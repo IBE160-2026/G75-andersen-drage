@@ -2,7 +2,7 @@
 title: Product Brief
 status: draft
 created: 2026-09-24
-updated: 2026-09-24
+updated: 2026-09-25
 ---
 
 # Product Brief: AI-Based Learning Assistant for Students
@@ -35,6 +35,7 @@ A focused web application `[ASSUMPTION: form factor]` where a student uploads th
 - **Flashcards** for spaced repetition
 - **Quiz questions** to self-test understanding
 - **Audio recap** in a podcast-style conversational format *(stretch goal, not core v1)*
+- **Video recommendations**: the AI finds existing videos (e.g., on YouTube) that help explain the topics, problems, or questions the student is working on, such as a concept from the uploaded material or a quiz question they got wrong *(stretch goal, not core v1)* `[ASSUMPTION: priority level]`
 
 The experience is deliberately narrow: one upload, multiple study formats, generated directly from the student's own material rather than generic pre-made content — so what comes out is actually relevant to what they're studying.
 
@@ -72,6 +73,7 @@ Success for this user looks like: upload material once, get usable study aids ba
 
 **Stretch, if time allows:**
 - Podcast-style audio recap
+- AI-found explanatory videos for relevant topics, problems, or questions
 
 **Explicitly out for v1** `[ASSUMPTION]`:
 - Multi-user/collaboration features (sharing decks, class-wide content)
@@ -85,6 +87,7 @@ These were deferred to assumptions for this draft and should be resolved as the 
 - Does IBE160 mandate a specific tech stack, deliverable format, or grading rubric that should shape scope or architecture?
 - Is there a narrower target user (e.g., a specific course's pensum) worth designing around, or should this stay general-purpose?
 - What's the actual timeline/deadline for the course deliverable?
+- For video recommendations: which source(s) should be searched (e.g., YouTube Data API), and how should the app check that a suggested video is relevant and of good quality?
 
 ## Vision
 
