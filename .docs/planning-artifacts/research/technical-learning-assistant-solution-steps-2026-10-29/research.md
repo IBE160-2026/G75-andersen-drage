@@ -49,7 +49,23 @@ All three major providers now offer **schema-constrained output** with Zod/Pydan
 - re-validate locally: Anthropic rejects some constraints (no min/max length, `minItems` only 0/1) [22], and Gemini silently strips length constraints [24];
 - retry once, then show a clear error.
 
-**Cost:** Anthropic Haiku 5.5 is listed at $0.10 / $0.50 per million input/output tokens for prompts up to 100k tokens [25] — a typical note costs fractions of a cent per generation. OpenAI and Gemini prices were not fetched and are not cited.
+**Cost:** the cheap model tiers of all three providers cost about the same. Standard tier, USD per million tokens, from the official pricing pages (accessed 2026-10-29):
+
+| Provider | Model | Input | Output | Conditions |
+|---|---|---|---|---|
+| Anthropic | Haiku 5.5 | $0.10 | $0.50 | prompts ≤ 100k tokens; $0.50 / $2.50 above [25] |
+| OpenAI | `gpt-6-luna` | $0.10 | $0.50 | ≤ 272k input tokens; $0.20 / $0.75 above [42] |
+| OpenAI | `gpt-5-nano` | $0.05 | $0.40 | older generation, cheapest listed [42] |
+| Google | `gemini-3.1-flash-lite` | $0.25 | $1.50 | paid tier [43] |
+| Google | `gemini-2.5-flash-lite` | $0.10 | $0.40 | paid tier, older generation [43] |
+| Google | `gemini-3.6-flash` / `3.8-flash` | $0.75 | $3.75 | **doubles to $1.50 / $7.50 from 2027-01-01** [43] |
+
+A typical note (about 5k tokens in and 3k tokens out per generation) costs about **$0.002** on Haiku 5.5 or `gpt-6-luna`. Cost does not decide the choice; output quality, structured-output support and the traceability constraint above do. Two points for the architecture doc:
+
+- **Gemini has a free tier** [43]. However, the page gives no numeric limits, and content on the free tier is used to improve Google's products, while for most models the paid tier isn't. That conflicts with the brief's notice that notes are sent to an external model. It's fine for development against demo notes, but not for real students' notes without saying so.
+- **Prices change on announced dates.** Gemini 3.6/3.8 Flash double on 2027-01-01, and GPT-5.6 Sol's promotional price runs "at least through November 21, 2026" [42][43]. Re-check before the architecture doc is final.
+
+Output quality was not compared in this research. The prices above were transcribed from the pricing pages with a page-summary tool, so check the chosen model's row by eye before quoting it in the report.
 
 ### Step 2b — Source traceability
 
@@ -121,11 +137,11 @@ Practice testing beats re-studying: g = 0.50 [0.42, 0.58] in Rowland's meta-anal
 | R5 | Rewrite *What Makes This Different*: drop "closed study loop" as a differentiator; lead with "every item shows a verified source passage" and "no account needed" | **Brief: What Makes This Different** | high that NotebookLM covers the loop [30]; medium that no one shows a verified passage by default (absence after 2 rounds) |
 | R6 | Describe 80/20 and ELI5 as design heuristics in the report and README, not as research-backed; cite the testing effect [1][2][3] for the core loop instead | Brief / IBE160 report | medium (absence of evidence) |
 | R7 | Store progress in localStorage with try/catch. Offer a JSON export, and note in the README that browser data can be deleted (Safari, private mode) | Architecture doc; README | high [28] |
-| R8 | Use Haiku 5.5 (or an equivalent cheap tier) as the default model when the architecture doc compares providers. OpenAI/Gemini prices still need fetching | Architecture doc (open question on LLM provider) | high for the Anthropic price [25]; comparison incomplete |
+| R8 | Choose the provider on quality and structured-output behaviour, not price: Haiku 5.5 and `gpt-6-luna` cost the same ($0.10 / $0.50), and a note costs about $0.002. Avoid the Gemini free tier for real notes (content used to improve Google's products) | Architecture doc (open question on LLM provider) | high for prices [25][42][43]; quality not compared |
 
 ## Open questions
 
-- **OpenAI and Gemini prices** were not fetched. They're needed for the provider choice in the architecture doc; checking the official pricing pages takes one more lookup.
+- **Output quality of the cheap models** on this task (picking central content, quotes that are word-for-word) was not compared. A small test on 2–3 reference notes before the architecture decision would settle it.
 - **NotebookLM's Explain citations and quiz scoring** are documented only in secondary sources [33]. Ten minutes of testing NotebookLM by hand would settle whether a source shows on the card itself.
 - **The Quizlet help centre** blocked fetching (HTTP 403), so Quizlet features and prices are medium-low confidence. Check them by hand.
 - **Whether the Karpicke & Roediger result [6] holds for concept questions** (it used word pairs) is a lead for the report. It is not needed for the design.
@@ -176,6 +192,8 @@ Practice testing beats re-studying: g = 0.50 [0.42, 0.58] in Rowland's meta-anal
 | 39 | NotebookLM flashcards/quizzes launch | [Google Blog](https://blog.google/innovation-and-ai/models-and-research/google-labs/notebooklm-app-quizzes-flashcards/) | 2025-11-06 | 2026-10-29 | high |
 | 40 | Quizlet price conflict | [Nibble (competitor blog)](https://nibble-app.com/blog/quizlet-cost) | 2026 | 2026-10-29 | low |
 | 41 | pypdf 6.21.4, BSD | [PyPI](https://pypi.org/project/pypdf/) | 2026-10-28 | 2026-10-29 | high |
+| 42 | OpenAI standard-tier prices (`gpt-6-luna`, `gpt-5-nano` etc.); GPT-5.6 Sol promo date | [OpenAI pricing](https://developers.openai.com/api/docs/pricing) | undated (latest note 2026-07-30) | 2026-10-29 | high |
+| 43 | Gemini paid-tier prices, free tier and data use, 2027 price change | [Google AI pricing](https://ai.google.dev/gemini-api/docs/pricing) | 2026-10-28 | 2026-10-29 | high |
 
 ## Staleness map
 
@@ -186,7 +204,9 @@ Computed with `recon_kit.py staleness` from the claims ledger (windows in months
 | mammoth 1.13.0 [17] | version | ~2026-09 | 2026-10-30 |
 | PDF.js v6.4.299 [18] | version | 2026-10-03 | 2026-11-03 |
 | LLM MCQ quality [9][10] | ML state of the art | 2026 | 2026-12-01 |
-| Haiku 5.5 price [25], NotebookLM [30][32] and Knowt [34] prices/features, Citations limit [26], structured outputs [22][23][24] | pricing / feature / limit | 2026-10 | 2027-01-29 |
+| GPT-5.6 Sol promo price [42] | pricing | 2026-10 | 2026-11-21 (announced end) |
+| Gemini 3.6/3.8 Flash prices [43] | pricing | 2026-10-28 | 2027-01-01 (announced doubling) |
+| Haiku 5.5 [25], OpenAI [42] and Gemini [43] prices, NotebookLM [30][32] and Knowt [34] prices/features, Citations limit [26], structured outputs [22][23][24] | pricing / feature / limit | 2026-10 | 2027-01-29 |
 | **Already stale:** NotebookLM Explain citations [33] (2025-09), MDN storage page [28] (2026-01), AI-flashcard study [12] (2025-05) | — | — | now |
 
 Earliest re-check: **library versions at the start of implementation**. A Refresh run re-checks this list.
