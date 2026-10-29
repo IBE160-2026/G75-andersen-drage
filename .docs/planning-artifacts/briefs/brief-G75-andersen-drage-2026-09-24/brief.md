@@ -35,19 +35,19 @@ A web application where the student works through one focused loop:
 2. **Get the core**: the app extracts the most central content and generates a short summary, a set of flashcards, and quiz questions — all focused on the key 20 % of the material, not everything in it. Each item shows which part of the note it came from.
 3. **Review flashcards** one by one. If a card doesn't make sense, **"Explain simpler"** (ELI5) re-explains it in plain language without jargon.
 4. **Take the quiz** and get a score, with the correct answer shown for each question. "Explain simpler" is available on quiz answers too.
-5. **Repeat what was wrong**: the student can start a new round with only the questions they answered incorrectly, until they get them right.
+5. **Repeat what was wrong**: the student can start a new round where the questions they answered incorrectly come first, until they get them right. Questions they already answered correctly are not dropped for good — they come back in later rounds, because research on retrieval practice shows that removing items from testing after one correct answer sharply reduces long-term retention.
 
 Progress (quiz results and wrong answers) is stored locally in the browser, so a student can come back to the same material later without an account. Before upload, the app makes clear that the content is sent to an external language model.
 
 ## What Makes This Different
 
-General AI chat tools (ChatGPT) and note tools (NotebookLM) can already produce summaries or Q&A ad hoc, and dedicated apps (Quizlet, Anki) already do flashcards well. The differentiator here is not a unique underlying capability, but:
+General AI chat tools (ChatGPT) and dedicated apps (Quizlet, Anki) already do summaries and flashcards well. Google NotebookLM goes further: it already offers the whole loop — upload, flashcards and quiz, an "Explain" button, and retrying the cards you missed — free with a Google account. A closed study loop is therefore not what sets this app apart. The differentiators are:
 
-- **An 80/20 profile throughout**: every output is deliberately limited to the most central content, built for a student with little time rather than for complete coverage
-- **A closed study loop**: upload → core → test → repeat mistakes, in one place, instead of stitching together several tools by hand
-- **Traceable output**: every flashcard and quiz question points back to the passage it came from, so the student can check it against their own notes
+- **A verified source passage on every item**: each flashcard and quiz question shows the exact passage from the student's own note it is based on, by default rather than on request — and the app checks in code that the quoted passage actually exists in the note, so the student can trust it and check it
+- **No account needed**: the app works without login, and progress is kept in the browser; the major alternatives all require an account
+- **An 80/20 profile throughout**: every output is deliberately limited to the most central content, built for a student with little time rather than for complete coverage. This is a design choice, not a research finding — the app's learning value rests on self-testing, which is well documented
 
-This is not a moat in a commercial sense. The value is fit and integration for one specific situation — and, for IBE160, the engineering behind it.
+This is not a moat in a commercial sense. The value is fit for one specific situation — and, for IBE160, the engineering behind it. The basis for this section is in `.docs/planning-artifacts/research/technical-learning-assistant-solution-steps-2026-10-29/research.md`.
 
 ## Who This Serves
 
@@ -61,7 +61,7 @@ Content criteria are verified against 2–3 reference notes, each with 5–10 ke
 - The summary is **at most 20–25 %** of the length of the source note
 - **Every** flashcard and quiz question is linked to the passage of the note it is based on
 - The language model's responses follow a fixed JSON format that is validated in code; invalid responses are handled with a clear error message, not a crash
-- After a quiz, the student sees their score and can start a new round containing **only** the questions they answered incorrectly
+- After a quiz, the student sees their score and can start a new round where the questions they answered incorrectly come **first**; correctly answered questions return in later rounds rather than being dropped
 - "Explain simpler" returns a plain-language explanation for any flashcard or quiz answer
 - Unsupported or empty files are rejected with a clear message
 - The examiner can run the app locally by following the README, using demo mode without an API key
@@ -81,7 +81,7 @@ Content criteria are verified against 2–3 reference notes, each with 5–10 ke
 **Explicitly out for v1:**
 - Legacy Word `.doc` files, scanned PDFs, and non-text material (audio, video, lecture recordings)
 - User accounts, multi-user and sharing features
-- Spaced-repetition scheduling algorithms beyond repeating wrong answers
+- Spaced-repetition scheduling algorithms beyond putting wrong answers first and bringing correct ones back in later rounds
 - Audio recaps and video recommendations (see Vision)
 
 ## Technical Direction
