@@ -1,8 +1,8 @@
 ---
 title: Product Brief
-status: draft
+status: final
 created: 2026-09-24
-updated: 2026-09-25
+updated: 2026-10-29
 ---
 
 # Product Brief: AI-Based Learning Assistant for Students
@@ -11,84 +11,90 @@ updated: 2026-09-25
 
 ## Executive Summary
 
-Students spend a large share of study time not learning new material but reprocessing what they already have — turning lecture notes and reading material into something they can actually review, test themselves on, and remember. This is slow, repetitive work that AI is well suited to help with, yet most students currently do it by hand or by improvising with general-purpose tools like ChatGPT.
+Students under exam pressure rarely lack material — they lack time to find what matters in it. Turning lecture notes and reading material into something they can review and test themselves on is slow, repetitive work, and most students either do it by hand or improvise with general-purpose tools like ChatGPT.
 
-This project is an AI-based learning assistant: students upload their own notes or course material, and the application generates study aids from it — summaries, flashcards, and quiz questions, with a podcast-style audio recap as a stretch goal. The app is explicitly a *supplement*, not a replacement for studying — it supports active learning and repetition rather than doing the learning for the student.
+This project is an AI-based learning assistant built around the 80/20 principle — the idea that roughly 20 % of the material gives 80 % of the understanding. A student uploads their own notes, and the application identifies the most central content and turns it into a short summary, flashcards, and a scored quiz. Questions the student gets wrong come back for another round, and any flashcard or quiz answer can be re-explained in simpler terms. The app is explicitly a *supplement*, not a replacement for studying — it supports active recall and repetition rather than doing the learning for the student.
 
-It is also the deliverable for IBE160 (Programming with AI, Høgskolen i Molde), so it doubles as a demonstration of applying AI meaningfully in both the *product* (AI-generated study aids) and the *process* (AI-assisted development, testing, and quality assurance). `[ASSUMPTION]`
+It is also the solo deliverable for IBE160 (Programming with AI, Høgskolen i Molde), so it demonstrates meaningful use of AI in both the *product* (AI-generated study aids) and the *process* (AI-assisted planning, development, testing, and quality assurance).
 
 ## The Problem
 
-Turning raw course material into something you can actually study from — a summary, flashcards, self-test questions — is manual, repetitive, and easy to put off. Students often:
+Before an exam, the bottleneck is not access to material but deciding what to focus on and turning it into something you can test yourself with. Students often:
 
 - Re-read notes passively instead of testing themselves, which is a weaker way to retain material
-- Spend disproportionate time formatting/organizing notes rather than actually studying
-- Improvise with general AI chat tools ad hoc, with no consistent format and no dedicated study workflow
+- Spend their limited time organizing and formatting notes rather than studying the parts that matter most
+- Improvise with general AI chat tools ad hoc, with no consistent format, no focus on what is central, and no way to repeat what they got wrong
 
-The cost is time lost to low-value repetition and, for some students, avoiding review altogether because the up-front effort of preparing study material feels too high.
+The cost is time lost to low-value repetition and, for some students, skipping review altogether because preparing study material feels like too much up-front effort.
 
 ## The Solution
 
-A focused web application `[ASSUMPTION: form factor]` where a student uploads their own notes or course material and gets back:
+A web application where the student works through one focused loop:
 
-- **Summaries** of the uploaded material
-- **Flashcards** for spaced repetition
-- **Quiz questions** to self-test understanding
-- **Audio recap** in a podcast-style conversational format *(stretch goal, not core v1)*
-- **Video recommendations**: the AI finds existing videos (e.g., on YouTube) that help explain the topics, problems, or questions the student is working on, such as a concept from the uploaded material or a quiz question they got wrong *(stretch goal, not core v1)* `[ASSUMPTION: priority level]`
+1. **Upload** a note or course text (plain text, Markdown, Word `.docx`, or text-based PDF).
+2. **Get the core**: the app extracts the most central content and generates a short summary, a set of flashcards, and quiz questions — all focused on the key 20 % of the material, not everything in it. Each item shows which part of the note it came from.
+3. **Review flashcards** one by one. If a card doesn't make sense, **"Explain simpler"** (ELI5) re-explains it in plain language without jargon.
+4. **Take the quiz** and get a score, with the correct answer shown for each question. "Explain simpler" is available on quiz answers too.
+5. **Repeat what was wrong**: the student can start a new round with only the questions they answered incorrectly, until they get them right.
 
-The experience is deliberately narrow: one upload, multiple study formats, generated directly from the student's own material rather than generic pre-made content — so what comes out is actually relevant to what they're studying.
+Progress (quiz results and wrong answers) is stored locally in the browser, so a student can come back to the same material later without an account. Before upload, the app makes clear that the content is sent to an external language model.
 
 ## What Makes This Different
 
-General AI chat tools (ChatGPT) and note tools (NotebookLM) can already produce summaries or Q&A ad hoc, and dedicated apps (Quizlet, Anki) already do flashcards well. The honest differentiator here is not a unique underlying capability — it's:
+General AI chat tools (ChatGPT) and note tools (NotebookLM) can already produce summaries or Q&A ad hoc, and dedicated apps (Quizlet, Anki) already do flashcards well. The differentiator here is not a unique underlying capability, but:
 
-- **One integrated workflow** purpose-built for exam prep from a student's own material, instead of stitching together several separate tools by hand
-- **The deliverable itself**: this is a built application, not a prompt technique — for IBE160 the value is in demonstrating the engineering (uploads, generation pipeline, testing, AI-assisted dev process), not in inventing a capability that doesn't exist elsewhere `[ASSUMPTION]`
+- **An 80/20 profile throughout**: every output is deliberately limited to the most central content, built for a student with little time rather than for complete coverage
+- **A closed study loop**: upload → core → test → repeat mistakes, in one place, instead of stitching together several tools by hand
+- **Traceable output**: every flashcard and quiz question points back to the passage it came from, so the student can check it against their own notes
 
-This is not a moat in a commercial sense, and the brief should not pretend otherwise — the differentiator is fit and integration, not novel AI capability.
+This is not a moat in a commercial sense. The value is fit and integration for one specific situation — and, for IBE160, the engineering behind it.
 
 ## Who This Serves
 
-**Primary user**: students who have their own notes/course material and want to convert it into review-ready study aids without manually building flashcards or quiz questions by hand. `[ASSUMPTION: no institution- or course-specific targeting yet — assumed general student audience, with Tor and IBE160 peers as the natural first test users]`
-
-Success for this user looks like: upload material once, get usable study aids back quickly, and use them to actually test their own recall — not just re-read a summary.
+**Primary user**: a student short on time before an exam who has their own notes for a course and wants to find and practise the most central content quickly. They are not looking for complete coverage — they want to know what matters most, check whether they know it, and spend their remaining time on what they got wrong. The first test user is Tor, using notes from current courses.
 
 ## Success Criteria
 
-`[ASSUMPTION — course grading criteria not yet confirmed]`
+Content criteria are verified against 2–3 reference notes, each with 5–10 key concepts listed in advance:
 
-- The application reliably takes uploaded notes and produces a summary, flashcards, and quiz questions that are recognizably grounded in the uploaded content (not generic/hallucinated)
-- A student (Tor, as first user) can go from "just uploaded notes" to "actively reviewing generated flashcards/quiz" in a few minutes
-- The project documents how AI was used across both the product and the development process, satisfying IBE160's course objectives
-- Delivered solo, within the course timeline
+- Flashcards and quiz together cover **at least 80 %** of the pre-listed key concepts for each reference note
+- The summary is **at most 20–25 %** of the length of the source note
+- **Every** flashcard and quiz question is linked to the passage of the note it is based on
+- The language model's responses follow a fixed JSON format that is validated in code; invalid responses are handled with a clear error message, not a crash
+- After a quiz, the student sees their score and can start a new round containing **only** the questions they answered incorrectly
+- "Explain simpler" returns a plain-language explanation for any flashcard or quiz answer
+- Unsupported or empty files are rejected with a clear message
+- The examiner can run the app locally by following the README, using demo mode without an API key
 
 ## Scope
 
 **In for v1:**
-- Upload notes/course material
-- Generate summary
-- Generate flashcards
-- Generate quiz questions
+- Upload of plain text / Markdown, Word (`.docx`), and text-based PDF
+- 80/20-focused summary, flashcards, and quiz questions, each traceable to the source
+- Flashcard review
+- Quiz with score and repetition of wrongly answered questions
+- "Explain simpler" (ELI5) on flashcards and quiz answers
+- Local storage of progress in the browser (no login)
+- Demo mode with stored responses for a sample note, plus `.env.example` for using your own API key
+- Notice that content is sent to an external language model
 
-**Stretch, if time allows:**
-- Podcast-style audio recap
-- AI-found explanatory videos for relevant topics, problems, or questions
+**Explicitly out for v1:**
+- Legacy Word `.doc` files, scanned PDFs, and non-text material (audio, video, lecture recordings)
+- User accounts, multi-user and sharing features
+- Spaced-repetition scheduling algorithms beyond repeating wrong answers
+- Audio recaps and video recommendations (see Vision)
 
-**Explicitly out for v1** `[ASSUMPTION]`:
-- Multi-user/collaboration features (sharing decks, class-wide content)
-- Spaced-repetition scheduling algorithms (beyond basic flashcard review)
-- Support for non-text source material (e.g., video/lecture recordings) unless notes are already text
+## Technical Direction
+
+- **Language model**: one LLM provider via API, with structured JSON output validated in code. The concrete provider, model, and cost estimate are chosen and justified in the architecture document.
+- **Runnable without the developer's key**: demo mode with stored responses for a sample note; otherwise, the user supplies their own key via `.env` (never committed; `.env.example` in the repo).
+- **Test data**: reference notes that are allowed to be shared publicly, each with a list of expected key concepts.
 
 ## Open Questions
 
-These were deferred to assumptions for this draft and should be resolved as the idea firms up:
-
-- Does IBE160 mandate a specific tech stack, deliverable format, or grading rubric that should shape scope or architecture?
-- Is there a narrower target user (e.g., a specific course's pensum) worth designing around, or should this stay general-purpose?
-- What's the actual timeline/deadline for the course deliverable?
-- For video recommendations: which source(s) should be searched (e.g., YouTube Data API), and how should the app check that a suggested video is relevant and of good quality?
+- What is the exact deadline for the course deliverable?
+- Which LLM provider and model gives acceptable quality and cost? (decided in the architecture document)
 
 ## Vision
 
-If this works well as a course project, the natural next step is less about scope growth and more about depth: better grounding of generated content in the source material, a review workflow that adapts to what the student actually gets wrong (rather than static flashcards), and possibly extending beyond text notes to other study material formats. But that is future scope — v1 is about proving the core loop: upload → generate → actively review.
+If the core loop works well, the next step is depth rather than breadth: better grounding of generated content in the source material and review that adapts more closely to what the student gets wrong. Further out, the same material could be offered in other formats — a podcast-style audio recap, or recommendations for existing videos that explain a topic or a missed quiz question. These require extra external services and are deliberately left out of v1, which is about proving the core loop: upload → core → test → repeat mistakes.
