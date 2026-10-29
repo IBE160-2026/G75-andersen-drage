@@ -18,6 +18,8 @@ Tor ønsket research mot de fem «Solution»-stegene i product brief (opplasting
 - Ikke gjort: semantisk sitatsjekk med egen subagent, `bmad-review` på rapporten og HTML-briefing.
 - Brief oppdatert etter R4 og R5 (steg 5, Success Criteria, Scope, «What Makes This Different»), lest og godkjent av Tor. Brief + research committet i `10ef45c` og pushet.
 
+- Priser for OpenAI og Gemini hentet fra offisielle prissider og lagt inn i research.md (kostnadstabell under steg 2, R8, kilder [42][43], staleness-kart). Haiku 5.5 og `gpt-6-luna` koster det samme ($0,10 / $0,50 per mill. tokens); Gemini Flash dobles 2027-01-01; Gemini gratisnivå bruker innholdet til å forbedre Googles produkter.
+
 ### Åpne punkter
-- Hent offisielle priser for OpenAI og Gemini før valg av språkmodell i arkitekturen.
+- Sammenlign kvaliteten på de billige modellene på 2–3 referansenotater før modellvalget i arkitekturen.
 - Test NotebookLM manuelt: vises kilde på kortet, og hvordan scores quizen?

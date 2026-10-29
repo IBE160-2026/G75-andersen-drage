@@ -4,5 +4,6 @@
 - [ ] 2026-10-29 [brainstorming-product-brief](995-2026-10-29-12-35-33-brainstorming-product-brief.md) — velg hvilke brainstorming-kandidater som skal inn i PRD-en
 - [x] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — vurder endring av steg 5 i brief: feil svar først, ikke bare feil svar (R4) (løst 2026-10-29)
 - [x] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — skriv om «What Makes This Different» i brief: verifisert kildeutdrag + ingen innlogging (R5) (løst 2026-10-29)
-- [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — hent offisielle priser for OpenAI og Gemini til modellvalget
+- [x] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — hent offisielle priser for OpenAI og Gemini til modellvalget (løst 2026-10-29)
+- [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — sammenlign kvaliteten på billige modeller (Haiku 5.5, gpt-6-luna, Gemini Flash-Lite) på 2–3 referansenotater
 - [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — test NotebookLM manuelt (kilde på kort, quiz-scoring)
