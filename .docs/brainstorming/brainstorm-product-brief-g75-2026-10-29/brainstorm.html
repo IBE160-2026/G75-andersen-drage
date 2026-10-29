@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exam Night Deck</title>
+<style>
+:root{
+  --desk:#f3eee3; --ink:#24211c; --muted:#6d665a; --card:#fffdf7; --line:#d9cfbd;
+  --red:#c2462f; --blue:#2f5f8a; --gold:#b8862b; --shadow:0 2px 0 rgba(0,0,0,.06),0 8px 22px rgba(60,40,10,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#1c1a17; --ink:#efe8da; --muted:#a59c8c; --card:#2a2723; --line:#433d35;
+    --red:#e2735c; --blue:#7fa9d1; --gold:#d8aa52; --shadow:0 2px 0 rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#1c1a17; --ink:#efe8da; --muted:#a59c8c; --card:#2a2723; --line:#433d35;
+  --red:#e2735c; --blue:#7fa9d1; --gold:#d8aa52; --shadow:0 2px 0 rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--desk);color:var(--ink);font:16px/1.5 Georgia,"Iowan Old Style",serif}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 16px 80px}
+header{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:28px}
+.kicker{font:600 12px/1 ui-monospace,Consolas,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+h1{font-size:clamp(32px,6vw,58px);line-height:1.02;margin:10px 0 12px;letter-spacing:-.01em}
+.lede{max-width:62ch;color:var(--muted);margin:0}
+.clock{display:flex;gap:28px;flex-wrap:wrap;margin-top:18px;font:600 13px/1.3 ui-monospace,Consolas,monospace}
+.clock b{display:block;font:700 30px/1 Georgia,serif;color:var(--ink)}
+.clock span{color:var(--muted)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 30px}
+nav button{font:600 13px ui-monospace,Consolas,monospace;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:7px 12px;border-radius:999px;cursor:pointer}
+nav button[aria-pressed="true"]{background:var(--ink);color:var(--desk)}
+.deck-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin:36px 0 6px}
+.deck-head h2{margin:0;font-size:26px}
+.deck-head .count{font:600 12px ui-monospace,Consolas,monospace;color:var(--muted)}
+.lens{color:var(--muted);margin:0 0 16px;font-style:italic}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{perspective:900px;min-height:150px;cursor:pointer;border:0;padding:0;background:none;text-align:left;font:inherit;color:inherit}
+.inner{position:relative;width:100%;height:100%;min-height:150px;transition:transform .45s;transform-style:preserve-3d}
+.card[aria-pressed="true"] .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:var(--card);border-radius:6px;box-shadow:var(--shadow);padding:16px 16px 14px;
+  background-image:repeating-linear-gradient(to bottom,transparent 0 27px,var(--line) 27px 28px);background-position:0 36px;overflow:auto}
+.face::before{content:"";position:absolute;left:0;right:0;top:34px;height:1.5px;background:var(--red);opacity:.55}
+.front .n{font:600 11px ui-monospace,Consolas,monospace;color:var(--muted)}
+.front p{margin:14px 0 0;font-size:15.5px}
+.back{transform:rotateY(180deg)}
+.back .tag{font:600 11px ui-monospace,Consolas,monospace;color:var(--blue);letter-spacing:.08em;text-transform:uppercase}
+.back p{margin:14px 0 0;font-size:15px}
+.hint{font:12px ui-monospace,Consolas,monospace;color:var(--muted);margin-top:8px}
+.climax{margin-top:70px;border-top:2px solid var(--ink);padding-top:26px}
+.climax h2{font-size:clamp(28px,5vw,42px);margin:6px 0 6px}
+.climax .lede{margin-bottom:22px}
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.ins{background:var(--card);border-radius:6px;box-shadow:var(--shadow);padding:18px 18px 16px;border-left:5px solid var(--gold);position:relative}
+.ins .k{font:700 34px/1 Georgia,serif;color:var(--gold);position:absolute;right:14px;top:10px;opacity:.35}
+.ins h3{margin:0 0 8px;font-size:19px;padding-right:34px}
+.ins p{margin:0;color:var(--ink);font-size:15px}
+footer{margin-top:50px;color:var(--muted);font:12px ui-monospace,Consolas,monospace}
+@media (prefers-reduced-motion: reduce){.inner{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Brainstorm · G75 · 2026-10-29</div>
+    <h1>Exam Night Deck</h1>
+    <p class="lede">A brainstorm against the product brief for the 80/20 study assistant: the time-pressed student, the examiner running the README, and everything that could go wrong in between. Every idea is a flashcard — read the front, tap to see the payoff.</p>
+    <div class="clock">
+      <div><b>105</b><span>ideas</span></div>
+      <div><b>5</b><span>techniques</span></div>
+      <div><b>6</b><span>cards that matter</span></div>
+    </div>
+  </header>
+  <nav id="nav" aria-label="Filter decks"></nav>
+  <main id="decks"></main>
+  <section class="climax" id="climax">
+    <div class="kicker">Synthesis</div>
+    <h2>The six cards worth keeping</h2>
+    <p class="lede">Not new ideas — the links between them. Several cards from different decks turned out to be the same idea wearing different hats.</p>
+    <div class="insights" id="insights"></div>
+  </section>
+  <footer>Source: .docs/brainstorming/brainstorm-product-brief-g75-2026-10-29/.memlog.md · stance: Ideate for me</footer>
+</div>
+<script>
+const DECKS=[{"name":"Role Playing","lens":"stakeholders: student night before exam, examiner, teacher, the LLM, anxious student, keyboard/mobile user","ideas":[{"front":"Exam mode","back":"student sets hours until exam; app scales how many cards/questions it serves"},{"front":"Mastery progress bar","back":"'X of Y key concepts mastered' per note"},{"front":"Resume where I left off","back":"on open, show last deck and unfinished quiz from local storage"},{"front":"'Try with sample note' button on start page so first experience needs no own notes or key","back":""},{"front":"Estimated time per session shown up front ('this quiz takes ~6 min')","back":""},{"front":"Input sanity warning","back":"note too short / too long, with concrete suggestion"},{"front":"Flashcard 'knew it / didn't' buttons feed the same wrong-answer pool as the quiz","back":""},{"front":"Click an item's source reference to highlight the passage in the original note","back":""},{"front":"Examiner","back":"visible demo-mode banner and toggle on start page ('Demo mode - stored responses')"},{"front":"Examiner","back":"README quick start in three commands plus one screenshot"},{"front":"Examiner","back":"one test command runs fully offline on recorded fixtures"},{"front":"Examiner","back":"traceability table brief -> PRD requirement -> story -> test in docs"},{"front":"Examiner","back":"prompts versioned as files in repo so AI-in-product is inspectable"},{"front":"Teacher","back":"QA evidence report - coverage % per reference note, committed with each release"},{"front":"Teacher","back":"show how ungrounded output is detected (eval script, not just claim)"},{"front":"LLM","back":"long notes need chunking and an input-size cap"},{"front":"LLM","back":"number paragraphs before sending so JSON can cite passage IDs instead of free text"},{"front":"LLM","back":"retry once on invalid JSON, then show clear error"},{"front":"Anxious student","back":"encouraging score framing ('3 left to master', not '3 wrong')"},{"front":"Keyboard","back":"space flips card, arrows navigate, enter answers quiz"},{"front":"Mobile","back":"responsive flashcard review for studying on the bus"},{"front":"Privacy","back":"show exactly what is sent; button to delete all local data"},{"front":"Language","back":"outputs in the same language as the note (Norwegian notes -> Norwegian cards)"},{"front":"Several courses","back":"multiple decks in local storage, named by file"}]},{"name":"Reverse Brainstorming","lens":"how could we make this fail? -> invert","ideas":[{"front":"Fail","back":"LLM invents facts -> verify each item's cited quote actually exists in the note (string match)"},{"front":"Fail","back":"80/20 picks the wrong concepts -> one-line 'why this is central' rationale per key concept"},{"front":"Fail","back":"API cost explodes -> cache results by file hash; reload never regenerates"},{"front":"Fail","back":"long PDF times out -> progress indicator plus v1 page cap (e.g. 20 pages)"},{"front":"Fail","back":"scanned PDF gives empty text -> detect and explain instead of generating nonsense"},{"front":"Fail","back":"correct option is always the longest -> shuffle options and check distractor lengths"},{"front":"Fail","back":"quiz duplicates flashcards word for word -> instruct and dedupe"},{"front":"Fail","back":"repeat-wrong loop never ends -> after N misses, auto-offer Explain simpler"},{"front":"Fail","back":"API key committed -> .env in .gitignore plus secret scan in CI"},{"front":"Fail","back":"API key exposed in browser -> LLM calls go through a small backend, never from client JS"},{"front":"Fail","back":"examiner's demo mode is broken -> CI runs the core loop end-to-end in demo mode"},{"front":"Fail","back":"README rots -> e2e test follows README steps ('README as test')"},{"front":"Fail","back":"local storage cleared -> export/import progress as JSON"},{"front":"Fail","back":"scope creep -> hard v1 cut list; nothing from Vision until core e2e is green"},{"front":"Fail","back":"solo dev runs out of time -> time-box per epic; deadline into issues.md"},{"front":"Fail","back":"nondeterministic LLM breaks tests -> tests run on recorded fixtures; live eval is a separate script"},{"front":"Fail","back":"Word file with tables/images -> extract text, warn what was lost"},{"front":"Fail","back":"copyrighted textbook uploaded / committed -> sample notes self-written; README says use own notes"},{"front":"Fail","back":"ELI5 oversimplifies into wrong -> ELI5 answer also cites its passage"},{"front":"Fail","back":"UI freezes during generation -> skeleton/loading state per format, formats appear as they finish"},{"front":"Fail","back":"cryptic errors -> error catalogue: what happened + what the user can do"},{"front":"Fail","back":"summary over 25 % -> enforce in code (check length, regenerate once)"},{"front":"Fail","back":"two-sentence note -> minimum-length message"},{"front":"Fail","back":"rate limit 429 -> backoff and friendly wait message"},{"front":"Fail","back":"prompt injection inside notes -> note treated as data; fixture note with injection in test suite"},{"front":"Fail","back":"process undocumented -> keep .logs and memlogs, link them from README"}]},{"name":"SCAMPER on the core loop","lens":"upload -> core -> test -> repeat mistakes","ideas":[{"front":"Substitute","back":"summary as a bullet 'cheat sheet' instead of prose"},{"front":"Substitute","back":"some quiz items as short answer graded by LLM (later, harder to test)"},{"front":"Combine","back":"one 'concept' view joining its flashcard, quiz items and mastery state"},{"front":"Combine","back":"missed question + ELI5 -> auto-generated 'repair card'"},{"front":"Combine","back":"list of key concepts with simple relations as a mini concept map"},{"front":"Adapt","back":"Leitner-lite with three boxes (new / shaky / known) instead of full SRS"},{"front":"Adapt","back":"exam countdown like calendar apps"},{"front":"Modify","back":"intensity slider 'core 10 / core 20 concepts'"},{"front":"Modify","back":"tag each question recall vs understanding"},{"front":"Put to other use","back":"teacher uploads lecture notes to create a class quiz (Vision)"},{"front":"Put to other use","back":"printable quiz/flashcard export for a study group"},{"front":"Eliminate","back":"paste-text box as alternative to file upload"},{"front":"Eliminate","back":"skip summary page and go straight to cards (optional path)"},{"front":"Eliminate","back":"no server database at all - backend is a stateless LLM proxy"},{"front":"Reverse","back":"student writes questions, AI checks them (Vision)"},{"front":"Reverse","back":"pre-test first, then summary ('test before study' effect)"},{"front":"Reverse","back":"show the skipped 80 % as a 'not covered' topic list so the student knows the risk"}]},{"name":"Constraint Mapping","lens":"rated 'simple', solo, no login, one LLM - turn constraints into assets","ideas":[{"front":"'Simple'","back":"asset: compete on depth - polish, tests, design, documentation"},{"front":"Test pyramid","back":"unit (validation, parsing), integration (LLM adapter on fixtures), e2e (core loop)"},{"front":"Measured eval report per reference note","back":"concept coverage %, summary ratio, grounding hits"},{"front":"Wireframes for the ~5 screens in the UX doc before code","back":""},{"front":"Design empty, loading and error states explicitly, not as afterthoughts","back":""},{"front":"Automated accessibility check in e2e","back":""},{"front":"LLM provider behind an interface","back":"mock + real implementation, swappable"},{"front":"Short ADRs for LLM choice, storage, backend proxy","back":""},{"front":"README cost note","back":"tokens per typical note and estimated cost per run"},{"front":"Prompt versioning","back":"prompt files changed only through commits"},{"front":"CI on GitHub Actions","back":"lint + unit + e2e in demo mode (gh is now installed)"},{"front":"GitHub Issues linked to stories","back":""},{"front":"PR-based workflow even solo, with bmad-code-review per PR as visible evidence","back":""},{"front":"Demo GIF in README","back":""},{"front":"Release tag v1.0 with changelog","back":""},{"front":"'Solo'","back":"asset: one consistent decision log, no coordination overhead"},{"front":"'No login'","back":"asset: zero setup and a clean privacy story"},{"front":"'One LLM'","back":"asset: simpler test surface and one set of fixtures"},{"front":"Vertical slice first","back":"txt upload -> flashcards end-to-end in week one"},{"front":"Three self-written, publicly shareable sample notes with expected key concepts in repo","back":""},{"front":"Retrospective per epic documented","back":""}]},{"name":"What If Scenarios","lens":"","ideas":[{"front":"What if LLM calls were free?","back":"cheap self-check pass that rejects ungrounded items"},{"front":"What if there is no internet?","back":"demo mode doubles as offline fallback"},{"front":"What if the exam is in one hour?","back":"panic mode: 10 most central cards only"},{"front":"What if the note itself is wrong?","back":"disclaimer: app is only as correct as your notes"},{"front":"What if five files for one course?","back":"merge into one deck (Vision)"},{"front":"What if the quiz were a game?","back":"light streaks and mastery badges"},{"front":"What if the examiner tries their own note?","back":"README invites it with own key; robust generic handling"},{"front":"What if the LLM is down during the exam presentation?","back":"one-click switch to demo mode"},{"front":"What if the student asks 'am I ready?'","back":"readiness score = mastered key concepts / total"},{"front":"What if quiz results shaped the next round?","back":"regenerate new questions on weak concepts, not the same ones"},{"front":"What if Explain simpler had levels?","back":"second press gives an everyday analogy"},{"front":"What if response time were tracked?","back":"slow correct answers marked as shaky"},{"front":"What if the app said what to do next?","back":"'next best action' card on home screen"},{"front":"What if recorded LLM responses were snapshots?","back":"snapshot tests catch prompt regressions"},{"front":"What if there were a performance budget?","back":"small bundle, first screen under a second"},{"front":"What if the presentation had a script?","back":"demo script in docs for the exam presentation"},{"front":"What if notes mix Norwegian and English?","back":"detect dominant language and say which was used"}]}];const INSIGHTS=[["Grounding is the spine","Passage IDs, quote verification, click-to-highlight, ELI5 that cites its source and the eval report are one mechanism. It answers trust for the student, testability for QA (15 %) and traceability for the examiner — all at once."],["One fixture set, four jobs","Recorded LLM responses power demo mode for the examiner, an offline fallback, a safe exam presentation and snapshot tests in CI. Design the fixtures first."],["Mastery per concept","Flashcard knew/didn't, quiz misses, Leitner-lite boxes, a readiness score and a next-best-action card are one state per key concept. It turns the quiz extension into a product."],["The honest 80/20","The real blind spot: the app silently drops 80 %. A 'why central' line per concept and a 'not covered' list make the choice explainable and testable."],["No key in the browser","The API key cannot live in client JavaScript, so 'no server' becomes 'stateless backend proxy'. Decide it in architecture, note it in the PRD."],["Cheap evidence wins","For a 'simple' project the top grade comes from visible process: CI on GitHub Actions, PRs with code review, a measured eval report, wireframes with error and loading states, README-as-test."]];
+const nav=document.getElementById("nav"), root=document.getElementById("decks");
+let filter="all";
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function render(){
+  root.innerHTML="";let n=0;
+  DECKS.forEach((d,i)=>{
+    if(filter!=="all"&&filter!==i)return;
+    const head=el("div","deck-head");
+    head.append(el("h2",null,esc(d.name)),el("span","count",d.ideas.length+" cards"));
+    root.append(head);
+    if(d.lens)root.append(el("p","lens",esc(d.lens)));
+    const grid=el("div","grid");
+    d.ideas.forEach((idea,j)=>{
+      const b=el("button","card");b.setAttribute("aria-pressed","false");
+      b.setAttribute("aria-label",idea.front+(idea.back?". Answer: "+idea.back:""));
+      const inner=el("div","inner");
+      const f=el("div","face front",`<span class="n">${esc(d.name)} · ${String(j+1).padStart(2,"0")}</span><p>${esc(idea.front)}</p>`);
+      const bk=el("div","face back",`<span class="tag">The move</span><p>${esc(idea.back||idea.front)}</p>`);
+      inner.append(f,bk);b.append(inner);
+      b.addEventListener("click",()=>b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")==="true"?"false":"true"));
+      grid.append(b);n++;
+    });
+    root.append(grid);
+    if(i===0&&filter==="all")root.append(el("div","hint","Tap or press Enter on a card to flip it."));
+  });
+}
+const all=el("button",null,"All decks");all.setAttribute("aria-pressed","true");
+all.onclick=()=>{filter="all";sync();};nav.append(all);
+DECKS.forEach((d,i)=>{const b=el("button",null,esc(d.name));b.setAttribute("aria-pressed","false");b.onclick=()=>{filter=i;sync();};nav.append(b);});
+function sync(){[...nav.children].forEach((b,k)=>b.setAttribute("aria-pressed",String(k===0?filter==="all":filter===k-1)));render();}
+const ins=document.getElementById("insights");
+INSIGHTS.forEach(([h,p],i)=>{const c=el("article","ins",`<span class="k">${i+1}</span><h3>${esc(h)}</h3><p>${esc(p)}</p>`);ins.append(c);});
+render();
+</script>
+</body>
+</html>
