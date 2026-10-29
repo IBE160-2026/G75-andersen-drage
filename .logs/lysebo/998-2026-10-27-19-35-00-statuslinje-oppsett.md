@@ -18,3 +18,20 @@ Brukeren ba om oppsett av statuslinje i Claude Code (`/statusline-setup`, som ik
 
 ### Åpne punkter
 Ingen.
+
+## 2026-10-29 kl. 10:21 — lysebo
+
+### Oppgave
+Brukeren ba om statuslinje-oppsett fra shellens PS1, og bestemte deretter at statuslinjen skal vise det den viser nå. Loggen skulle oppdateres så den stemmer med faktisk innhold.
+
+### Plan
+- `statusline-setup`-agenten fant ingen PS1 (ingen `~/.bashrc`, `~/.bash_profile`, `~/.zshrc` eller `~/.profile`) og endret ingenting.
+- Leste og testet `~/.claude/statusline.sh` for å dokumentere hva den faktisk viser.
+
+### Resultat
+- Ingen endringer i statuslinjen; `statusLine` i `~/.claude/settings.json` er fortsatt `bash ~/.claude/statusline.sh`.
+- Skriptet viser nå mer enn beskrevet i forrige seksjon: `<modell> | <mappe> | <git-gren> | ctx <n>% | 7d: <tid igjen> (<n>% brukt)`. Context- og 7-dagersdelen vises bare når Claude Code sender feltene. Skriptet bruker `node` til JSON-parsing (ikke `jq`).
+- Testet med eksempel-JSON → `Opus 5.5 | G75-andersen-drage | main | ctx 12%`.
+
+### Åpne punkter
+Ingen.
