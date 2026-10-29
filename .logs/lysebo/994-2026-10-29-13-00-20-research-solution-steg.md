@@ -15,10 +15,9 @@ Tor ønsket research mot de fem «Solution»-stegene i product brief (opplasting
 - Hovedfunn: alt kan bygges med få avhengigheter (tekstuttrekk i nettleseren, skjemastyrt JSON, localStorage). Anthropic Citations kan ikke kombineres med structured outputs → sporbarhet via chunk_id + ordrett sitat sjekket i kode.
 - Forskning: selvtesting er godt belagt (g ≈ 0,50). Å fjerne riktig besvarte spørsmål fra testing gir dårligere husking (~80 % vs 33–36 %). Ingen empiri for 80/20 eller ELI5.
 - Konkurrenter: NotebookLM dekker allerede hele loopen inkl. «Only cards you missed». Gjenstående forskjeller: verifisert kildeutdrag på hvert element, og ingen innlogging.
-- Ikke gjort: semantisk sitatsjekk med egen subagent, `bmad-review` på rapporten og HTML-briefing. Research-filene er ikke committet.
+- Ikke gjort: semantisk sitatsjekk med egen subagent, `bmad-review` på rapporten og HTML-briefing.
+- Brief oppdatert etter R4 og R5 (steg 5, Success Criteria, Scope, «What Makes This Different»), lest og godkjent av Tor. Brief + research committet i `10ef45c` og pushet.
 
 ### Åpne punkter
-- Vurder å endre steg 5 i brief til «feil svar først, pluss tidligere riktige i senere runder» (R4 i rapporten).
-- Skriv om «What Makes This Different» i brief: dropp «closed loop», løft fram verifisert kildeutdrag + ingen innlogging (R5).
 - Hent offisielle priser for OpenAI og Gemini før valg av språkmodell i arkitekturen.
 - Test NotebookLM manuelt: vises kilde på kortet, og hvordan scores quizen?
