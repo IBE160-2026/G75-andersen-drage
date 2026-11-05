@@ -7,3 +7,7 @@
 - [x] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — hent offisielle priser for OpenAI og Gemini til modellvalget (løst 2026-10-29)
 - [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — sammenlign kvaliteten på billige modeller (Haiku 5.5, gpt-6-luna, Gemini Flash-Lite) på 2–3 referansenotater
 - [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — test NotebookLM manuelt (kilde på kort, quiz-scoring)
+- [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — bestem produktnavn før README og grensesnittet ferdigstilles, senest 12. desember (PRD §10 spørsmål 2)
+- [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag 2–3 referansenotater med forventede nøkkelkonsepter, minst ett på norsk, før promptene finjusteres (PRD §10 spørsmål 3, DR-3)
+- [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — oppdater «Medlemmer» i README: G75 leveres solo, og Lasse S. Drage falt fra før briefen (DR-1)
+- [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag UX-spesifikasjonen med bmad-ux før arkitekturen
