@@ -80,5 +80,5 @@ The findings below were deliberately left out of the brief. They are requirement
 
 ## 10. Process
 
-- **Deadline.** The brief is marked final while the deadline is still open. Find it in the course description before sprint planning.
+- **Deadline.** Resolved 2026-11-05: the deliverable is due on 15 December 2026, and the brief is updated. Use it to size the "Should" list in sprint planning.
 - **Usefulness.** Consider a short self-test log by Tor (or another student) comparing the app with manual preparation.

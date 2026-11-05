@@ -15,7 +15,7 @@ Students under exam pressure rarely lack material — they lack time to find wha
 
 This project is an AI-based learning assistant built around the 80/20 principle — the idea that roughly 20% of the material gives 80% of the understanding. A student uploads their own notes, and the application identifies the most central content, turns it into a short summary, flashcards, and a scored quiz, and then focuses the next round on what the student has not yet mastered. The app is explicitly a *supplement*, not a replacement for studying — it supports active recall and repetition rather than doing the learning for the student.
 
-It is also the solo deliverable for IBE160 (Programming with AI, Høgskolen i Molde), so it demonstrates meaningful use of AI in both the *product* (AI-generated study aids) and the *process* (AI-assisted planning, development, testing, and quality assurance).
+It is also the solo deliverable for IBE160 (Programming with AI, Høgskolen i Molde), due on 15 December 2026, so it demonstrates meaningful use of AI in both the *product* (AI-generated study aids) and the *process* (AI-assisted planning, development, testing, and quality assurance).
 
 ## The Problem
 
@@ -93,7 +93,7 @@ Content criteria are verified against 2–3 reference notes, each with 5–10 ke
 - Paste text directly as an alternative to file upload
 - Panic mode: "Exam in one hour" limits flashcards and quiz to the 10 most central concepts
 
-How many of these are built depends on the course deadline (see Open Questions).
+How many of these are built depends on the time left before the deadline on 15 December 2026, once v1 works.
 
 **Explicitly out for v1:**
 - Legacy Word `.doc` files, scanned PDFs, and non-text material (audio, video, lecture recordings)
@@ -112,7 +112,7 @@ How many of these are built depends on the course deadline (see Open Questions).
 
 ## Open Questions
 
-- What is the exact deadline for the course deliverable? It decides how much of the "Should" list is built.
+- None at the brief level. The course deadline was confirmed on 2026-11-05: 15 December 2026.
 
 ## Vision
 
