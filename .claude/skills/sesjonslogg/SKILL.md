@@ -57,16 +57,16 @@ Dato-overskriften bærer klokkeslettet for når loggen skrives **og hvem som kj�
 
 Etter at loggfila er skrevet (ny fil, ny dato-seksjon eller oppdatert dagens seksjon), **skal** den committes umiddelbart, før sluttoppsummeringen. Ellers blir loggene glemt som ukommitterte filer og kommer ut av sync mellom brukere og maskiner. Dette er et krav, ikke et valg — ikke spør om lov, og hopp det ikke over fordi økten var liten.
 
-**Commit kun loggfila og `issues.md` — ingenting annet.** `issues.md` oppdateres i samme økt (se under), og må med, ellers blir den stående ukommittert og kommer ut av sync. Andre endringer i arbeidskopien (kode, konfig, utracket filer, ting brukeren selv har staget) skal ikke bli med. Bruk en path-begrenset commit, slik at annet som allerede ligger i staging-området ikke dras med:
+**Commit kun selve loggfila — ingenting annet.** Heller ikke `issues.md`, andre loggfiler, kode, konfig, utracket filer eller ting brukeren selv har staget. Bruk en path-begrenset commit, slik at annet som allerede ligger i staging-området ikke dras med:
 
 ```sh
-git add -- ".logs/<bruker-slug>/<fil>.md" ".logs/<bruker-slug>/issues.md"
-git commit -m "Logg: <tittel>" -- ".logs/<bruker-slug>/<fil>.md" ".logs/<bruker-slug>/issues.md"
+git add -- ".logs/<bruker-slug>/<fil>.md"
+git commit -m "Logg: <tittel>" -- ".logs/<bruker-slug>/<fil>.md"
 ```
 
 - Meldingen er `Logg: <tittel>` (tittelen er den samme som i fila, f.eks. `Logg: kurstab-redesign`), pluss eventuelle attribusjonslinjer harnessen krever for commits. Angir prosjektets `CLAUDE.md`/`AGENTS.md` en egen commit-meldingskonvensjon for logger, følg den i stedet.
-- Var `issues.md` uendret i økten (eller finnes den ikke), utelates den fra kommandoene, og bare loggfila committes.
-- Kontroller etterpå med `git show --stat HEAD` at commiten inneholder nøyaktig disse filene: loggfila og eventuelt `issues.md`. Inneholder den mer, angre med `git reset --soft HEAD~1`, unstage det som ikke hører til, og commit på nytt.
+- Kontroller etterpå med `git show --stat HEAD` at commiten inneholder nøyaktig én fil: loggfila. Inneholder den mer, angre med `git reset --soft HEAD~1`, unstage det som ikke hører til, og commit på nytt.
+- `issues.md` oppdateres fortsatt (se under), men committes ikke av skillen. Nevn kort i sluttoppsummeringen at den er endret og ukommittert.
 - **Ikke push** med mindre brukeren ber om det i økten. Skillen committer bare lokalt.
 - Er `.logs/` git-ignorert, eller er prosjektet ikke et git-repo, hopp over commit og nevn det kort i sluttoppsummeringen.
 - Hook-feil: løs årsaken og commit på nytt. Aldri `--no-verify`.
@@ -102,7 +102,7 @@ Sjekk ved hver bruk om prosjektets rot-`CLAUDE.md` eller `AGENTS.md` refererer t
 
 - Legg regelen der prosjektets agent-instruksjoner faktisk bor: i `AGENTS.md` hvis den finnes (eller hvis `CLAUDE.md` bare er en `@AGENTS.md`-import), ellers i `CLAUDE.md`; finnes ingen av dem, opprett `CLAUDE.md` med regelen.
 - Hold den kort og tilpass filens eksisterende struktur og språk, f.eks.:
-  > **Logg sesjonen.** Når en oppgave/økt avsluttes — før sluttoppsummeringen — bruk `sesjonslogg`-skillen: den logger Oppgave + Plan + Resultat + åpne punkter per bruker i `.logs/<bruker>/`, fører åpne punkter i `issues.md` og committer loggfilene.
+  > **Logg sesjonen.** Når en oppgave/økt avsluttes — før sluttoppsummeringen — bruk `sesjonslogg`-skillen: den logger Oppgave + Plan + Resultat + åpne punkter per bruker i `.logs/<bruker>/`, fører åpne punkter i `issues.md` og committer selve loggfila.
 - Ikke dupliser: står referansen alt et sted i en av filene, er alt i orden.
 
 ## Ved oppstart av en fortsettelse
