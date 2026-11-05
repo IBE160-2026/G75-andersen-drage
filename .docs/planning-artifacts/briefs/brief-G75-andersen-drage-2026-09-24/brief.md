@@ -122,4 +122,4 @@ If the core loop works well, the next step is depth rather than breadth: the "Sh
 
 - Research on the solution steps, competitors, and retrieval practice: `.docs/planning-artifacts/research/technical-learning-assistant-solution-steps-2026-10-29/research.md`
 - Brainstorm that added grounding, mastery state, the proxy, and the "Should" list (2026-10-29): `.docs/brainstorming/brainstorm-product-brief-g75-2026-10-29/brainstorm-intent.md`
-- Review of this brief (2026-11-05, `bmad-review`: adversarial, edge-case-hunter, structure, prose); detailed edge cases are carried into the PRD
+- Review of this brief (2026-11-05, `bmad-review`: adversarial, edge-case-hunter, structure, prose); detailed edge cases are carried into the PRD: `review-findings-for-prd-2026-11-05.md`
