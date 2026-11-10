@@ -7,7 +7,10 @@
 - [x] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — hent offisielle priser for OpenAI og Gemini til modellvalget (løst 2026-10-29)
 - [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — sammenlign kvaliteten på billige modeller (Haiku 5.5, gpt-6-luna, Gemini Flash-Lite) på 2–3 referansenotater
 - [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — test NotebookLM manuelt (kilde på kort, quiz-scoring)
-- [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — bestem produktnavn før README og grensesnittet ferdigstilles, senest 12. desember (PRD §10 spørsmål 2)
+- [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — bestem produktnavn før README og grensesnittet ferdigstilles, senest 12. desember (PRD §10 spørsmål 2) (løst 2026-11-10: Torsas læringsassistent)
 - [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag 2–3 referansenotater med forventede nøkkelkonsepter, minst ett på norsk, før promptene finjusteres (PRD §10 spørsmål 3, DR-3)
 - [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — oppdater «Medlemmer» i README: G75 leveres solo, og Lasse S. Drage falt fra før briefen (DR-1)
 - [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag UX-spesifikasjonen med bmad-ux før arkitekturen
+- [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — fullfør bmad-ux: innhold i «Dine notater» og sletting, tone, samtykketekst og deretter Finalize
+- [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — oppdater PRD-en etter UX: presiser FR-12 (sitat etter snudd kort eller besvart spørsmål), legg til «Dine notater» på Start (UJ-2) og sett produktnavnet (§10 spm. 2)
+- [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — bekreft at det er greit å klikke kildereferansen før kortet er snudd eller spørsmålet besvart
