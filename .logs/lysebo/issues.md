@@ -12,12 +12,14 @@
 - [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — oppdater «Medlemmer» i README: G75 leveres solo, og Lasse S. Drage falt fra før briefen (DR-1)
 - [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag UX-spesifikasjonen med bmad-ux før arkitekturen (løst 2026-11-12)
 - [x] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — fullfør bmad-ux: innhold i «Dine notater» og sletting, tone, samtykketekst og deretter Finalize (løst 2026-11-12)
-- [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — oppdater PRD-en etter UX: presiser FR-12 (sitat etter snudd kort eller besvart spørsmål), legg til «Dine notater» på Start (UJ-2) og sett produktnavnet (§10 spm. 2)
+- [x] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — oppdater PRD-en etter UX: presiser FR-12 (sitat etter snudd kort eller besvart spørsmål), legg til «Dine notater» på Start (UJ-2) og sett produktnavnet (§10 spm. 2) (løst 2026-11-12, commit 28344cf)
 - [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — bekreft at det er greit å klikke kildereferansen før kortet er snudd eller spørsmålet besvart
-- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — PRD-oppdateringen gjelder nå 7 NOTE FOR PRD (EXPERIENCE.md › Open Items): i tillegg Arkiv, viktighetsnivå, samtykke ved første åpning og 320 px (NFR-7)
+- [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — PRD-oppdateringen gjelder nå 7 NOTE FOR PRD (EXPERIENCE.md › Open Items): i tillegg Arkiv, viktighetsnivå, samtykke ved første åpning og 320 px (NFR-7) (løst 2026-11-12)
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — godkjenn utkastene i Microcopy-tabellen i EXPERIENCE.md før implementering
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — arkitektur: AI-leverandørens navn i samtykketeksten, lang-attributt for notatinnhold, hvor samtykket lagres
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — lag «Design»-seksjon i README med PNG-er fra mockups/ og lenker til DESIGN.md/EXPERIENCE.md
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — kuttdato 2026-12-01: kutt og skjul Should-funksjoner (Arkiv, viktighetsnivå, mørk modus) som ikke virker
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — vurder v2 av IA- og UJ-1-wireframes (v1 er utdatert, se Known drift)
-- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — les tilbakemeldingen på PRD-en (tilbakemelding-prd.md) og technology.md fra Bård Pettersen før PRD-oppdateringen og arkitekturen
+- [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — les tilbakemeldingen på PRD-en (tilbakemelding-prd.md) og technology.md fra Bård Pettersen før PRD-oppdateringen og arkitekturen (løst 2026-11-12)
+- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — PRD-oppdatering: ta fire beslutninger (FR-25 kuttbar?, begrep uten quizspørsmål, FR-13/FR-5 i kjernen, plan B for SM-3), gjør rubrikkrettelsene, språkvask og sett status final
+- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — UX: rett UJ-1/UJ-2 i EXPERIENCE.md (8 spørsmål, 5 av 8, 3 usikre) og 360→320 px, og lukk NOTE FOR PRD 1–7
