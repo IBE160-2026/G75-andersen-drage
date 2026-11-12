@@ -20,9 +20,9 @@ Visual references (illustrations only; **the spines win on conflict**):
 
 ## Foundation
 
-- **Form factor:** web app. Desktop/laptop is primary; every flow must work down to 320px wide viewports (WCAG 1.4.10; PRD NFR-7 names 360px).
+- **Form factor:** web app. Desktop/laptop is primary; every flow must work down to 320px wide viewports (WCAG 1.4.10; PRD NFR-7).
 - **UI system:** none named. Component library is deferred to architecture (`bmad-architecture`). `DESIGN.md` is the visual reference; components here are library-agnostic.
-- **Language:** UI in Norwegian bokmål (NFR-9); generated content follows the Note's language. PRD error strings are English for the record; the student sees the Microcopy strings, referenced below by key (for example `err.noKey`).
+- **Language:** UI in Norwegian bokmål (NFR-9); generated content follows the Note's language. The PRD references UI strings by message key (NFR-9); the student sees the Microcopy strings, referenced below by key (for example `err.noKey`).
 - **Product name:** "Torsas læringsassistent" (resolves PRD open question 2).
 - **Modes:** light 'Lesesal' (Must) / dark 'Kveldsmodus' (Should). Default follows OS `prefers-color-scheme`; a manual toggle overrides it and is remembered in browser storage.
 - **Storage:** everything (Notes, Study Sets, Mastery history, settings, Consent) lives in this browser; no account.
@@ -86,7 +86,7 @@ The app speaks like a teacher sitting beside the student: informal bokmål, addr
 | Do | Don't |
 |---|---|
 | "Det var nok feil, rett svar er …" followed by the correct answer and the Quote | "Oops! Feil svar 😕" |
-| "Du har en uferdig runde (3 av 9 besvart)" | "Velkommen tilbake! Klar for mer læring?" |
+| "Du har en uferdig runde (3 av 8 besvart)" | "Velkommen tilbake! Klar for mer læring?" |
 | "Skannede PDF-er støttes ikke" — say what is wrong, then what to do | Raw provider errors or HTTP codes (FR-24) |
 | "Demomodus støtter bare eksempelnotatene" | Blaming the student |
 | "Klar for eksamen 63 %" + "2 begreper uten verifiserte elementer" | A score without its gap note (FR-19) |
@@ -298,9 +298,9 @@ Sara, second-year student, one evening left, laptop, first visit. Wireframes: [`
 4. Genererer: "Finner nøkkelbegreper …", "forelesning-7.pdf · 3 120 ord · 24 avsnitt", under a minute. (mockup: [key-generating](mockups/key-generating.html), [PNG](mockups/key-generating.png), frame a)
 5. Notatoversikt: source panel left (P1 …), right: "Klar for eksamen 0 %" with its gap note, summary with Quotes, 8 Key Concepts all 'ny', 'Start runde'.
 6. Runde: Flashcard front "Hva skiller 3NF fra 2NF?" + "Kilde: P4". Space reveals the back: answer, Quote, "Kilde: P4". She presses 1 or 2 per card; focus lands on each new card's heading. On one card she presses 'Forklar enklere'. (mockup: [key-flashcards](mockups/key-flashcards.html), [PNG](mockups/key-flashcards.png))
-7. Runde: quiz, "Spørsmål 4 av 9", reference "Kilde: P7" under the stem. She answers with 1–4; on a miss: `quiz.wrong` ("Det var nok feil, rett svar er C.") + Quote. (mockup: [key-quiz](mockups/key-quiz.html), [PNG](mockups/key-quiz.png))
-8. **Climax — Resultat:** "6 av 9 riktige". On the question she missed she clicks "Kilde: P7"; the source panel scrolls to P7 and rings the exact sentence the question was built from. She sees it is in her own Note, then presses 'Tilbake til resultatet'. (mockup: [key-result](mockups/key-result.html), [PNG](mockups/key-result.png))
-9. 'Tilbake til oversikten' → Notatoversikt: "Klar for eksamen 63 %", two concepts 'usikker', 'Start runde' ("Usikre begreper kommer først.").
+7. Runde: quiz, "Spørsmål 4 av 8", reference "Kilde: P7" under the stem. She answers with 1–4; on a miss: `quiz.wrong` ("Det var nok feil, rett svar er C.") + Quote. (mockup: [key-quiz](mockups/key-quiz.html), [PNG](mockups/key-quiz.png))
+8. **Climax — Resultat:** "5 av 8 riktige". On the question she missed she clicks "Kilde: P7"; the source panel scrolls to P7 and rings the exact sentence the question was built from. She sees it is in her own Note, then presses 'Tilbake til resultatet'. (mockup: [key-result](mockups/key-result.html), [PNG](mockups/key-result.png))
+9. 'Tilbake til oversikten' → Notatoversikt: "Klar for eksamen 63 %", three concepts 'usikker', 'Start runde' ("Usikre begreper kommer først.").
 
 Failure: her PDF is a scan → after choosing the file, Start shows `err.scanned` inline (key-start, frame d). No generation, no AI call (FR-3). Generation error → `err.generation` + 'Prøv igjen' + 'Tilbake til start', focus on the message (key-generating, frame b).
 
@@ -308,9 +308,9 @@ Failure: her PDF is a scan → after choosing the file, Start shows `err.scanned
 
 1. Sara opens the app in the same browser. 'Dine notater' lists `forelesning-7` with "Sist øvd i går" (`row.lastPractised`), Readiness Score, gap note and importance "2 – middels". (mockup: [key-start](mockups/key-start.html), [PNG](mockups/key-start.png), frame b)
 2. She clicks the row → Notatoversikt (no AI call). Re-uploading the same file reaches the same place via FR-4.
-3. Banner: "Du har en uferdig runde (5 av 9 besvart)" — she closed the tab mid-quiz yesterday; answered questions were kept and scored. (mockup: [key-overview](mockups/key-overview.html), [PNG](mockups/key-overview.png))
+3. Banner: "Du har en uferdig runde (5 av 8 besvart)" — she closed the tab mid-quiz yesterday (PRD UJ-2 edge case); answered questions were kept and scored. (mockup: [key-overview](mockups/key-overview.html), [PNG](mockups/key-overview.png))
 4. She chooses 'Ny runde'.
-5. **Climax:** the Round opens with her two 'usikker' concepts first, followed by one she already knew; the top bar shows "Klar for eksamen 63 %".
+5. **Climax:** the Round holds four concepts (FR-18): her three 'usikker' concepts first, followed by one she already knew; the top bar shows "Klar for eksamen 63 %" (5 of 8 known).
 
 Failure: the browser cleared storage → 'Dine notater' is empty and Sara re-uploads; generation runs again. Whether the Consent gate reappears depends on where Consent is stored `[OPEN]`.
 
@@ -378,7 +378,7 @@ Responsive web only; no native app. Keyboard hints hidden on touch-only devices 
 
 ## Open Items
 
-**[NOTE FOR PRD]** (PRD updates required)
+**[NOTE FOR PRD]** (all seven resolved in the PRD, 2026-11-12)
 
 1. FR-12 "Quote visible without any extra click": clarify for Flashcards (Quote visible once revealed; reference always visible) and Quiz Questions (Quote after answering).
 2. The 'Dine notater' start screen is a new surface; the PRD's UJ-2 assumed the student re-uploads the Note.
@@ -386,9 +386,9 @@ Responsive web only; no native app. Keyboard hints hidden on touch-only devices 
 4. Importance level (viktighetsnivå 1–3, default 2) is a new Note attribute driving sort order.
 5. Consent timing: first open, not first upload; align UJ-1 / FR-5 wording.
 6. Product name "Torsas læringsassistent" resolves PRD open question 2.
-7. NFR-7 floor: the spine designs for 320px (WCAG 1.4.10); PRD says 360px.
+7. NFR-7 floor: the spine designs for 320px (WCAG 1.4.10); the PRD now says 320px.
 
-**PRD update pending:** [NOTE FOR PRD] items are resolved by a `bmad-prd` Update run right after UX finalizes; until then the PRD lags this spine on those items.
+The PRD Update run of 2026-11-12 adopted items 1–7 (FR-12, FR-25, FR-26, FR-27, FR-5 and UJ-1, product name, NFR-7 at 320px); the PRD and this spine agree on them.
 
 **[OPEN]**: provider name in Consent; Note-language `lang` attribute; where Consent is stored (UJ-2 failure path); qualities liked in 'Logically' / 'Open notebook'. Labels, error strings and empty copy are drafted in Microcopy (awaiting approval).
 
@@ -396,7 +396,7 @@ Responsive web only; no native app. Keyboard hints hidden on touch-only devices 
 
 ## Known drift
 
-The v1 wireframes and `directions-4.html` predate these decisions; use the spine. The key-screen mockups were aligned with the spines on 2026-11-12; no residual drift is known in them.
+The v1 wireframes and `directions-4.html` predate these decisions; use the spine. The key-screen mockups were aligned with the spines on 2026-11-12; their only known residual drift is item 12.
 
 1. *IA map numbering:* the map numbers 1 Start, 2 Samtykke, 3 Demovelger … 9 Innstillinger and puts Kildepanel "beside 5–8". The spine numbers 0 Samtykke … 9 Innstillinger, Kildepanel beside 4–7. Cross-reference by name, not number.
 2. *IA map content:* no Arkiv surface, no Note-row controls (importance select, 'Arkiver'), no delete-warning or shortcut settings, no first-run Consent gate.
@@ -409,3 +409,4 @@ The v1 wireframes and `directions-4.html` predate these decisions; use the spine
 9. *Active Passage and highlight (directions-4):* tinted Passage with a pale 1px ring. Spine: no tint, 3px `accent` rule, 2px `highlight-ring` (`DESIGN.md` › Colors › Contrast).
 10. *Kveldsmodus (directions-4):* sans for Note content, 6px / 10px radii, 1 : 1.2 columns. Spine: serif for Note content in both modes, shared 4px / 6px radii, 1 : 1.15.
 11. *Mobile top bar (directions-4, 360px):* full bar. Spine: condensed bar with 'Mer' menu, 320px floor.
+12. *Example counts (key-quiz, key-result, key-overview):* "Spørsmål 4 av 9", "6 av 9 riktige" and "5 av 9 besvart" are illustrative counts from before the PRD fixed UJ-1 at 8 Key Concepts. Spine: "Spørsmål 4 av 8", "5 av 8 riktige", "5 av 8 besvart" (Key Flows); the spine wins.

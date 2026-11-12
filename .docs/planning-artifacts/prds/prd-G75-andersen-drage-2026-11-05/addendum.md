@@ -18,13 +18,14 @@ This addendum collects technical direction gathered during the PRD work. It is i
 
 ## Quote Check (FR-9)
 
-- Anthropic Citations cannot be combined with structured output (the API returns HTTP 400 if you try), so the app does its own Quote Check (R3).
+- Anthropic Citations cannot be combined with structured output (the API returns HTTP 400 for the combination), so the app does its own Quote Check (R3).
 - Apply the same Normalization to the Passage and to the Quote, then check that the normalized Quote appears as a substring of the normalized Passage. Only an exact match counts. The research suggested a "weak" tier for fuzzy matches, but Decision D3 rejected it.
 
 ## Storage (FR-4, FR-21, Decision D5)
 
 - R7 recommends storing progress in localStorage, wrapped in try/catch. Whether Study Sets fit in localStorage or need IndexedDB depends on their size, and the architecture decides.
 - Use keys namespaced per Note, such as `progress:<noteHash>`, and include a schema version in the stored data.
+- Size the store for the per-Note data FR-21 lists beyond the Study Set: last-shown time and last-used Quiz Question per Key Concept, and last-practiced time, archive state and Importance Level per Note (FR-18, FR-25 to FR-27).
 - Include the prompt version and model ID in the cache key for stored Study Sets (FR-4, Decision D2).
 - Warn in the app and the README that Safari deletes stored data after 7 days without a visit, and that private browsing deletes it when the window closes (R7, Review fix E5).
 
