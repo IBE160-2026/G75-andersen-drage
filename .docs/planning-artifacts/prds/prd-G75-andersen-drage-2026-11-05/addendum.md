@@ -1,12 +1,12 @@
 # Addendum to the PRD: Architecture input
 
-This addendum collects technical direction gathered during the PRD work. It is input for `bmad-architecture`, which makes the final choices, and it is not a set of requirements. Sources are coded in parentheses: research recommendations (R1–R8), Decision D1–D9 and Review fix E1–E13 (both resolve in `.memlog.md`), and PRD requirements (FR-n, NFR-n). A bullet with no source code is the PM's judgment.
+This addendum collects technical direction gathered during the PRD work. It is input for `bmad-architecture`, which makes the final choices, and it is not a set of requirements. Sources are coded in parentheses: research recommendations (R1–R8), Decision D1–D9 and Review fix E1–E13 (both resolve in `.memlog.md`; PRD §12 maps them to requirements), and PRD requirements (FR-n, NFR-n). A bullet with no source code is the PM's judgment.
 
 ## Text extraction (FR-1, FR-3)
 
 - Extract text in the browser, so that unreadable files are rejected before any network call. The research names these candidates: `unpdf`/pdf.js for PDF, `mammoth` for `.docx`, and `File.text()` for `.txt` and `.md` (R1).
 - Detect scanned PDFs by counting characters per page (R1).
-- Wrap every parser in try/catch, and show the message "File could not be read." for any parser error.
+- Wrap every parser in try/catch, and show `err.unreadable` (EXPERIENCE.md › Microcopy) for any parser error.
 - The `mammoth` documentation warns that some files can cause high CPU or memory use. Run parsing in a Web Worker with a timeout, because try/catch does not catch a hang (FR-3, Review fix E7).
 - Check the library versions again when implementation starts (R1).
 
@@ -30,8 +30,9 @@ This addendum collects technical direction gathered during the PRD work. It is i
 
 ## Proxy (NFR-1 to NFR-3)
 
-- Bind the Proxy to localhost by default, and check the `Origin` header.
-- Rate-limit requests with a simple in-memory counter.
+- The Proxy runs locally only, started with the app by the README command (DR-1). It is not publicly hosted, which keeps cost and abuse risk on the local machine.
+- Bind the Proxy to localhost, and check the `Origin` header.
+- Rate-limit requests with a simple in-memory counter per origin: the 11th request within one minute gets HTTP 429 (NFR-3).
 - Log only status codes and timings, never request or response bodies.
 
 ## Model choice (Open Question 1)
