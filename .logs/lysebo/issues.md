@@ -10,7 +10,13 @@
 - [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — bestem produktnavn før README og grensesnittet ferdigstilles, senest 12. desember (PRD §10 spørsmål 2) (løst 2026-11-10: Torsas læringsassistent)
 - [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag 2–3 referansenotater med forventede nøkkelkonsepter, minst ett på norsk, før promptene finjusteres (PRD §10 spørsmål 3, DR-3)
 - [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — oppdater «Medlemmer» i README: G75 leveres solo, og Lasse S. Drage falt fra før briefen (DR-1)
-- [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag UX-spesifikasjonen med bmad-ux før arkitekturen
-- [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — fullfør bmad-ux: innhold i «Dine notater» og sletting, tone, samtykketekst og deretter Finalize
+- [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag UX-spesifikasjonen med bmad-ux før arkitekturen (løst 2026-11-12)
+- [x] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — fullfør bmad-ux: innhold i «Dine notater» og sletting, tone, samtykketekst og deretter Finalize (løst 2026-11-12)
 - [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — oppdater PRD-en etter UX: presiser FR-12 (sitat etter snudd kort eller besvart spørsmål), legg til «Dine notater» på Start (UJ-2) og sett produktnavnet (§10 spm. 2)
 - [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — bekreft at det er greit å klikke kildereferansen før kortet er snudd eller spørsmålet besvart
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — PRD-oppdateringen gjelder nå 7 NOTE FOR PRD (EXPERIENCE.md › Open Items): i tillegg Arkiv, viktighetsnivå, samtykke ved første åpning og 320 px (NFR-7)
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — godkjenn utkastene i Microcopy-tabellen i EXPERIENCE.md før implementering
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — arkitektur: AI-leverandørens navn i samtykketeksten, lang-attributt for notatinnhold, hvor samtykket lagres
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — lag «Design»-seksjon i README med PNG-er fra mockups/ og lenker til DESIGN.md/EXPERIENCE.md
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — kuttdato 2026-12-01: kutt og skjul Should-funksjoner (Arkiv, viktighetsnivå, mørk modus) som ikke virker
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — vurder v2 av IA- og UJ-1-wireframes (v1 er utdatert, se Known drift)
