@@ -20,3 +20,4 @@
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — lag «Design»-seksjon i README med PNG-er fra mockups/ og lenker til DESIGN.md/EXPERIENCE.md
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — kuttdato 2026-12-01: kutt og skjul Should-funksjoner (Arkiv, viktighetsnivå, mørk modus) som ikke virker
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — vurder v2 av IA- og UJ-1-wireframes (v1 er utdatert, se Known drift)
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — les tilbakemeldingen på PRD-en (tilbakemelding-prd.md) og technology.md fra Bård Pettersen før PRD-oppdateringen og arkitekturen
