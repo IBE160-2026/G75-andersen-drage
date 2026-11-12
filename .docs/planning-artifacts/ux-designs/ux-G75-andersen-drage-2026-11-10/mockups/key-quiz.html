@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Runde 1, quiz · forelesning-7.pdf · Torsas læringsassistent (key screen)</title>
+<style>
+/* =====================================================================
+   KEY SCREEN 2 — Runde: quiz, question answered wrong (light / Lesesal only)
+   Governing spine sections (spine wins on conflict):
+   - EXPERIENCE.md › IA #6 Runde: quiz, Kildepanel; Page structure (Runde quiz row; DOM order
+     skip link → header → main → aside)
+   - EXPERIENCE.md › Component Patterns: Quiz Question, Source reference, Passage, Quote highlight,
+     Return control, Quote block, Explain Simpler, Round progress, Mastery chip, Concept chip,
+     Tabs ('Studier'/'Kilde'), Top bar (desktop + condensed mobile), Overflow menu, Focus ring
+   - EXPERIENCE.md › Interaction Primitives: Shortcuts (1–4), Reference jump;
+     Accessibility Floor › Focus management (Quiz answer: focus stays on chosen option)
+   - EXPERIENCE.md › Microcopy: quiz.wrong, quiz.next, simpler.button, return.label, quote.start/end,
+     readiness, topbar.more
+   - EXPERIENCE.md › Key Flows: UJ-1 step 7; Responsive & Platform (mobile tabs, condensed bar)
+   - DESIGN.md › Components: Quiz Question, Passage (active rule), Quote highlight (fill + 2px ring),
+     Return control, Quote block, Round progress, Tabs, Keyboard hint; Colors › Contrast rules
+   Visual reference: directions-4.html direction 1 Lesesal (desktop + 360px Kilde tab).
+   ===================================================================== */
+/* ---- Tokens: DESIGN.md frontmatter, light (Lesesal, unsuffixed) values only ---- */
+:root{
+  --background:#FAF7F2; --surface:#FFFDF9; --surface-source:#F5F0E7; --surface-card:#FFFDF9;
+  --ink:#2B2A28; --ink-muted:#6B655C; --line:#E4DCCD; --line-strong:#8A8275; --ink-disabled:#A39B8F;
+  --surface-hover:#F3EEE5; --accent:#2F5D50; --accent-strong:#2F5D50; --on-accent:#FFFFFF; --focus:#2F5D50;
+  --highlight:#F3E3A3; --highlight-ring:#8A6510; --quote-bg:#F5F0E7;
+  --new-bg:#ECE7DE; --new-fg:#4D473F; --shaky-bg:#F6E1D3; --shaky-fg:#7A3B12; --known-bg:#DCE9E2; --known-fg:#1F4A3D;
+  --error-bg:#FBE1E7; --error-fg:#A11A3B;
+  --serif:Georgia,'Iowan Old Style','Times New Roman',serif; --sans:system-ui,'Segoe UI',sans-serif; --mono:ui-monospace,Consolas,monospace;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --r-sm:4px; --r-md:6px; --r-track:3px; --r-full:9999px;
+}
+
+/* ---- Mock shell (not product UI) ---- */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:#E4E2DE;color:#222;padding:32px 24px 48px;line-height:1.45}
+.shell-head{max-width:1360px;margin:0 auto 28px}
+.shell-head .t{font-size:1.5rem;font-weight:600;margin-bottom:4px}
+.shell-head .d{max-width:860px;color:#444;font-size:.9375rem}
+.frame-label{max-width:1360px;margin:0 auto 8px;font-size:.8125rem;font-weight:600;color:#3a3a3a;text-transform:uppercase;letter-spacing:.05em}
+.frame-label span{text-transform:none;letter-spacing:0;font-weight:400;color:#555}
+.browser{max-width:1360px;margin:0 auto 44px;border-radius:10px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.15);background:#ccc}
+.browser-bar{height:30px;background:#d7d7db;display:flex;align-items:center;gap:6px;padding:0 12px}
+.browser-bar i{width:11px;height:11px;border-radius:50%;background:#bbb;display:block}
+.browser-bar b{margin-left:14px;font-weight:400;font-size:12px;color:#555;background:#eee;border-radius:6px;padding:2px 12px}
+.pair{max-width:1360px;margin:0 auto 44px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.pair .browser,.pair .frame-label{margin-bottom:8px}
+.phone-wrap{max-width:1360px;margin:0 auto 44px;display:flex;gap:32px;align-items:flex-start}
+.phone{flex:0 0 auto;width:380px;padding:10px;border-radius:30px;background:#1b1b1b;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.phone .screen{width:360px;height:660px;overflow:hidden;border-radius:22px}
+.note-box{max-width:520px;font-size:.875rem;color:#333}
+.note-box p{margin-bottom:8px}
+
+/* ---- App ---- */
+.app{position:relative;background:var(--background);color:var(--ink);font-family:var(--sans);font-size:.9375rem;line-height:1.45;overflow-wrap:anywhere;hyphens:auto}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+a{color:var(--accent-strong)}
+:focus-visible,.focus-demo{outline:3px solid var(--focus);outline-offset:2px}
+
+/* Top bar */
+.topbar{display:flex;align-items:center;gap:var(--s4);padding:var(--s2) var(--s5);background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--serif);font-weight:500;font-size:1.03125rem;color:var(--ink);text-decoration:none}
+.notename{color:var(--ink-muted);font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:18rem}
+.spacer{flex:1}
+.ready{font-size:.875rem;white-space:nowrap}
+.ready strong{font-size:1.171875rem;color:var(--accent-strong);font-weight:600}
+.gap-note{color:var(--ink-muted);font-size:.8125rem}
+
+/* Buttons */
+.btn{font:inherit;font-size:.9375rem;display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);min-height:40px;border-radius:var(--r-sm);border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;line-height:1.3}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent}
+.btn.icon{width:44px;height:44px;min-height:44px;padding:0;justify-content:center}
+.btn[aria-disabled="true"]{color:var(--ink-disabled);border-color:var(--line);background:var(--surface);cursor:default}
+.kbd{font-family:var(--mono);font-size:.6875rem;color:var(--ink-muted);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:0 .35em;line-height:1.5}
+.btn.primary .kbd{color:var(--on-accent);border-color:var(--on-accent)}
+.textlink{font:inherit;background:none;border:0;color:var(--accent-strong);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+
+/* Split layout: main first in DOM, aside placed left by grid */
+.split{display:grid;grid-template-columns:1fr 1.15fr}
+.split > main{grid-column:2;grid-row:1;min-width:0}
+.split > aside{grid-column:1;grid-row:1;min-width:0}
+.source{background:var(--surface-source);border-right:1px solid var(--line);padding:var(--s5);height:100%}
+.panel-label{font-family:var(--serif);font-weight:500;font-size:.75rem;color:var(--ink-muted);margin-bottom:var(--s3)}
+.passage{display:flex;gap:10px;margin-bottom:14px;font-family:var(--serif);font-size:.9375rem;line-height:1.6}
+.passage p{flex:1}
+.pid{flex:0 0 auto;font-family:var(--mono);font-size:.6875rem;color:var(--ink-muted);padding-top:.35em;min-width:2em}
+.passage.active{border-left:3px solid var(--accent);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:var(--s2);margin-left:-11px}
+.passage.focus-inset{outline:3px solid var(--focus);outline-offset:-3px}
+mark{background:var(--highlight);color:var(--ink);outline:2px solid var(--highlight-ring);-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .1em;border-radius:2px}
+.return{display:flex;justify-content:space-between;align-items:center;gap:var(--s2);flex-wrap:wrap;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font-size:.8125rem;margin-bottom:var(--s4)}
+
+.study{padding:var(--s5) var(--s6);display:flex;flex-direction:column;gap:var(--s4)}
+.roundbar{display:flex;align-items:center;gap:var(--s3);font-size:.875rem;color:var(--ink-muted)}
+.roundbar h1{font-size:.875rem;font-weight:400;color:var(--ink-muted)}
+.progress{flex:1;height:6px;background:var(--line);border-radius:var(--r-track);overflow:hidden}
+.progress span{display:block;height:100%;background:var(--accent)}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;font-size:.75rem;padding:.15em .7em;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);color:var(--ink);white-space:nowrap}
+.chip.new{background:var(--new-bg);color:var(--new-fg);border-color:transparent}
+.chip.shaky{background:var(--shaky-bg);color:var(--shaky-fg);border-color:transparent}
+.chip.known{background:var(--known-bg);color:var(--known-fg);border-color:transparent}
+
+/* Content */
+.headline{font-family:var(--serif);font-weight:500;font-size:1.25rem;line-height:1.3}
+.item-h{font-size:.8125rem;font-weight:400;color:var(--ink-muted)}
+.stem{font-family:var(--serif);font-weight:500;font-size:1.625rem;line-height:1.3}
+.ref{font-family:var(--sans);font-size:.8125rem;color:var(--accent-strong);text-decoration:underline;text-underline-offset:2px}
+.quote{background:var(--quote-bg);border-left:3px solid var(--accent);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:10px 14px;font-family:var(--serif);font-size:.84375rem;line-height:1.5}
+.quote .ref{display:inline-block;margin-top:6px}
+.answer{font-size:.9375rem;line-height:1.55}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.actions .grow{flex:1}
+
+/* Quiz options */
+.options{list-style:none;display:flex;flex-direction:column;gap:var(--s2)}
+.opt{width:100%;justify-content:flex-start;text-align:left;padding:10px var(--s4)}
+.opt .letter{font-weight:600;min-width:1.4em}
+.opt .end{margin-left:auto;display:inline-flex;gap:var(--s2);align-items:center}
+.opt.correct{background:var(--known-bg);color:var(--known-fg)}
+.opt.wrong{background:var(--shaky-bg);color:var(--shaky-fg)}
+.opt .glyph{font-weight:700}
+/* Answered, not chosen and not correct: full ink text, only the border muted (memlog; not the disabled style) */
+.opt[aria-disabled="true"]{color:var(--ink);border-color:var(--line);cursor:default}
+.opt.correct[aria-disabled="true"]{color:var(--known-fg);border-color:var(--line-strong)}
+.opt.wrong[aria-disabled="true"]{color:var(--shaky-fg);border-color:var(--line-strong)}
+
+/* ---- Quiz region: shared round-progress line (same pattern as key-flashcards.html); no card container ---- */
+.quiz-region{display:flex;flex-direction:column;gap:var(--s4)}
+.roundbar .sep{color:var(--ink-muted)}
+.roundbar h2{font-size:.875rem;font-weight:400;color:var(--ink-muted)}
+.card-top{display:flex}
+
+/* Error message */
+.error{display:flex;gap:10px;align-items:flex-start;background:var(--error-bg);color:var(--error-fg);border-left:3px solid var(--error-fg);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:10px 14px;font-size:.9375rem}
+.error svg{flex:0 0 auto;margin-top:2px}
+
+/* Start: single column */
+.single{max-width:40rem;margin:0 auto;padding:var(--s6) var(--s4) 72px}
+.single h1{margin-bottom:var(--s4)}
+.single h2{font-family:var(--serif);font-weight:500;font-size:1.0625rem;margin:var(--s6) 0 var(--s3)}
+.rows{list-style:none;border-top:1px solid var(--line)}
+.row{position:relative;display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s3);border-bottom:1px solid var(--line);background:var(--surface)}
+.row-main{flex:1;min-width:0}
+.row-title{display:block;color:var(--ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-title::after{content:"";position:absolute;inset:0}
+.row-title.focus-demo{outline:none}
+.row-title.focus-demo::after{outline:3px solid var(--focus);outline-offset:-3px}
+.row .meta{color:var(--ink-muted);font-size:.8125rem}
+.row .ctl{position:relative;z-index:1}
+.imp{font:inherit;font-size:.75rem;min-height:44px;padding:0 var(--s3);border:1px solid var(--line-strong);border-radius:var(--r-full);background:var(--surface);color:var(--ink)}
+.dropzone{border:1px dashed var(--ink-muted);border-radius:var(--r-md);background:var(--surface);padding:28px var(--s4);text-align:center}
+.dropzone .main-line{font-size:.9375rem}
+.dropzone .types{color:var(--ink-muted);font-size:.8125rem;margin-top:4px}
+.field{margin-top:var(--s4)}
+.field label{display:block;font-size:.9375rem;margin-bottom:6px}
+textarea{width:100%;font:inherit;font-size:.9375rem;background:var(--surface);color:var(--ink);border:1px solid var(--ink-muted);border-radius:var(--r-sm);padding:var(--s2) var(--s3);resize:vertical}
+.under-field{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:var(--s2)}
+.demo-line{margin-top:var(--s5);display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap}
+.bottom-link{margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line);font-size:.9375rem}
+.empty-body{color:var(--ink-muted);margin:-8px 0 var(--s4)}
+.toast{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:var(--s3);align-items:center;background:var(--surface-card);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:var(--s2) var(--s4);font-size:.875rem;white-space:nowrap}
+.toast .sep{color:var(--ink-muted)}
+
+/* Dialog */
+.scrim{position:absolute;inset:0;background:rgba(43,42,40,.45)}
+.dialog{position:absolute;left:50%;top:120px;transform:translateX(-50%);width:min(32rem,90%);background:var(--surface-card);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s5)}
+.dialog h2{font-family:var(--serif);font-weight:500;font-size:1.25rem;margin-bottom:var(--s3)}
+.dialog p{margin-bottom:var(--s3)}
+.disclosure{font:inherit;background:none;border:0;color:var(--accent-strong);text-decoration:underline;text-underline-offset:2px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;min-height:32px}
+.dialog .actions{justify-content:flex-end;margin-top:var(--s5)}
+
+/* Mobile */
+.m-top{display:flex;align-items:center;justify-content:space-between;padding:0 var(--s1) 0 var(--s4);background:var(--surface);border-bottom:1px solid var(--line)}
+.m-top .brand{font-size:1rem}
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--line)}
+.tab{flex:1;text-align:center;padding:var(--s3) 0;color:var(--ink-muted);border:0;border-bottom:3px solid transparent;background:none;font:inherit}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:600;border-bottom-color:var(--accent)}
+.m-kilde{background:var(--surface-source);padding:var(--s4);height:100%}
+.m-kilde .passage.active{margin-left:-11px}
+
+/* Result / overview */
+.score{font-family:var(--serif);font-weight:500;font-size:1.625rem}
+.qrow{border-top:1px solid var(--line);padding:var(--s4) 0;display:flex;flex-direction:column;gap:var(--s2)}
+.qrow h2{font-size:.8125rem;font-weight:400;color:var(--ink-muted)}
+.qrow .q{font-family:var(--serif);font-size:1rem;font-weight:500;line-height:1.4}
+.qrow .ans{font-size:.875rem}
+.ok{color:var(--known-fg);font-weight:600}
+.no{color:var(--shaky-fg);font-weight:600}
+.banner{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:var(--s3) var(--s4)}
+.banner p{flex:1;min-width:12rem}
+.readiness-big{display:flex;flex-direction:column;gap:2px}
+.readiness-big .v{font-family:var(--serif);font-weight:500;font-size:1.25rem}
+.readiness-big .v strong{color:var(--accent-strong);font-weight:600}
+.readiness-big .g{color:var(--ink-muted);font-size:.875rem}
+.section-h{font-family:var(--serif);font-weight:500;font-size:1.0625rem;margin-top:var(--s2)}
+.summary{list-style:none;display:flex;flex-direction:column;gap:var(--s4)}
+.summary li > p{margin-bottom:6px}
+.concepts{list-style:none;display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4)}
+.concepts li{display:inline-flex;gap:6px;align-items:center;font-size:.9375rem}
+.concepts .none{color:var(--ink-muted);font-size:.8125rem}
+.hint{color:var(--ink-muted);font-size:.875rem}
+</style>
+</head>
+<body>
+
+<div class="shell-head">
+  <p class="t">Runde: quiz · spørsmål besvart feil</p>
+  <p class="d">Sara har svart B på spørsmål 4 og fått rett svar og sitatet. Hun har klikket «Kilde: P7», så kildepanelet viser P7 som aktivt avsnitt med sitatet ringet inn. Fokus står fortsatt på svaret hun valgte (demo av fokusring). Under: samme øyeblikk på 360 px, i fanen 'Kilde'.</p>
+</div>
+
+<p class="frame-label">Desktop <span>· kilde til venstre, studier til høyre (1 : 1,15)</span></p>
+<div class="browser"><div class="browser-bar"><i></i><i></i><i></i><b>localhost:5173</b></div>
+  <div class="app">
+    <a class="vh" href="#main-h">Gå til hovedinnhold</a>
+    <header class="topbar">
+      <a class="brand" href="#">Torsas læringsassistent</a>
+      <span class="notename" title="forelesning-7.pdf">forelesning-7.pdf</span>
+      <span class="spacer"></span>
+      <span class="ready">Klar for eksamen <strong>48 %</strong></span>
+      <span class="gap-note">1 begrep uten verifiserte elementer</span>
+      <button class="btn ghost icon" aria-label="Bytt til mørk modus"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="btn ghost">Innstillinger</button>
+    </header>
+    <div class="split">
+      <main class="study">
+        <section class="quiz-region" aria-labelledby="q4">
+          <div class="roundbar">
+            <h1 id="main-h" tabindex="-1">Runde 1<span class="vh">: quiz</span></h1>
+            <span class="sep" aria-hidden="true">·</span>
+            <h2 id="q4" tabindex="-1">Spørsmål 4 av 9</h2>
+            <div class="progress" aria-hidden="true"><span style="width:38%"></span></div>
+            <span class="chip shaky">usikker</span>
+          </div>
+          <div class="card-top"><span class="chip">Boyce–Codd normalform (BCNF)</span></div>
+          <p class="stem">Når er en relasjon i Boyce–Codd normalform?</p>
+          <p><a class="ref" href="#">Kilde: P7</a></p>
+          <ul class="options">
+            <li><button class="btn opt" aria-disabled="true"><span class="letter">A</span>Når alle attributter har atomære verdier<span class="end"><span class="kbd" aria-hidden="true">1</span></span></button></li>
+            <li><button class="btn opt wrong focus-demo" aria-disabled="true"><span class="letter">B</span>Når ingen ikke-nøkkelattributter er delvis avhengige av nøkkelen<span class="end"><span class="glyph" aria-hidden="true">✗</span><span class="vh">ditt svar, feil</span><span class="kbd" aria-hidden="true">2</span></span></button></li>
+            <li><button class="btn opt correct" aria-disabled="true"><span class="letter">C</span>Når hver determinant er en kandidatnøkkel<span class="end"><span class="glyph" aria-hidden="true">✓</span><span class="vh">rett svar</span><span class="kbd" aria-hidden="true">3</span></span></button></li>
+            <li><button class="btn opt" aria-disabled="true"><span class="letter">D</span>Når tabellen ikke har fremmednøkler<span class="end"><span class="kbd" aria-hidden="true">4</span></span></button></li>
+          </ul>
+          <div aria-live="polite" style="display:flex;flex-direction:column;gap:var(--s3)">
+            <p class="answer">Det var nok feil, rett svar er C.</p>
+            <div class="quote">«En relasjon er i Boyce–Codd normalform når hver determinant er en kandidatnøkkel.»<br><a class="ref" href="#">Kilde: P7</a></div>
+          </div>
+          <div class="actions">
+            <button class="btn ghost">Forklar enklere</button>
+            <span class="grow"></span>
+            <button class="btn primary">Neste spørsmål</button>
+          </div>
+        </section>
+      </main>
+      <aside class="source" aria-label="Kilde: forelesning-7.pdf">
+        <div class="return" role="status"><span>Viser P7 fra spørsmål 4</span><button class="textlink">Tilbake til spørsmålet</button></div>
+        <p class="panel-label">Kilde · forelesning-7.pdf</p>
+        <div role="region" aria-label="Kilde: forelesning-7.pdf" tabindex="0">
+          <div class="passage"><span class="pid">P1</span><p>Normalisering er en metode for å fordele data på tabeller slik at hver opplysning lagres ett sted. Målet er å unngå redundans og oppdateringsanomalier.</p></div>
+          <div class="passage"><span class="pid">P2</span><p>En relasjon er i første normalform (1NF) når alle attributter har atomære verdier og det ikke finnes repeterende grupper.</p></div>
+          <div class="passage"><span class="pid">P3</span><p>En relasjon er i andre normalform når den er i første normalform og ingen ikke-nøkkelattributter er delvis avhengige av en sammensatt primærnøkkel.</p></div>
+          <div class="passage"><span class="pid">P4</span><p>Tredje normalform krever i tillegg at ingen ikke-nøkkelattributter er transitivt avhengige av primærnøkkelen. Hvis postnummer bestemmer poststed, bør poststed flyttes til en egen tabell.</p></div>
+          <div class="passage"><span class="pid">P5</span><p>En funksjonell avhengighet A → B betyr at verdien av A bestemmer verdien av B. Alle normalformene bygger på slike avhengigheter.</p></div>
+          <div class="passage"><span class="pid">P6</span><p>Uten normalisering får vi oppdateringsanomalier: vi kan ikke registrere en ny kunde uten en ordre, og sletter vi den siste ordren, forsvinner kunden.</p></div>
+          <div class="passage active" tabindex="-1" aria-describedby="esc-hint"><span class="pid">P7</span><p><span class="vh">Sitat start</span><mark>En relasjon er i Boyce–Codd normalform når hver determinant er en kandidatnøkkel.</mark><span class="vh">Sitat slutt</span> BCNF er strengere enn 3NF, men de fleste tabeller i 3NF er også i BCNF.</p></div>
+          <span id="esc-hint" class="vh">Trykk Esc for å gå tilbake.</span>
+          <div class="passage"><span class="pid">P8</span><p>Denormalisering kan være et bevisst valg når lesehastighet veier tyngre enn risikoen for oppdateringsanomalier.</p></div>
+          <div class="passage"><span class="pid">P9</span><p>Øvingsoppgave: Normaliser tabellen Bestilling(ordrenr, kundenr, kundenavn, varenr, antall) til tredje normalform.</p></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<p class="frame-label">Mobil 360 px <span>· fanen 'Kilde' etter «Kilde: P7», med kontrollen for å gå tilbake</span></p>
+<div class="phone-wrap">
+  <div class="phone"><div class="screen app">
+    <header class="m-top">
+      <a class="brand" href="#">Torsas læringsassistent</a>
+      <button class="btn ghost icon" aria-haspopup="menu" aria-expanded="false" aria-label="Mer"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+    </header>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="false">Studier</button>
+      <button class="tab" role="tab" aria-selected="true">Kilde</button>
+    </div>
+    <div class="m-kilde" role="tabpanel" aria-label="Kilde: forelesning-7.pdf">
+      <div class="return" role="status"><span>Viser P7 fra spørsmål 4</span><button class="textlink">Tilbake til spørsmålet</button></div>
+      <p class="panel-label">Kilde · forelesning-7.pdf</p>
+      <div class="passage"><span class="pid">P6</span><p>Uten normalisering får vi oppdateringsanomalier: vi kan ikke registrere en ny kunde uten en ordre, og sletter vi den siste ordren, forsvinner kunden.</p></div>
+      <div class="passage active" tabindex="-1"><span class="pid">P7</span><p><span class="vh">Sitat start</span><mark>En relasjon er i Boyce–Codd normalform når hver determinant er en kandidatnøkkel.</mark><span class="vh">Sitat slutt</span> BCNF er strengere enn 3NF, men de fleste tabeller i 3NF er også i BCNF.</p></div>
+      <div class="passage"><span class="pid">P8</span><p>Denormalisering kan være et bevisst valg når lesehastighet veier tyngre enn risikoen for oppdateringsanomalier.</p></div>
+      <div class="passage"><span class="pid">P9</span><p>Øvingsoppgave: Normaliser tabellen Bestilling(ordrenr, kundenr, kundenavn, varenr, antall) til tredje normalform.</p></div>
+    </div>
+  </div></div>
+  <div class="note-box">
+    <p><strong>Mobil:</strong> topplinjen er kondensert til merkenavn og 'Mer' (Innstillinger og fargemodus ligger i menyen). Notatnavn, «Klar for eksamen» og gap-notatet står i statusstripen øverst i fanen 'Studier', som ikke er synlig her.</p>
+    <p>'Tilbake til spørsmålet' (eller Esc) bytter tilbake til 'Studier' ved spørsmål 4 og flytter fokus til «Kilde: P7»-lenken som ble brukt.</p>
+  </div>
+</div>
+
+</body>
+</html>

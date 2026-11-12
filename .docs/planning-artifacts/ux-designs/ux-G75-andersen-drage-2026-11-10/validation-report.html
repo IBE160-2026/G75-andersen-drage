@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UX Design Validation: G75-andersen-drage</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --muted: #78716c;
+
+    --verdict-strong: #16a34a;
+    --verdict-adequate: #65a30d;
+    --verdict-thin: #d97706;
+    --verdict-broken: #dc2626;
+
+    --sev-low: #64748b;
+    --sev-medium: #ca8a04;
+    --sev-high: #ea580c;
+    --sev-critical: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  header.report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .synthesis {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 15.5px;
+  }
+  .synthesis p { margin: 0 0 10px; }
+  .synthesis p:last-child { margin-bottom: 0; }
+
+  .dimension-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; }
+
+  section.dimension, section.reviewer-section { margin-bottom: 14px; }
+  section.dimension details, section.reviewer-section details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section summary::-webkit-details-marker { display: none; }
+  section summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  section details[open] summary::before { transform: rotate(90deg); }
+  section summary h2 {
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex: 1;
+  }
+  .verdict-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: white;
+  }
+  .verdict-strong { background: var(--verdict-strong); }
+  .verdict-adequate { background: var(--verdict-adequate); }
+  .verdict-thin { background: var(--verdict-thin); }
+  .verdict-broken { background: var(--verdict-broken); }
+
+  .dim-body { padding: 4px 20px 18px; }
+  .dim-judgment { color: var(--text); font-size: 14.5px; }
+  .dim-judgment p { margin: 0 0 10px; }
+
+  .findings-list { padding: 0 20px 4px; }
+  article.finding {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  article.finding:first-child { border-top: none; }
+  article.finding header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .badge-sev-medium { background: rgba(202, 138, 4, 0.14); color: var(--sev-medium); }
+  .badge-sev-high { background: rgba(234, 88, 12, 0.14); color: var(--sev-high); }
+  .badge-sev-critical { background: rgba(220, 38, 38, 0.14); color: var(--sev-critical); }
+  .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
+  .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
+  .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
+  .finding-fix strong { color: var(--muted); font-weight: 500; }
+
+  .reviewer-source {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .mechanical {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mechanical ul { margin: 0; padding-left: 20px; }
+  .mechanical li { margin-bottom: 4px; color: var(--text); }
+
+  footer.report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="title">
+        <h1>G75-andersen-drage — UX Design Validation Report</h1>
+        <div class="subtitle">.docs/planning-artifacts/ux-designs/ux-G75-andersen-drage-2026-11-10/ (DESIGN.md + EXPERIENCE.md)</div>
+      </div>
+    </header>
+
+    <div class="synthesis">
+      <p><strong>Adequate.</strong> Downstream consumers can use the pair for the core study loop. UJ-1..UJ-3 are fully walked, every <code>{token}</code> reference resolves, all 23 colors come in light/dark pairs, contrast is computed for the main pairs, and DESIGN.md follows the canonical section order. The pair is not yet a clean contract, for four reasons. Stale <code>[OPEN]</code> markers and English PRD strings contradict the Microcopy table. The FR-12 change to a PRD load-bearing differentiator has not been settled with the PRD. The Demo Mode model (picker vs. global mode) is undefined. Innstillinger has no components at all. Fix the 4 high rubric findings before <code>bmad-architecture</code> and story creation consume the pair.</p>
+      <p>The two extra reviewers make the picture worse than "adequate" suggests, and each raises 2 criticals. The accessibility reviewer finds the pair <strong>not AA-ready</strong>: the UJ-1 climax, the Quote highlight in the source panel, is about 1.04:1 against the active Passage in Lesesal, and the 'Dine notater' Note row nests buttons inside a clickable row, which fails the NFR-6 axe gate by construction. Focus management (after marking, archiving, answering and reference jumps), heading/landmark structure, shortcut scoping and 320px reflow are also unspecified. The examiner reviewer predicts a <strong>B</strong> for criterion 4, with an A possible and a C likely if Should features ship half-styled. The design trail is invisible as delivered (dot-folders, Excalidraw JSON, no images, template README), and the remaining scope does not fit about 33 solo days to 2026-12-15 without a firm Must/Should cut. Several rubric findings recur across reviewers (stale strings, the PRD gap, the mobile top bar, the reference-jump return path, archive feedback, wireframe drift). After deduplication: <strong>4 critical · 16 high · 28 medium · 22 low</strong>.</p>
+    </div>
+
+    <div class="dimension-summary">
+      <div class="dim-card"><div class="dim-name">Flow coverage</div><div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div></div>
+      <div class="dim-card"><div class="dim-name">Token completeness</div><div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div></div>
+      <div class="dim-card"><div class="dim-name">Component coverage</div><div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div></div>
+      <div class="dim-card"><div class="dim-name">State coverage</div><div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div></div>
+      <div class="dim-card"><div class="dim-name">Visual reference coverage</div><div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div></div>
+      <div class="dim-card"><div class="dim-name">Bloat &amp; overspecification</div><div class="dim-verdict" style="color: var(--verdict-strong)">strong</div></div>
+      <div class="dim-card"><div class="dim-name">Inheritance discipline</div><div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div></div>
+      <div class="dim-card"><div class="dim-name">Shape fit</div><div class="dim-verdict" style="color: var(--verdict-strong)">strong</div></div>
+    </div>
+
+    <!-- 1. Flow coverage -->
+    <section class="dimension">
+      <details>
+        <summary><h2>Flow coverage</h2><span class="verdict-pill verdict-adequate">adequate</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p>UJ-1..UJ-3 match the PRD names verbatim. Each has a protagonist, numbered steps, a bold climax and a failure path. Flow 4 (archive/delete) covers the memlog-added Arkiv surface. Misses: FR-20, FR-22 and Demo Mode entry/exit.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">The Demo Mode model is undefined</h3><span class="finding-location">EXPERIENCE L32, L39, L167, L262</span></header>
+            <div class="finding-note">'Prøv demomodus' opens Demovelger; Innstillinger has "Demo Mode on/off"; FR-23 says Demo Mode can be switched on at any time and then rejects non-sample uploads. The spine never says whether picking a sample switches on a global mode, how the student leaves it, or how Start/top bar show it is on.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add one rule, e.g. "Demovelger turns Demo Mode on. A visible 'Demomodus' indicator in the top bar links to Innstillinger, where it is turned off." Add the indicator to both spines' Components.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">UJ-3 contradicts itself on upload after Consent decline</h3><span class="finding-location">EXPERIENCE L258, L262 vs L161</span></header>
+            <div class="finding-note">Step 2 declines Consent (upload/paste disabled); step 6 has the same examiner uploading a file and getting <code>err.demoOnly</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> State which wins: upload stays enabled in Demo Mode and shows <code>err.demoOnly</code>, or step 6 applies only to the accept path.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">UJ-1 step 5 shows "Klar: –" where the rules require 0 %</h3><span class="finding-location">EXPERIENCE L237; DESIGN L464</span></header>
+            <div class="finding-note">FR-19 and DESIGN hide the score only with zero eligible concepts, so 0/8 must render "Klar for eksamen 0 %".</div>
+            <div class="finding-fix"><strong>Fix:</strong> Change step 5 to "Klar for eksamen 0 %", or make the dash an explicit rule plus a PRD note.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">FR-20 Panic Mode and FR-22 export/import have no flow or components</h3><span class="finding-location">EXPERIENCE L34, L39, L179</span></header>
+            <div class="finding-note">They appear only in IA rows 4 and 9 and one State row, yet their entry points sit on Must surfaces.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add a short Flow 5 and component rows, or state "hidden until built" per the Priority rule (L44).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">'Ny runde (usikre først)' label not in Microcopy</h3><span class="finding-location">EXPERIENCE L241, L34, L103</span></header>
+            <div class="finding-note">IA and the banner use 'Start runde' / 'Ny runde'.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add an <code>overview.newRound</code> key, or reuse 'Start runde'.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 2. Token completeness -->
+    <section class="dimension">
+      <details>
+        <summary><h2>Token completeness</h2><span class="verdict-pill verdict-adequate">adequate</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p>All 50 distinct <code>{path}</code> references resolve; colors (23/23) and typography (11/11) are light/dark paired; spec type rules hold. No color lacks a hex value or a dark pair.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Light→dark resolution rule exists only as a YAML comment</h3><span class="finding-location">DESIGN L14–15</span></header>
+            <div class="finding-note">YAML parsers drop comments; all 32 component entries reference light tokens only, and nothing states the rule covers <code>typography.*</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> State the rule in Colors and Typography prose; add <code>components.*-dark</code> overrides only where the mapping is not 1:1.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">No token or visual spec for disabled, hover, pressed or selected states</h3><span class="finding-location">DESIGN L187–343, L449; EXPERIENCE L127, L150, L161</span></header>
+            <div class="finding-note">EXPERIENCE requires disabled buttons during pending actions, disabled upload after Consent decline, a disabled drop zone during generation, and a selected quiz option.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add an <code>ink-disabled</code> / <code>ink-disabled-dark</code> pair (or one opacity rule) and a hover/pressed rule per control family.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title"><code>quiz-option.correct</code> references a whole component, not a color</h3><span class="finding-location">DESIGN L262–263 vs L458</span></header>
+            <div class="finding-note">A flattening resolver would turn the option into a 12px pill with chip typography.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Use <code>correct-bg: '{colors.mastery-known-bg}'</code>, <code>correct-fg: '{colors.mastery-known-fg}'</code>, same for wrong.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Values outside the token system</h3><span class="finding-location">DESIGN L312, L433, L435, L449</span></header>
+            <div class="finding-note">Dark card shadow, dialog scrim, hard-coded 3px tab indicator, approximate button padding.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add <code>shadow-card-dark</code> and <code>scrim</code>/<code>scrim-dark</code>, reuse <code>{spacing.quote-rule}</code>, give exact padding.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Contrast table omits load-bearing pairs</h3><span class="finding-location">DESIGN L384–396</span></header>
+            <div class="finding-note"><code>accent-strong</code> on surface/background, <code>ink-muted</code> on surface, <code>ink-muted</code> input border on surface (3:1), <code>accent</code> tab indicator on surface.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add these four rows (see also the accessibility reviewer's table).</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 3. Component coverage -->
+    <section class="dimension">
+      <details>
+        <summary><h2>Component coverage</h2><span class="verdict-pill verdict-adequate">adequate</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p>The core loop is fully paired with real rules (Flashcard, Quiz Question, Source reference, Quote block, Passage, Tabs, Return toast, Note row, Banner). The gaps are on secondary surfaces.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Innstillinger, a Must surface, has no components</h3><span class="finding-location">EXPERIENCE L39, L116, L189, L222; DESIGN Components</span></header>
+            <div class="finding-note">Needs a toggle/switch, a withdraw-Consent action, export/import file controls, storage-warning text; the 'Ikke spør igjen' checkbox has no component either.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add Toggle, Checkbox and Settings row (visual + behavioral) and define the withdraw-Consent interaction.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">DESIGN Note row lacks the 'Arkiver' control and the Arkiv variant</h3><span class="finding-location">DESIGN L466; EXPERIENCE L115, L145</span></header>
+            <div class="finding-note">No icon, size or placement for 'Arkiver'; no 'Gjenopprett' / 'Slett for godt' variant.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add the control and the Arkiv row variant, plus <code>note-row</code> token entries.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Sample-note item, Result row and a Notice component are undefined</h3><span class="finding-location">EXPERIENCE L32, L37, L162, L166, L177</span></header>
+            <div class="finding-note">The encoding fallback, first-time storage warning and "Progresjon lagres ikke" need a non-blocking notice; there is no warning color role.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add Sample-note item, Result row and Notice (with a stated color role) to both spines.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Consent 'Les mer' and Explain Simpler loading are unspecified</h3><span class="finding-location">EXPERIENCE L82, L135, L197; DESIGN L459</span></header>
+            <div class="finding-note">'Les mer' could expand inline or navigate; "inline loading in place" has no visual spec.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Make 'Les mer' an inline disclosure (<code>aria-expanded</code>); define loading as status text plus a disabled button.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Component names differ across the pair</h3><span class="finding-location">DESIGN L328–331, L449, L458; EXPERIENCE L139</span></header>
+            <div class="finding-note"><code>text-input</code> vs "Text area"; <code>kbd-hint</code> vs "Keyboard hint"; <code>quiz-option</code> has no prose row.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Rename to <code>text-area</code> / <code>keyboard-hint</code> and give Keyboard hint its own DESIGN row.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4. State coverage -->
+    <section class="dimension">
+      <details>
+        <summary><h2>State coverage</h2><span class="verdict-pill verdict-adequate">adequate</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p>Well covered: Start input rejections, Genererer failures, no-eligible-concepts, interrupted Round, Arkiv empty, storage failures, offline. Gaps: mobile top bar, exits from Genererer, Consent-declined scope, export context and keyboard order.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">360px top bar is "condensed [ASSUMPTION]" with no survival rule</h3><span class="finding-location">EXPERIENCE L125, L143, L291</span></header>
+            <div class="finding-note">Six elements; FR-19 requires the gap note beside the score; NFR-7 requires every flow at 360px. (Raised to high in the merged list: accessibility and examiner reviewers flag the same.)</div>
+            <div class="finding-fix"><strong>Fix:</strong> Specify the mobile top bar, e.g. brand + Readiness + Innstillinger icon; move gap note and Note name into the 'Studier' tab and the theme toggle into Innstillinger.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Genererer has no cancel or back path</h3><span class="finding-location">EXPERIENCE L33, L99–101, L169–171</span></header>
+            <div class="finding-note">Error states offer only 'Prøv igjen'; browser Back during a pending generation is undefined (NFR-8).</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add 'Tilbake til start' and define Back while pending (abort, no cache write).</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Consent declined/withdrawn scope is unclear</h3><span class="finding-location">EXPERIENCE L161, L199</span></header>
+            <div class="finding-note">Are stored Notes still studyable? Are 'Forklar enklere' and 'Prøv igjen' disabled, with what copy?</div>
+            <div class="finding-fix"><strong>Fix:</strong> "Stored Notes remain studyable; live AI actions are disabled with <code>consent.declined</code> copy; Demo-Mode Notes use Fixtures."</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Per-Note export lives on global Innstillinger; no import-success state</h3><span class="finding-location">EXPERIENCE L39, L179</span></header>
+            <div class="finding-note">FR-22 export is per Note but the screen has no Note context.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Place export on Notatoversikt (or name a picker) and add <code>import.success</code>.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Tab order puts the source panel before the study panel</h3><span class="finding-location">EXPERIENCE L129, L186</span></header>
+            <div class="finding-note">Keyboard users cross the scrollable source panel before reaching the Flashcard on every card; whether Passages are tab stops is ambiguous.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Study panel first; one focusable scroll container; Passages <code>tabindex="-1"</code>.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Space for 'Snu kortet' collides with native Space on focused controls</h3><span class="finding-location">EXPERIENCE L186</span></header>
+            <div class="finding-note">E.g. the front-side "Kilde: P4" reference or 'Forklar enklere'.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Space flips only when focus is on the card or body.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Minor states not covered</h3><span class="finding-location">EXPERIENCE L103, L144</span></header>
+            <div class="finding-note">Drop-zone drag-over; last Flashcard → quiz transition; whether "n av m besvart" counts Flashcard marks.</div>
+            <div class="finding-fix"><strong>Fix:</strong> One line each.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5. Visual reference coverage -->
+    <section class="dimension">
+      <details>
+        <summary><h2>Visual reference coverage</h2><span class="verdict-pill verdict-adequate">adequate</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p><code>.working/</code> holds <code>directions-4.html</code>, <code>ia-2026-11-10.excalidraw</code> and <code>flow-uj1-2026-11-10.excalidraw</code>; both spines name all three and say "this spine wins on conflict". <code>mockups/</code> and <code>wireframes/</code> do not exist; <code>imports/</code> is empty. Some drift is declared, some is not.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Undeclared IA-map numbering drift</h3><span class="finding-location">EXPERIENCE L15, L28–42</span></header>
+            <div class="finding-note">The map numbers 1 Start … 9 Innstillinger with Kildepanel beside 5–8; the spine numbers 0 Samtykke … beside 4–7. The map also lacks the delete-warning setting.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add "IA map numbering differs; use the spine's numbers" to Known drift, or re-render the map.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Other undeclared drift</h3><span class="finding-location">DESIGN L350; EXPERIENCE L15, L197</span></header>
+            <div class="finding-note"><code>directions-4.html</code> says "Se i kilden" (9×) where the spine uses "Kilde: P4"; flow-uj1 screen 2 says "Ingenting lagres hos oss", contradicting Consent point (D).</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add both to Known drift.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">References listed only in preambles, not at point of use</h3><span class="finding-location">EXPERIENCE L15, L26, L229; DESIGN L350, L441</span></header>
+            <div class="finding-note">IA, UJ-1 and Components do not point to the illustration.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add one-line pointers under UJ-1, IA and the Flashcard/Tabs rows.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">No key-screen mocks, though Finalize step 4 planned them</h3><span class="finding-location">memlog L52</span></header>
+            <div class="finding-note">13 DESIGN components are marked † (unmocked), including all of 'Dine notater', Arkiv, Dialog and Error message.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Render key screens into <code>mockups/</code> and link them, or state the deferral.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 6. Bloat -->
+    <section class="dimension">
+      <details>
+        <summary><h2>Bloat &amp; overspecification</h2><span class="verdict-pill verdict-strong">strong</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p>The pair is lean for its scope. The Microcopy and Contrast tables carry real weight, and each invented section owns a rule set found nowhere else.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">8 of 11 dark typography roles duplicate light values</h3><span class="finding-location">DESIGN L117–167</span></header>
+            <div class="finding-note">Only <code>brand</code>, <code>headline</code> and <code>panel-label</code> differ; the duplicates can drift.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Define only the three deltas, or comment "identical to light; change both".</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Two Inspiration entries add no constraint</h3><span class="finding-location">EXPERIENCE L278–279</span></header>
+            <div class="finding-note">"qualities not stated" and "Reason not recorded".</div>
+            <div class="finding-fix"><strong>Fix:</strong> Record the reason or drop the entries.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 7. Inheritance -->
+    <section class="dimension">
+      <details>
+        <summary><h2>Inheritance discipline</h2><span class="verdict-pill verdict-adequate">adequate</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p><code>sources</code> paths resolve, UJ names and glossary terms match the PRD, and all superseding memlog entries are reflected. Two high gaps: stale strings, and the unsettled FR-12 change.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Stale <code>[OPEN]</code> markers and English strings contradict the Microcopy table</h3><span class="finding-location">EXPERIENCE L134–174, L264</span></header>
+            <div class="finding-note">Submit label <code>[OPEN]</code> vs <code>start.paste.submit</code>; quiz advance vs <code>quiz.next</code>; Arkiv empty vs <code>archive.empty</code>; review round vs <code>round.review</code>; English Explain Simpler failure vs <code>simpler.fail</code>; English No API key vs <code>err.noKey</code>; English PRD strings throughout State Patterns.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Replace every inline string or <code>[OPEN]</code> with its Microcopy key; keep <code>[OPEN]</code> only where no key exists.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">FR-12 narrowed against a PRD differentiator; PRD not updated</h3><span class="finding-location">EXPERIENCE L132–134, L190, L298–305; PRD L49–51, L232–236</span></header>
+            <div class="finding-note">The spine removes the Quote from the Flashcard front and before a Quiz answer; the PRD (<code>status: final</code>) says UX "must not trade away" differentiator 1, and nothing says which document wins on Open Items 1–6.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Run <code>bmad-prd</code> update for Open Items 1–6, or add "Until the PRD is updated, this spine supersedes it on Open Items 1–6".</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Much of the behavior is provisional</h3><span class="finding-location">EXPERIENCE L77, L146, L207, L219, L292; DESIGN L424</span></header>
+            <div class="finding-note">Microcopy awaits Tor's approval; 768px breakpoint, column ratio, focus after reveal, importance cycling and sort tie-break are <code>[ASSUMPTION]</code>; both files <code>draft</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Have Tor confirm or adjust in one pass, remove the tags, set <code>status: final</code>.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">PRD-to-UI term mappings are implied, not stated</h3><span class="finding-location">DESIGN L461; EXPERIENCE L40, L105</span></header>
+            <div class="finding-note">new/shaky/known ↔ ny/usikker/kan; "text view" ↔ Kildepanel; "knew it" ↔ 'Kunne det'; "Exam in one hour" ↔ 'Eksamen om en time'.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add a 5-row "PRD term → UI label" table to EXPERIENCE Foundation.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Grading guide missing from <code>sources</code></h3><span class="finding-location">frontmatter; memlog L6</span></header>
+            <div class="finding-note">It is a confirmed source that drove decisions.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add <code>../../input/Sensorveiledning IBE160 - Del 1 applikasjon og prosess.pdf</code>.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 8. Shape fit -->
+    <section class="dimension">
+      <details>
+        <summary><h2>Shape fit</h2><span class="verdict-pill verdict-strong">strong</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p>DESIGN.md follows the canonical order exactly. EXPERIENCE.md has every section the examples use; four invented sections (Microcopy, Consent &amp; Privacy, Note Lifecycle, Open Items) each earn their place.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Key Flows sits before Inspiration and Responsive</h3><span class="finding-location">EXPERIENCE L227, L275, L286</span></header>
+            <div class="finding-note">The house pattern ends with Key Flows.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Move Key Flows to just before Open Items.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Consent &amp; Privacy paraphrases <code>consent.*</code> Microcopy</h3><span class="finding-location">EXPERIENCE L81–84, L192–199</span></header>
+            <div class="finding-note">Prose repeats copy kept elsewhere.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Reference the keys instead of paraphrasing.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Extra reviewer: Accessibility -->
+    <section class="reviewer-section">
+      <details>
+        <summary><h2>Accessibility review</h2><span class="reviewer-source">review-accessibility.md</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p><strong>Not AA-ready. Fix before status final.</strong> The text contrast table holds up: every ratio I recomputed matches within rounding. The spines then use that table to imply AA conformance, and it does not cover what will actually fail. The product's climax, the Quote highlight, is close to invisible in Lesesal. The 'Dine notater' row nests two buttons inside a clickable row. Global single-key shortcuts have no off switch and no focus scoping. Focus after mark-and-advance, archive, quiz answer and the desktop reference jump is either unspecified or wrong. No surface defines headings, landmarks or page titles. Reflow is only promised at 360px, but WCAG 1.4.10 requires 320px.</p>
+          <p>Unlisted pairs that fail: <code>highlight</code> vs <code>passage-active</code> 1.04 / 1.89; <code>highlight-ring</code> vs <code>passage-active</code> 1.32 (light); <code>passage-active</code> vs <code>surface-source</code> 1.09 / 1.11; <code>kbd-hint</code> inside a primary button 1.30 / 1.35; <code>error-bg</code> vs <code>mastery-shaky-bg</code> 1.01 / 1.10. Counts: critical 2 · high 7 · medium 12 · low 8.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-critical">critical</span><h3 class="finding-title">The Quote highlight is effectively invisible against the active Passage</h3><span class="finding-location">DESIGN Colors / Quote highlight; EXPERIENCE Reference jump; SC 1.4.11, 1.4.1, 1.3.1</span></header>
+            <div class="finding-note"><code>#F3E3A3</code> on <code>#EFE6D2</code> is 1.04:1 and the 1px ring 1.32:1. This is the UJ-1 climax ("highlights the exact sentence"). A student with low vision, or anyone on a washed-out laptop panel, sees one beige block. Screen readers do not announce <code>&lt;mark&gt;</code> by default, so the highlight conveys nothing non-visually.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Stop stacking the highlight on <code>passage-active</code>: drop the Passage tint while a Quote is highlighted, or use a ≥3:1 ring (e.g. 2px <code>accent</code> underline/outline). Bracket the Quote with visually hidden "Sitat start" / "Sitat slutt", or reference it via <code>aria-describedby</code>. Add the pair to the contrast table.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-critical">critical</span><h3 class="finding-title">The Note row nests interactive controls</h3><span class="finding-location">DESIGN Note row; EXPERIENCE Note row, Interaction Primitives; SC 4.1.2, 1.3.1</span></header>
+            <div class="finding-note">"Whole row is the hit area" plus two separate Tab stops inside it is invalid nesting (axe <code>nested-interactive</code>, serious). It fails the NFR-6 gate by construction, and screen readers flatten or swallow the inner controls. The Arkiv row inherits it, and nothing says what clicking an archived row does.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Title as a real <code>&lt;a&gt;</code> with a <code>::after</code> stretched hit area; badge and 'Arkiver' as DOM siblings raised with <code>position: relative; z-index</code>; <code>&lt;ul&gt;</code>/<code>&lt;li&gt;</code> markup. State that an Arkiv row opens nothing.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Global single-key shortcuts cannot be turned off and are not scoped to focus</h3><span class="finding-location">EXPERIENCE Interaction Primitives › Keyboard, Flashcard, Quiz Question; SC 2.1.4, 2.1.1</span></header>
+            <div class="finding-note">Suppressed only in text fields. Speech-input users trigger them by dictating words. With focus on "Kilde: P4", 'Forklar enklere' or 'Kunne det', a single Space both activates the control <em>and</em> flips or marks the card. Nothing says they are suppressed in dialogs, or what Space does on a revealed card.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Fire only when focus is in the Flashcard region and not on a button/link/checkbox; add an Innstillinger toggle "Hurtigtaster"; suppress in dialogs; Space on a revealed card is a no-op; use 1–4 (not A–D) for quiz options under the same scoping, or arrow keys in a radio group.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Focus after mark-and-advance is unspecified, so focus is lost</h3><span class="finding-location">EXPERIENCE Flashcard, Quiz Question, Accessibility Floor; SC 2.4.3, 4.1.3</span></header>
+            <div class="finding-note">The focused button is removed; focus falls to <code>&lt;body&gt;</code> and the next Tab restarts at the top bar. Same on flashcards → quiz, 'Neste spørsmål', 'Se resultatet', Resultat → overview. No announcement that card 4 of 12 loaded.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Move focus to the new Item's heading (<code>h2</code> "Kort 4 av 12", <code>tabindex="-1"</code>); on screen changes to the <code>h1</code>. Write the rule once in the Accessibility Floor.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">The desktop reference jump has no way back</h3><span class="finding-location">EXPERIENCE Accessibility Floor, Reference jump; SC 2.4.3, 2.1.1</span></header>
+            <div class="finding-note">The claimed "Shift+Tab path returns to the Item" does not exist. On Resultat with nine questions, the student tabs back through the list after every jump. Mobile has 'Tilbake til kortet'; desktop has nothing.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Show 'Tilbake til {kort 3 / spørsmål 4}' at the top of the source panel after every jump, on desktop too, returning focus to the exact reference; Esc in the Passage does the same.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">No headings, landmarks or page titles on any surface</h3><span class="finding-location">DESIGN Typography/Layout; EXPERIENCE IA, Accessibility Floor; SC 2.4.2, 1.3.1, 2.4.6, 2.4.1</span></header>
+            <div class="finding-note">No stated <code>h1</code> on Round, Quiz, Resultat, Genererer, Demovelger; source panel is not a landmark; SPA route changes do not update <code>document.title</code>. "Source before study" means every Round screen starts by reading or skipping 24 Passages, with no skip link. That assumption is backwards for this product.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Per-surface table of <code>document.title</code>, <code>h1</code> and landmarks (<code>header</code>, <code>main</code>, <code>&lt;aside aria-label="Kilde: …"&gt;</code>); skip link; study panel first in DOM and tab order, source panel visually left.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">The cycling importance badge is undiscoverable, poorly announced and disorienting</h3><span class="finding-location">DESIGN Importance badge; EXPERIENCE Importance badge, Note Lifecycle › Order; SC 1.4.11, 4.1.2, 4.1.3, 2.4.3, 3.3.2</span></header>
+            <div class="finding-note">Looks identical to the read-only concept chip; its only boundary is <code>line</code> at 1.34:1, breaking DESIGN's own rule. Usage instructions sit in the accessible name, and nothing says 1 = most important. Each press re-sorts the list so the focused row jumps; 2 → 1 takes two presses and two re-sorts; nothing is announced.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Menu button or native <code>&lt;select&gt;</code> "Viktighet for {tittel}" with "1 – viktigst / 2 – middels / 3 – minst"; <code>ink-muted</code> border and chevron; defer re-sort until focus leaves, or keep focus and announce the new position in <code>role="status"</code>.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Reflow is promised at 360px, but 1.4.10 requires 320px</h3><span class="finding-location">DESIGN Layout &amp; Spacing; EXPERIENCE Responsive &amp; Platform; SC 1.4.10, 1.4.4; NFR-7</span></header>
+            <div class="finding-note">The six-element top bar is only "condensed [ASSUMPTION]". 26px Georgia card fronts with Norwegian compounds ("eksamensforberedelse") overflow a 288px box. Dialogs with 'Les mer' need internal scrolling at 200% zoom.</div>
+            <div class="finding-fix"><strong>Fix:</strong> 320px floor; condensed top bar (brand + overflow menu with Readiness, gap note, theme, Innstillinger); <code>overflow-wrap: anywhere; hyphens: auto</code> with correct <code>lang</code>; dialogs <code>max-height: 100dvh</code>; rem font tokens.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Archiving removes the row with no confirmation, no undo and no focus target</h3><span class="finding-location">EXPERIENCE Note Lifecycle, Confirmation policy, Flow 4; SC 2.4.3, 4.1.3</span></header>
+            <div class="finding-note">Focus goes to <code>&lt;body&gt;</code>; a screen-reader user hears nothing; a mis-tap on the small 'Arkiver' next to the small badge silently hides a Note. Restore and delete in Arkiv have the same problem.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Move focus to the next row (or previous, or list heading); announce "{tittel} er arkivert" in <code>role="status"</code> with an 'Angre' that stays until the next action, not on a timer.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Quiz answering leaves focus undefined</h3><span class="finding-location">DESIGN/EXPERIENCE Quiz Question; SC 2.4.3, 4.1.3, 1.1.1</span></header>
+            <div class="finding-note">Disabled options drop focus; live feedback can be cut off; ✓/✗ read as "check mark" / "multiplication x".</div>
+            <div class="finding-fix"><strong>Fix:</strong> <code>aria-disabled</code> options, focus to the feedback heading, hidden "Ditt svar, feil" / "Riktig svar", group as <code>radiogroup</code> or labelled list.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">The "dedicated error role" cannot be told apart from 'usikker'</h3><span class="finding-location">DESIGN Colors › error, Error message; SC 1.4.1, 3.3.1</span></header>
+            <div class="finding-note"><code>error-bg</code> vs <code>mastery-shaky-bg</code> 1.01:1; fg 1.08:1. The claimed distinction is false.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Icon + "Feil:" prefix + <code>error-fg</code> rule; <code>role="alert"</code>/<code>status</code>; <code>aria-describedby</code> + <code>aria-invalid</code> on fields.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Keyboard hint illegible inside a primary button</h3><span class="finding-location">DESIGN Button, kbd-hint; SC 1.4.3</span></header>
+            <div class="finding-note"><code>ink-muted</code> on <code>accent</code> is 1.30 / 1.35 at 11px.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Use <code>on-accent</code> inside primary buttons; add the pair to the table.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Note content has no language markup</h3><span class="finding-location">EXPERIENCE Foundation, Accessibility Floor; SC 3.1.2</span></header>
+            <div class="finding-note">An English lecture note will be read in a Norwegian voice.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Store a detected language per Note (fallback <code>nb</code>) and set <code>lang</code> on all Note-derived content.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Mobile tabs and the return toast are under-specified</h3><span class="finding-location">DESIGN/EXPERIENCE Tabs, Return toast; SC 4.1.2, 2.4.3, 2.2.1</span></header>
+            <div class="finding-note">No ARIA tabs pattern; the toast sits above the focused Passage so a screen-reader user never meets it; "toast" invites a timer; label wrong on Quiz/Resultat.</div>
+            <div class="finding-fix"><strong>Fix:</strong> ARIA tabs with manual activation; persistent return control as the next Tab stop; context-aware label.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">The active Passage is a tint only</h3><span class="finding-location">DESIGN Passage; SC 1.4.11, 1.4.1</span></header>
+            <div class="finding-note">1.09 / 1.11 against <code>surface-source</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> 3px <code>accent</code> left rule on the active Passage.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">The scrollable source panel is not keyboard reachable</h3><span class="finding-location">EXPERIENCE Source panel, Passage; SC 2.1.1, 2.4.7</span></header>
+            <div class="finding-note">No focusable content (axe <code>scrollable-region-focusable</code>); focus outlines get clipped by <code>overflow</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> <code>tabindex="0"</code>, <code>role="region"</code> + label; inset focus ring inside scroll containers.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Generation progress is a lie to assistive technology</h3><span class="finding-location">DESIGN Generation progress; EXPERIENCE Generating; SC 4.1.3, 4.1.2, 2.4.3</span></header>
+            <div class="finding-note">Determinate-looking bar with no real progress; unspecified announcements and focus on error/success; no exit.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Indeterminate <code>progressbar</code>, steps via <code>role="status"</code>, focus error heading / Notatoversikt <code>h1</code>, add 'Avbryt'.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Dialog focus details are missing</h3><span class="finding-location">EXPERIENCE Dialog, Consent &amp; Privacy, delete.confirm; SC 2.4.3, 4.1.2, 3.3.2</span></header>
+            <div class="finding-note">Delete dialog initial focus unspecified (must be 'Avbryt'); no labelling; 'Les mer' could break the focus trap; checkbox needs a real label.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Native <code>&lt;dialog&gt;</code> + <code>showModal()</code>, <code>aria-labelledby</code>/<code>describedby</code>, initial focus rules, in-place disclosure, real checkbox.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Forced-colors mode is ignored</h3><span class="finding-location">DESIGN Quote highlight, Round progress, Quiz Question; SC 1.4.11, 1.4.1</span></header>
+            <div class="finding-note">Highlight ring, active Passage, progress fill and quiz state all vanish.</div>
+            <div class="finding-fix"><strong>Fix:</strong> <code>@media (forced-colors: active)</code> rules using outlines, <code>Mark</code>/<code>Highlight</code> system colors, chip borders.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Small targets next to a destructive neighbour</h3><span class="finding-location">DESIGN Note row, Importance badge, Source reference; SC 2.5.5 (AAA) / 2.5.8</span></header>
+            <div class="finding-note">The 44px target is an assumption that the badge, 'Arkiver' and "Kilde: P4" do not meet.</div>
+            <div class="finding-fix"><strong>Fix:</strong> 44px hit areas; ≥8px between badge and 'Arkiver', or move 'Arkiver' into an overflow menu.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Error messages lack suggestions and programmatic association</h3><span class="finding-location">EXPERIENCE Microcopy, Text area, Input rejected; SC 3.3.1, 3.3.3, 4.1.3, 3.3.2</span></header>
+            <div class="finding-note"><code>err.noText</code> gives no next step; async PDF validation must be announced; the submit label is inconsistent.</div>
+            <div class="finding-fix"><strong>Fix:</strong> "Fant ingen tekst i filen. Prøv en annen fil, eller lim inn teksten."; <code>role="alert"</code> + focus; native labelled <code>&lt;input type="file"&gt;</code>.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Progress track is imperceptible</h3><span class="finding-location">DESIGN Round progress; SC 1.4.11</span></header>
+            <div class="finding-note">1.27–1.43:1; text rescues it.</div>
+            <div class="finding-fix"><strong>Fix:</strong> <code>ink-muted</code> track border, or make it <code>aria-hidden</code>.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Quiz options and secondary buttons rely on a 1.34:1 border</h3><span class="finding-location">DESIGN Quiz Question, Button</span></header>
+            <div class="finding-note">Options read as plain text rows in light mode.</div>
+            <div class="finding-fix"><strong>Fix:</strong> <code>ink-muted</code> border on quiz options.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Theme toggle semantics are muddled</h3><span class="finding-location">DESIGN/EXPERIENCE Theme toggle; SC 4.1.2, 2.5.3</span></header>
+            <div class="finding-note">Unclear whether the glyph shows current or target mode.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Fixed name "Mørk modus" with <code>aria-pressed</code>; glyph shows current state.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Pending buttons are <code>disabled</code>, dropping focus</h3><span class="finding-location">EXPERIENCE Button, Explain Simpler; SC 2.4.3, 4.1.3</span></header>
+            <div class="finding-note">Affects 'Lag kort og quiz' and 'Forklar enklere'.</div>
+            <div class="finding-fix"><strong>Fix:</strong> <code>aria-disabled</code> + <code>aria-busy</code>, announce via <code>role="status"</code>.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">"Klar: –" and "Kilde: P4" are cryptic to screen readers</h3><span class="finding-location">EXPERIENCE UJ-1, Source reference; SC 2.4.4, 1.1.1</span></header>
+            <div class="finding-note">"–" reads as "minus"; repeated "Kilde: P4" on Resultat is ambiguous.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Hidden "ingen poengsum ennå"; names like "Kilde: avsnitt 4, vis i notatet".</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Storage warning and "Progresjon lagres ikke" have no persistence spec</h3><span class="finding-location">EXPERIENCE State Patterns; SC 2.2.1, 4.1.3</span></header>
+            <div class="finding-note">A timed toast would fail.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Persistent <code>role="status"</code> banner dismissed by the user.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Reduced motion covers only the reference scroll</h3><span class="finding-location">EXPERIENCE Interaction Primitives; SC 2.3.3 (AAA)</span></header>
+            <div class="finding-note">Card flip and theme transition are not covered.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Global reduced-motion rule.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Text spacing untested; px font tokens</h3><span class="finding-location">DESIGN tokens; SC 1.4.12, 1.4.4</span></header>
+            <div class="finding-note">Pills and fixed-height chrome may clip.</div>
+            <div class="finding-fix"><strong>Fix:</strong> rem tokens, no fixed heights on text; add a 1.4.12 pass to the checklist.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Accidental marks are permanent</h3><span class="finding-location">EXPERIENCE Flashcard</span></header>
+            <div class="finding-note">Compounds the shortcut finding for tremor and switch users.</div>
+            <div class="finding-fix"><strong>Fix:</strong> 'Angre' for the last mark until the next card is marked.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Extra reviewer: Examiner -->
+    <section class="reviewer-section">
+      <details>
+        <summary><h2>Examiner review (grading guide, criterion 4)</h2><span class="reviewer-source">review-grading-guide.md</span></summary>
+        <div class="dim-body"><div class="dim-judgment">
+          <p>The guide is clear about the order of work: step 4, "Vurder design", happens <strong>in the running app</strong>; the planning documents are not read until step 6. The A–B descriptor is earned or lost on the built screens. The spines can only earn "spor av designarbeid" directly; everything else is a promise I will check against the app. Right now the repo has no screenshots of anything, and the only visual artifacts sit in a dot-folder inside a dot-folder.</p>
+          <p><strong>Overall prediction:</strong> a <strong>B</strong> is realistic and an <strong>A</strong> is possible, <em>only if</em> the Must screens ship polished in one mode with working error/empty states, and the repo shows rendered wireframes plus final screenshots linked from the README. If both modes, Arkiv, importance and export/import ship half-styled under deadline pressure, I expect a <strong>C</strong>. Sub-criteria: 4.1 full if built (partial likely), 4.2 partial, 4.3 full if built, 4.4 full if verified, 4.5 partial, 4.6 full on substance / partial on findability. Counts: critical 2 · high 8 · medium 14 · low 6.</p>
+        </div></div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-critical">critical</span><h3 class="finding-title">The design trail is invisible to the examiner as delivered</h3><span class="finding-location">README.md; W/.working/*; W/imports/</span></header>
+            <div class="finding-note">All of it lives under dot-folders, hidden by default. Excalidraw is raw JSON on GitHub; the mockup must be downloaded. <code>imports/</code> is empty. The README is still the group template (both members, no links). Under step 6 I look for "skisser, wireframes" and find nothing I can see.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Export the boards and the directions page to PNG/SVG into a visible folder; embed IA, UJ-1 flow and final screenshots in the README under "Design", linking DESIGN.md, EXPERIENCE.md and the memlog.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-critical">critical</span><h3 class="finding-title">Scope against the solo deadline</h3><span class="finding-location">EXPERIENCE › Information Architecture › Priority</span></header>
+            <div class="finding-note">About 33 days remain, solo, with no architecture, epics or code. The UX defines 10 surfaces, Consent, Demo Mode, an AI pipeline with Quote Check, two modes, archive/restore/delete, importance, export/import, mobile tabs and accessibility verification. Criterion 4 punishes <em>half-finished</em> UI harder than <em>missing</em> Should features. The "hide, never dead" rule is right but written as an <code>[ASSUMPTION]</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Firm, dated Must/Should line (UJ-1 and UJ-3 working and screenshotted by about 2026-12-01; Shoulds only after). Remove the <code>[ASSUMPTION]</code>; record cuts in PRD and README.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Two modes double the consistency surface</h3><span class="finding-location">DESIGN Brand &amp; Style, Elevation; EXPERIENCE Foundation</span></header>
+            <div class="finding-note">Kveldsmodus changes chrome typography, elevation and brand weight. Anything not checked in dark mode (dialogs, errors, drop zone, disabled buttons, scrim) is where I will find inconsistency.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Ship light only until every Must flow is complete and screenshotted; then add dark via custom properties and screenshot both modes side by side.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">11 components marked † (not drawn) include every step-3 "feil input" surface</h3><span class="finding-location">DESIGN Components, †</span></header>
+            <div class="finding-note">Drop zone, text area, error message, empty state, generation progress, dialog, Quiz Question, banner. The drawn parts are the ones least likely to be inconsistent.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Run Finalize step 4 before architecture: mock Start (empty + error), Genererer, Quiz answered, Resultat, Consent dialog, 360px Round.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Mobile top bar is "condensed [ASSUMPTION]"</h3><span class="finding-location">EXPERIENCE/DESIGN Top bar</span></header>
+            <div class="finding-note">At 360px it wraps or overflows. It is the first thing I see when I resize.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Brand plus an overflow menu (theme, Innstillinger), score on its own line or in the Notatoversikt header.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">English and Norwegian are mixed in the spine's behavior tables</h3><span class="finding-location">EXPERIENCE State Patterns; Explain Simpler; UJ-3 Failure</span></header>
+            <div class="finding-note">"No API key configured …", "All key concepts are known …", "No readable text found", "Could not make a verified simpler explanation". A dev agent will ship English into a bokmål UI (NFR-9), exactly the inconsistency I see in step 3.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Replace every English string with its Microcopy key; the table is the single source.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Nothing puts accessibility evidence in the repo</h3><span class="finding-location">EXPERIENCE Accessibility Floor</span></header>
+            <div class="finding-note">axe and the keyboard checklist are named, but not where results live. If I hit one trap in two screens, I will not trust the claim.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Commit the axe report (or Playwright + axe test) and a filled keyboard checklist for UJ-1 and UJ-3 under .docs; link from README.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Only one mobile visual exists</h3><span class="finding-location">DESIGN Layout; EXPERIENCE Responsive</span></header>
+            <div class="finding-note">Start with Note rows, Consent, Quiz with four options, Resultat: the screens I will resize have no 360px drawing.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Wireframe 360px Start, Quiz (answered), Resultat; screenshot from the built app.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">Wireframes are stale against the spines</h3><span class="finding-location">EXPERIENCE header; .working/ia, flow-uj1</span></header>
+            <div class="finding-note">Contradicting wireframes look like abandoned exploration, not design that drove the build.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add dated v2 boards next to v1, or annotate v1.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-high">high</span><h3 class="finding-title">The PRD will describe less than the app</h3><span class="finding-location">EXPERIENCE Open Items; prd.md</span></header>
+            <div class="finding-note">Six <code>[NOTE FOR PRD]</code> items ('Dine notater', Arkiv, importance, consent-on-first-open, name) are absent from a <code>final</code> PRD. Section 5 warns about this; DR-4 traceability has no FR for these surfaces.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Run the <code>bmad-prd</code> update now; add FRs and change reasons citing memlog dates.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">No interaction-state visual spec</h3><span class="finding-location">DESIGN Button</span></header>
+            <div class="finding-note">The AI-assisted build will invent disabled/hover/loading per screen.</div>
+            <div class="finding-fix"><strong>Fix:</strong> One row of shared interaction-state tokens.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Back route to Start relies on browser Back / brand link</h3><span class="finding-location">EXPERIENCE IA "Back navigation"</span></header>
+            <div class="finding-note">I will ask: "how do I get back to my notes?"</div>
+            <div class="finding-fix"><strong>Fix:</strong> Visible 'Dine notater' link on screens 4–7; leaving a Round keeps it resumable.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Arkiv is only reachable from a bottom link; archiving gives no feedback</h3><span class="finding-location">EXPERIENCE Note Lifecycle, Flow 4</span></header>
+            <div class="finding-note">A first-time user does not know where the Note went.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Toast "Arkivert. [Angre] · [Vis arkiv]".</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">IA wireframe predates Arkiv, Consent-first and Note-row controls</h3><span class="finding-location">.working/ia; flow-uj1 screen 2</span></header>
+            <div class="finding-note">Consent shown at first submission; "Ingenting lagres hos oss".</div>
+            <div class="finding-fix"><strong>Fix:</strong> Dated IA v2, keeping v1 as trace.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Stale <code>[OPEN]</code> markers read as an unmaintained document</h3><span class="finding-location">EXPERIENCE Quiz Question, Text area, State Patterns</span></header>
+            <div class="finding-note">Warning sign 2.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Remove the four stale <code>[OPEN]</code>s.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">All microcopy is unapproved Claude draft</h3><span class="finding-location">EXPERIENCE Microcopy</span></header>
+            <div class="finding-note">The strongest 4.3 evidence reads as unreviewed AI output.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Review, change some strings, log approval in the memlog.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Archiving gives no feedback and has no undo</h3><span class="finding-location">EXPERIENCE Interaction Primitives; Flow 4</span></header>
+            <div class="finding-note">The row just disappears.</div>
+            <div class="finding-fix"><strong>Fix:</strong> The undo toast above.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Quiz option keys are <code>[OPEN]</code></h3><span class="finding-location">EXPERIENCE Interaction Primitives</span></header>
+            <div class="finding-note">Keyboard behavior differs between Round screens.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Decide A–D or 1–4 (watch the 1/2 clash) and show hints.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Focus path after a reference jump is unclear</h3><span class="finding-location">EXPERIENCE Accessibility Floor; Tab order</span></header>
+            <div class="finding-note">Shift+Tab goes further up the source; the keyboard user loses their place.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Visible "Tilbake til kortet" on desktop too.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Icon-only buttons and badge cycle lack committed names/announcements</h3><span class="finding-location">DESIGN Theme toggle; EXPERIENCE Importance badge</span></header>
+            <div class="finding-note">I will check icon buttons for names.</div>
+            <div class="finding-fix"><strong>Fix:</strong> <code>aria-pressed</code>/live announcement; exact accessible names in Microcopy.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">768px breakpoint leaves a cramped tablet range</h3><span class="finding-location">DESIGN Layout; EXPERIENCE Breakpoint</span></header>
+            <div class="finding-note">350–450px columns between 768 and ~1000px.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Raise split to ~1024px, or set a minimum source-panel width and test at 800px.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Both spines are <code>draft</code>; Finalize not done</h3><span class="finding-location">frontmatter; .memlog.md last line</span></header>
+            <div class="finding-note">Reads as "generert én gang og ikke brukt videre".</div>
+            <div class="finding-fix"><strong>Fix:</strong> Finish Finalize, set <code>final</code>, update spines with story references when the build deviates.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">~40 <code>[ASSUMPTION]</code> tags risk reading as machine output</h3><span class="finding-location">EXPERIENCE passim; .memlog.md L9</span></header>
+            <div class="finding-note">Tor's voice is visible only in the memlog.</div>
+            <div class="finding-fix"><strong>Fix:</strong> One confirm/reject pass; a short human-written "Design decisions" summary linked from README.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-medium">medium</span><h3 class="finding-title">Uncommitted design changes</h3><span class="finding-location">git status</span></header>
+            <div class="finding-note">The history on GitHub is only as good as what is committed.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Commit Finalize work in small, described commits.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Mockup still shows superseded name and Quote placement</h3><span class="finding-location">.working/directions-4.html</span></header>
+            <div class="finding-note">The only colored drawing an examiner might open.</div>
+            <div class="finding-fix"><strong>Fix:</strong> One-line banner "Exploration 2026-11-10; superseded by DESIGN.md".</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">'Eksamen om en time' has no component, state or flow</h3><span class="finding-location">EXPERIENCE IA row 4</span></header>
+            <div class="finding-note">Should feature listed on a Must surface.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Specify it or move it to "not in v1".</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">No success feedback for export/import, theme, Consent withdrawal</h3><span class="finding-location">EXPERIENCE Microcopy</span></header>
+            <div class="finding-note">Only failure strings exist.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add three success strings.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Pre-first-Round Readiness state unclear</h3><span class="finding-location">EXPERIENCE UJ-1 step 5; DESIGN Readiness Score</span></header>
+            <div class="finding-note">"–", nothing, or 0 %?</div>
+            <div class="finding-fix"><strong>Fix:</strong> Define it in Microcopy.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">11px mono and 12px chips</h3><span class="finding-location">DESIGN Typography</span></header>
+            <div class="finding-note">"Lesbar" is about legibility as well as ratio.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Raise mono to 12px.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title"><code>lang</code> for generated content is <code>[OPEN]</code></h3><span class="finding-location">EXPERIENCE Accessibility Floor</span></header>
+            <div class="finding-note">Wrong screen-reader voice on English Notes.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Set <code>lang</code> from the detected Note language.</div>
+          </article>
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Drag-and-drop is primary on mobile</h3><span class="finding-location">DESIGN Drop zone</span></header>
+            <div class="finding-note">Dropping is not possible on touch.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Show only "Velg fil" on touch devices.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <div class="mechanical">
+      <h3>Mechanical notes</h3>
+      <ul>
+        <li>Token references: 50 distinct <code>{path}</code> references (49 DESIGN, 1 EXPERIENCE), all resolve.</li>
+        <li>Colors 23 light + 23 dark, all hex; dark highlights use 8-digit alpha hex (<code>#F2B84B47</code>, <code>#F2B84B99</code>), so consumers must support alpha hex.</li>
+        <li>Typography 11 + 11 roles; <code>rounded</code> sm, md, track, full; <code>spacing</code> 1–6 plus 5 named tokens.</li>
+        <li>Frontmatter components 32; DESIGN prose rows 29; EXPERIENCE Component Patterns 30.</li>
+        <li>Journeys UJ-1..UJ-3 verbatim plus spine-added Flow 4. FR-20 and FR-22 have no UX surface beyond a mention.</li>
+        <li>Workspace: <code>.working/</code> files all referenced; <code>imports/</code> empty; <code>mockups/</code> and <code>wireframes/</code> absent. Both spines <code>draft</code>.</li>
+        <li>Raw counts: rubric 0/4/16/15, accessibility 2/7/12/8, examiner 2/8/14/6 (critical/high/medium/low). After cross-reviewer deduplication: 4 critical · 16 high · 28 medium · 22 low (see validation-report.md).</li>
+      </ul>
+    </div>
+
+    <footer class="report-footer">
+      <div class="meta">
+        <span>Rubric: .docs/planning-artifacts/ux-designs/ux-G75-andersen-drage-2026-11-10/review-rubric.md</span>
+        <span>Also: review-accessibility.md, review-grading-guide.md</span>
+        <span>Generated: 2026-11-12</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
