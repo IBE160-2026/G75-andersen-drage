@@ -21,5 +21,7 @@
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — kuttdato 2026-12-01: kutt og skjul Should-funksjoner (Arkiv, viktighetsnivå, mørk modus) som ikke virker
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — vurder v2 av IA- og UJ-1-wireframes (v1 er utdatert, se Known drift)
 - [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — les tilbakemeldingen på PRD-en (tilbakemelding-prd.md) og technology.md fra Bård Pettersen før PRD-oppdateringen og arkitekturen (løst 2026-11-12)
-- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — PRD-oppdatering: ta fire beslutninger (FR-25 kuttbar?, begrep uten quizspørsmål, FR-13/FR-5 i kjernen, plan B for SM-3), gjør rubrikkrettelsene, språkvask og sett status final
-- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — UX: rett UJ-1/UJ-2 i EXPERIENCE.md (8 spørsmål, 5 av 8, 3 usikre) og 360→320 px, og lukk NOTE FOR PRD 1–7
+- [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — PRD-oppdatering: ta fire beslutninger (FR-25 kuttbar?, begrep uten quizspørsmål, FR-13/FR-5 i kjernen, plan B for SM-3), gjør rubrikkrettelsene, språkvask og sett status final (løst 2026-11-12, commit a2aa721)
+- [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — UX: rett UJ-1/UJ-2 i EXPERIENCE.md (8 spørsmål, 5 av 8, 3 usikre) og 360→320 px, og lukk NOTE FOR PRD 1–7 (løst 2026-11-12, commit a2aa721)
+- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — sjekk at ett automatisk nytt forsøk (FR-8) før «Prøv igjen» er ønsket når et notat ikke består FR-7
+- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — start bmad-architecture med technology.md som referanse (OpenRouter/modell, UI-rammeverk, lokal proxy)
