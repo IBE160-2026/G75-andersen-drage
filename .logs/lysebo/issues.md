@@ -24,4 +24,7 @@
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — PRD-oppdatering: ta fire beslutninger (FR-25 kuttbar?, begrep uten quizspørsmål, FR-13/FR-5 i kjernen, plan B for SM-3), gjør rubrikkrettelsene, språkvask og sett status final (løst 2026-11-12, commit a2aa721)
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — UX: rett UJ-1/UJ-2 i EXPERIENCE.md (8 spørsmål, 5 av 8, 3 usikre) og 360→320 px, og lukk NOTE FOR PRD 1–7 (løst 2026-11-12, commit a2aa721)
 - [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — sjekk at ett automatisk nytt forsøk (FR-8) før «Prøv igjen» er ønsket når et notat ikke består FR-7
-- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — start bmad-architecture med technology.md som referanse (OpenRouter/modell, UI-rammeverk, lokal proxy)
+- [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — start bmad-architecture med technology.md som referanse (OpenRouter/modell, UI-rammeverk, lokal proxy) (løst 2026-11-18: startet, se [arkitektur](991-2026-11-18-15-58-21-arkitektur.md))
+- [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — fortsett bmad-architecture fra memloggen (lagring, Next↔FastAPI, UI-bibliotek, endepunkter/feilkoder, Demo/Fixtures, feature flags, lang, parse-timeout, test/CI, versjoner) og finaliser
+- [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag tilpasset teknologinotat (ny fil ved technology.md) og en versjon av arkitekturen for sensor og Bård
+- [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — tekstuttrekk: håndter gjentatte topptekster/bunntekster og tabeller i ekte PDF-er
