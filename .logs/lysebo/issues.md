@@ -16,18 +16,21 @@
 - [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — bekreft at det er greit å klikke kildereferansen før kortet er snudd eller spørsmålet besvart
 - [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — PRD-oppdateringen gjelder nå 7 NOTE FOR PRD (EXPERIENCE.md › Open Items): i tillegg Arkiv, viktighetsnivå, samtykke ved første åpning og 320 px (NFR-7) (løst 2026-11-12)
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — godkjenn utkastene i Microcopy-tabellen i EXPERIENCE.md før implementering
-- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — arkitektur: AI-leverandørens navn i samtykketeksten, lang-attributt for notatinnhold, hvor samtykket lagres
+- [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — arkitektur: AI-leverandørens navn i samtykketeksten, lang-attributt for notatinnhold, hvor samtykket lagres (løst 2026-11-19: AD-10, AD-13, AD-16)
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — lag «Design»-seksjon i README med PNG-er fra mockups/ og lenker til DESIGN.md/EXPERIENCE.md
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — kuttdato 2026-12-01: kutt og skjul Should-funksjoner (Arkiv, viktighetsnivå, mørk modus) som ikke virker
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — vurder v2 av IA- og UJ-1-wireframes (v1 er utdatert, se Known drift)
 - [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — les tilbakemeldingen på PRD-en (tilbakemelding-prd.md) og technology.md fra Bård Pettersen før PRD-oppdateringen og arkitekturen (løst 2026-11-12)
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — PRD-oppdatering: ta fire beslutninger (FR-25 kuttbar?, begrep uten quizspørsmål, FR-13/FR-5 i kjernen, plan B for SM-3), gjør rubrikkrettelsene, språkvask og sett status final (løst 2026-11-12, commit a2aa721)
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — UX: rett UJ-1/UJ-2 i EXPERIENCE.md (8 spørsmål, 5 av 8, 3 usikre) og 360→320 px, og lukk NOTE FOR PRD 1–7 (løst 2026-11-12, commit a2aa721)
-- [ ] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — sjekk at ett automatisk nytt forsøk (FR-8) før «Prøv igjen» er ønsket når et notat ikke består FR-7
+- [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — sjekk at ett automatisk nytt forsøk (FR-8) før «Prøv igjen» er ønsket når et notat ikke består FR-7 (løst 2026-11-19: ja for feil proxyen ser, ikke etter Quote Check; PRD-notat FR-7)
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — start bmad-architecture med technology.md som referanse (OpenRouter/modell, UI-rammeverk, lokal proxy) (løst 2026-11-18: startet, se [arkitektur](991-2026-11-18-15-58-21-arkitektur.md))
-- [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — fortsett bmad-architecture fra memloggen (lagring, Next↔FastAPI, UI-bibliotek, endepunkter/feilkoder, Demo/Fixtures, feature flags, lang, parse-timeout, test/CI, versjoner) og finaliser
+- [x] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — fortsett bmad-architecture fra memloggen (lagring, Next↔FastAPI, UI-bibliotek, endepunkter/feilkoder, Demo/Fixtures, feature flags, lang, parse-timeout, test/CI, versjoner) og finaliser (løst 2026-11-19: spine final, se [arkitektur](991-2026-11-18-15-58-21-arkitektur.md))
 - [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag tilpasset teknologinotat (ny fil ved technology.md) og en versjon av arkitekturen for sensor og Bård
-- [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — tekstuttrekk: håndter gjentatte topptekster/bunntekster og tabeller i ekte PDF-er
-- [ ] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — docx-uttrekk: Word-ligninger (OMML) forsvinner (hull i nb-digital-verden.docx); avgjør i arkitekturen/uttrekkshistorien
-- [ ] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabelluttrekk: én tabellrad på én linje (etikett + tall), slik at tall kan siteres (FR-9); avgjør i arkitekturen/uttrekkshistorien
+- [x] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — tekstuttrekk: håndter gjentatte topptekster/bunntekster og tabeller i ekte PDF-er (løst 2026-11-19: AD-8)
+- [x] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — docx-uttrekk: Word-ligninger (OMML) forsvinner (hull i nb-digital-verden.docx); avgjør i arkitekturen/uttrekkshistorien (løst 2026-11-19: godtas tapt i v1, AD-8)
+- [x] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabelluttrekk: én tabellrad på én linje (etikett + tall), slik at tall kan siteres (FR-9); avgjør i arkitekturen/uttrekkshistorien (løst 2026-11-19: AD-8)
 - [x] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabell-docx: sjekk rad 5 (limefeil?) mot kilden, oppgi kilde og år, og slett originalfila i reference-notes/ (løst 2026-11-19: rettet mot SSB 2025, kilde lagt inn)
+- [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — opprett OpenRouter-nøkkel med kredittgrense og nevn det i README
+- [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag injeksjonstest-note og PDF med topptekst/bunntekst i reference-notes/edge-cases/
+- [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — neste BMad-steg: bmad-spec (spine som companion), deretter bmad-create-epics-and-stories
