@@ -29,3 +29,5 @@
 - [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag tilpasset teknologinotat (ny fil ved technology.md) og en versjon av arkitekturen for sensor og Bård
 - [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — tekstuttrekk: håndter gjentatte topptekster/bunntekster og tabeller i ekte PDF-er
 - [ ] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — docx-uttrekk: Word-ligninger (OMML) forsvinner (hull i nb-digital-verden.docx); avgjør i arkitekturen/uttrekkshistorien
+- [ ] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabelluttrekk: én tabellrad på én linje (etikett + tall), slik at tall kan siteres (FR-9); avgjør i arkitekturen/uttrekkshistorien
+- [ ] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabell-docx: sjekk rad 5 (limefeil?) mot kilden, oppgi kilde og år, og slett originalfila i reference-notes/
