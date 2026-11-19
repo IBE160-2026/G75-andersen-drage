@@ -8,7 +8,7 @@
 - [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — sammenlign kvaliteten på billige modeller (Haiku 5.5, gpt-6-luna, Gemini Flash-Lite) på 2–3 referansenotater
 - [ ] 2026-10-29 [research-solution-steg](994-2026-10-29-13-00-20-research-solution-steg.md) — test NotebookLM manuelt (kilde på kort, quiz-scoring)
 - [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — bestem produktnavn før README og grensesnittet ferdigstilles, senest 12. desember (PRD §10 spørsmål 2) (løst 2026-11-10: Torsas læringsassistent)
-- [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag 2–3 referansenotater med forventede nøkkelkonsepter, minst ett på norsk, før promptene finjusteres (PRD §10 spørsmål 3, DR-3)
+- [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag 2–3 referansenotater med forventede nøkkelkonsepter, minst ett på norsk, før promptene finjusteres (PRD §10 spørsmål 3, DR-3) (løst 2026-11-19, se [referansenotater](990-2026-11-19-13-52-22-referansenotater.md))
 - [ ] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — oppdater «Medlemmer» i README: G75 leveres solo, og Lasse S. Drage falt fra før briefen (DR-1)
 - [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag UX-spesifikasjonen med bmad-ux før arkitekturen (løst 2026-11-12)
 - [x] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — fullfør bmad-ux: innhold i «Dine notater» og sletting, tone, samtykketekst og deretter Finalize (løst 2026-11-12)
@@ -28,3 +28,4 @@
 - [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — fortsett bmad-architecture fra memloggen (lagring, Next↔FastAPI, UI-bibliotek, endepunkter/feilkoder, Demo/Fixtures, feature flags, lang, parse-timeout, test/CI, versjoner) og finaliser
 - [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag tilpasset teknologinotat (ny fil ved technology.md) og en versjon av arkitekturen for sensor og Bård
 - [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — tekstuttrekk: håndter gjentatte topptekster/bunntekster og tabeller i ekte PDF-er
+- [ ] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — docx-uttrekk: Word-ligninger (OMML) forsvinner (hull i nb-digital-verden.docx); avgjør i arkitekturen/uttrekkshistorien
