@@ -2,7 +2,7 @@
 title: PRD — AI-Based Learning Assistant for Students
 status: final
 created: 2026-11-05
-updated: 2026-11-12
+updated: 2026-11-19
 ---
 
 # PRD: AI-Based Learning Assistant for Students
@@ -198,7 +198,7 @@ The app generates a short summary of the Note and, for each Key Concept, Items f
 
 **Consequences (testable):**
 - Each Key Concept gets 1–2 Flashcards and at least one Quiz Question.
-- The summary has 5–10 Summary Points, each at most 40 words. A Summary Point over 40 words is dropped in the same way as an Item that fails the Quote Check. A response with more than 10 Summary Points keeps the first 10. If fewer than 5 Summary Points remain after drops, the generation counts as failed under FR-8 and the student sees 'Prøv igjen'.
+- The summary has 5–10 Summary Points, each at most 40 words. A Summary Point over 40 words is dropped in the same way as an Item that fails the Quote Check. A response with more than 10 Summary Points keeps the first 10. If fewer than 5 Summary Points remain after drops, the generation counts as failed under FR-8 and the student sees 'Prøv igjen'. *Note (2026-11-19, architecture AD-7, AD-19):* when this shortfall is only found in the browser after the Quote Check, the automatic FR-8 retry does not apply; the student sees `err.generation` with 'Prøv igjen' at once, and nothing is cached. The retry applies only to failures the Proxy can detect before the Quote Check.
 - Each Quiz Question has exactly four unique options and exactly one correct option, and the index of the correct option is in range. A Quiz Question that breaks this is dropped in the same way as an Item that fails the Quote Check.
 - All counts in this FR and FR-6 (concepts, Summary Points, Flashcards per concept, options per question) are checked in the app's own validation, because provider JSON schemas do not reliably enforce counts. A Key Concept with too many Items keeps only the first Items, up to the limit. A Study Set with fewer than 5 or more than 15 Key Concepts counts as a failed generation under FR-8.
 - All generated text is in the language of the Note. A Norwegian Note gives Norwegian Items.
@@ -448,7 +448,7 @@ Each Note has an Importance Level from 1 (most important) to 3, default 2, which
 
 - **NFR-1: Secrets.** The API key exists only in the Proxy's environment. It never reaches the browser, the repository or its history. `.env` is git-ignored, and `.env.example` documents every variable without real values.
 - **NFR-2: No data retention in the Proxy.** The Proxy stores no Note content and logs only status codes, timings and error codes, never request or response bodies. This is verified by an automated test: a request carrying a marker string passes through the Proxy, and the test asserts that the marker appears in no log output and no file the Proxy writes.
-- **NFR-3: Proxy access.** The Proxy runs locally only, started with the app (DR-1); it is not publicly hosted. It accepts requests only from the app's own origin on localhost, and rejects the 11th request within one minute from one origin with HTTP 429, so that others cannot use the key. Details are in `addendum.md`.
+- **NFR-3: Proxy access.** The Proxy runs locally only, started with the app (DR-1); it is not publicly hosted. It accepts requests only from the app's own origin on localhost, and rejects the 11th request within one minute from one origin with HTTP 429, so that others cannot use the key. Details are in `addendum.md`. *Note (2026-11-19, architecture AD-5):* the limit counts only requests that can reach the AI provider (live `POST` requests). `GET /api/status` and Demo Mode requests are not counted, because they use no key.
 - **NFR-4: Latency.** For a Note of about 3,000 words, the first Flashcard is shown within 60 seconds of submission with the chosen model. Explain Simpler responds within 15 seconds.
 - **NFR-5: Cost.** One generation uses at most 2 AI calls (the first try and one retry). Each "Try again" (FR-10) is a new generation with its own budget of 2 calls, started only by the student. Explain Simpler uses one call per request. A cache hit uses none. The architecture states the expected cost per Note.
 - **NFR-6: Accessibility.** The app meets WCAG 2.1 AA for these criteria: readable contrast, full keyboard operation of every flow, visible focus, labelled form controls, and text alternatives for non-text elements. It is verified in two ways: an automated axe check of the main screens with no serious or critical violations, which runs in the test suite, and a documented manual keyboard checklist that walks UJ-1 without a mouse.
@@ -617,3 +617,5 @@ Decision and review-fix IDs resolve in `.memlog.md` (in this folder). **Decision
 - Low findings: FR-5 input after declining Consent; FR-6 range only; FR-7 count before drops; FR-11 `err.noConcepts` as a defensive guard; FR-16 jargon judged in SM-2; FR-18 order within a state; FR-19 rounding and gap note only when the count is above 0; NFR-6 wording; message keys next to UI labels; glossary 'Dine notater', Eligible, Incomplete Round, Last-shown time, Innstillinger; Review fix D1–D4 mapped above.
 
 **2026-11-12: Final confirmations by Tor and editorial polish; status final.** FR-7 fewer than 5 Summary Points after drops fails; FR-5 and FR-24 `consent.declined` takes precedence over `err.noKey`; FR-4 and FR-26 re-supplying an archived Note restores it with history; SM-6 qualitative with no threshold; FR-20 message key defined in stories; FR-25 last in cut order (§11); structure and prose polish with no requirement changes.
+
+**2026-11-19: Notes from the architecture (DR-4).** Two readings made in the architecture spine (`../../architecture/architecture-G75-andersen-drage-2026-11-18/ARCHITECTURE-SPINE.md`) and accepted by Tor, recorded as notes in place: FR-7, a Summary Point shortfall found only after the Quote Check is not retried automatically (AD-7, AD-19); NFR-3, the rate limit counts only live requests, not `/api/status` or Demo Mode (AD-5). No requirement values changed.
