@@ -33,4 +33,5 @@
 - [x] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabell-docx: sjekk rad 5 (limefeil?) mot kilden, oppgi kilde og år, og slett originalfila i reference-notes/ (løst 2026-11-19: rettet mot SSB 2025, kilde lagt inn)
 - [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — opprett OpenRouter-nøkkel med kredittgrense og nevn det i README
 - [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag injeksjonstest-note og PDF med topptekst/bunntekst i reference-notes/edge-cases/
-- [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — neste BMad-steg: bmad-spec (spine som companion), deretter bmad-create-epics-and-stories
+- [x] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — neste BMad-steg: bmad-spec (spine som companion), deretter bmad-create-epics-and-stories (løst 2026-11-21: bmad-spec hoppet over, se [kuttdato-should](989-2026-11-21-13-14-06-kuttdato-should.md))
+- [ ] 2026-11-21 [kuttdato-should](989-2026-11-21-13-14-06-kuttdato-should.md) — neste BMad-steg: bmad-create-epics-and-stories (hver story viser til FR- og AD-ID-er), deretter bmad-sprint-planning
