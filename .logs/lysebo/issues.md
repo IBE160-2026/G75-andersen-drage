@@ -18,7 +18,7 @@
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — godkjenn utkastene i Microcopy-tabellen i EXPERIENCE.md før implementering
 - [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — arkitektur: AI-leverandørens navn i samtykketeksten, lang-attributt for notatinnhold, hvor samtykket lagres (løst 2026-11-19: AD-10, AD-13, AD-16)
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — lag «Design»-seksjon i README med PNG-er fra mockups/ og lenker til DESIGN.md/EXPERIENCE.md
-- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — kuttdato 2026-12-01: kutt og skjul Should-funksjoner (Arkiv, viktighetsnivå, mørk modus) som ikke virker
+- [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — kuttdato 2026-12-06 (flyttet fra 2026-12-01 den 2026-11-21): kutt og skjul Should-funksjoner (Arkiv, viktighetsnivå, mørk modus) som ikke virker
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — vurder v2 av IA- og UJ-1-wireframes (v1 er utdatert, se Known drift)
 - [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — les tilbakemeldingen på PRD-en (tilbakemelding-prd.md) og technology.md fra Bård Pettersen før PRD-oppdateringen og arkitekturen (løst 2026-11-12)
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — PRD-oppdatering: ta fire beslutninger (FR-25 kuttbar?, begrep uten quizspørsmål, FR-13/FR-5 i kjernen, plan B for SM-3), gjør rubrikkrettelsene, språkvask og sett status final (løst 2026-11-12, commit a2aa721)
