@@ -2,7 +2,7 @@
 title: PRD — AI-Based Learning Assistant for Students
 status: final
 created: 2026-11-05
-updated: 2026-11-19
+updated: 2026-11-21
 ---
 
 # PRD: AI-Based Learning Assistant for Students
@@ -514,7 +514,7 @@ v1 is built in three tiers, and each FR belongs to exactly one tier. Each tier s
 - FR-26 Archive, restore and permanent delete.
 - FR-27 Importance Level.
 
-**Cutoff: 2026-12-01.** A Should item that does not work end to end by then is cut, and its entry point is hidden, never left dead. Dropped items are listed under DR-9.
+**Cutoff: 2026-12-06.** A Should item that does not work end to end by then is cut, and its entry point is hidden, never left dead. Dropped items are listed under DR-9.
 
 ### 8.3 Out of Scope for v1
 
@@ -619,3 +619,5 @@ Decision and review-fix IDs resolve in `.memlog.md` (in this folder). **Decision
 **2026-11-12: Final confirmations by Tor and editorial polish; status final.** FR-7 fewer than 5 Summary Points after drops fails; FR-5 and FR-24 `consent.declined` takes precedence over `err.noKey`; FR-4 and FR-26 re-supplying an archived Note restores it with history; SM-6 qualitative with no threshold; FR-20 message key defined in stories; FR-25 last in cut order (§11); structure and prose polish with no requirement changes.
 
 **2026-11-19: Notes from the architecture (DR-4).** Two readings made in the architecture spine (`../../architecture/architecture-G75-andersen-drage-2026-11-18/ARCHITECTURE-SPINE.md`) and accepted by Tor, recorded as notes in place: FR-7, a Summary Point shortfall found only after the Quote Check is not retried automatically (AD-7, AD-19); NFR-3, the rate limit counts only live requests, not `/api/status` or Demo Mode (AD-5). No requirement values changed.
+
+**2026-11-21: Should cutoff moved by Tor.** §8.2 cutoff moved from 2026-12-01 to 2026-12-06, since implementation had not started on 2026-11-21. Tiers, cut order and the 2026-12-15 deadline are unchanged.

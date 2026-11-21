@@ -7,7 +7,7 @@ paradigm: 'Functional core, imperative shell (browser) + thin gateway with no st
 scope: 'Whole system for v1: Next.js browser app + local FastAPI Proxy, started together by Docker Compose'
 status: final
 created: '2026-11-18'
-updated: '2026-11-19'
+updated: '2026-11-21'
 binds: [FR-1, FR-2, FR-3, FR-4, FR-5, FR-6, FR-7, FR-8, FR-9, FR-10, FR-11, FR-12, FR-13, FR-14, FR-15, FR-16, FR-17, FR-18, FR-19, FR-20, FR-21, FR-22, FR-23, FR-24, FR-25, FR-26, FR-27, NFR-1, NFR-2, NFR-3, NFR-4, NFR-5, NFR-6, NFR-7, NFR-8, NFR-9, DR-1, DR-2, DR-3]
 sources:
   - ../../prds/prd-G75-andersen-drage-2026-11-05/prd.md
@@ -216,7 +216,7 @@ Arrows are the only allowed dependency directions. `core/` imports nothing outsi
 ### AD-17: Should features behind flags
 
 - **Binds:** FR-20, FR-22, FR-26, FR-27, dark mode, PRD §8
-- **Prevents:** dead entry points after the 2026-12-01 cut, and ad-hoc toggles spread through the code.
+- **Prevents:** dead entry points after the 2026-12-06 cut, and ad-hoc toggles spread through the code.
 - **Rule:** `web/features.ts` exports one boolean per Should feature. An entry point (button, menu item or settings row) renders only when its flag is `true`. The flag is turned on in the story that completes the feature and stays `false` if the feature is cut. The fields a Should feature stores exist in the schema from the start (AD-21).
 
 ### AD-18: One test command, same in CI

@@ -2,7 +2,7 @@
 name: Torsas læringsassistent
 status: final
 created: 2026-11-10
-updated: 2026-11-12
+updated: 2026-11-21
 sources:
   - ../../prds/prd-G75-andersen-drage-2026-11-05/prd.md
   - ../../prds/prd-G75-andersen-drage-2026-11-05/addendum.md
@@ -45,7 +45,7 @@ Visual references (illustrations only; **the spines win on conflict**):
 | — | **Top bar** | Must | All screens | Brand · Note name · Readiness Score + not-covered count · theme toggle · 'Innstillinger' (mobile: Component Patterns › Top bar) |
 | — | **Error states** | Must | Inline on the surface that caused them | See State Patterns |
 
-**Priority.** *Must* = required by the PRD, plus 'Dine notater'. *Should* = built only after every Must flow works end to end: Arkiv (archive, restore, permanent delete), importance level, and dark mode (Kveldsmodus; light Lesesal ships first). If a Should item is cut, its entry point is hidden, never left dead. **Cutoff: 2026-12-01** — any Should item not working end to end by then is cut and hidden.
+**Priority.** *Must* = required by the PRD, plus 'Dine notater'. *Should* = built only after every Must flow works end to end: Arkiv (archive, restore, permanent delete), importance level, and dark mode (Kveldsmodus; light Lesesal ships first). If a Should item is cut, its entry point is hidden, never left dead. **Cutoff: 2026-12-06** — any Should item not working end to end by then is cut and hidden.
 
 **Navigation map**
 
