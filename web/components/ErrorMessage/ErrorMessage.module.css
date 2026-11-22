@@ -1,0 +1,48 @@
+/* DESIGN.md › Error message (components.error-message). */
+.error {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--colors-error-bg);
+  color: var(--colors-error-fg);
+  border-left: var(--spacing-quote-rule) solid var(--colors-error-fg);
+  border-radius: 0 var(--rounded-sm) var(--rounded-sm) 0;
+}
+
+.error:focus {
+  outline: none;
+}
+
+.error:focus-visible {
+  outline: var(--spacing-focus-width) solid var(--colors-focus);
+  outline-offset: var(--spacing-focus-offset);
+}
+
+.body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+}
+
+.icon {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+  margin-top: 0.1em;
+  fill: var(--colors-error-fg);
+}
+
+.text {
+  min-width: 0;
+}
+
+.prefix {
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}

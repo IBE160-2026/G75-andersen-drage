@@ -1,0 +1,14 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* DESIGN.md › Typography › headline: screen titles. */
+.heading {
+  font-family: var(--typography-headline-font-family);
+  font-size: var(--typography-headline-font-size);
+  font-weight: var(--typography-headline-font-weight);
+  line-height: var(--typography-headline-line-height);
+  color: var(--colors-ink);
+}

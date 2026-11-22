@@ -11,4 +11,6 @@
 _bmad
 .claude
 .docs
+# Exception: the test image needs DESIGN.md for the token test (web/core/tokens.test.ts).
+!.docs/planning-artifacts/ux-designs/ux-G75-andersen-drage-2026-11-10/DESIGN.md
 .logs

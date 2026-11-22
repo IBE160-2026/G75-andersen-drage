@@ -1,0 +1,107 @@
+/* DESIGN.md › Top bar, Overflow menu; Layout & Spacing › Condensed top bar. */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-2) var(--spacing-4);
+  padding: var(--spacing-2) var(--spacing-gutter-mobile);
+  background: var(--colors-surface);
+  color: var(--colors-ink);
+  border-bottom: 1px solid var(--colors-line);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 0;
+  color: var(--colors-ink);
+  font-family: var(--typography-brand-font-family);
+  font-size: var(--typography-brand-font-size);
+  font-weight: var(--typography-brand-font-weight);
+  text-decoration: none;
+}
+
+.brand:hover {
+  text-decoration: underline;
+}
+
+.nav {
+  margin-left: auto;
+}
+
+.wide {
+  display: none;
+}
+
+.narrow {
+  display: block;
+}
+
+.moreTrigger {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.moreIcon {
+  width: 1.25em;
+  height: 1.25em;
+  fill: currentColor;
+}
+
+.moreTrigger[data-state="open"] {
+  background: var(--colors-surface-hover);
+}
+
+.menu {
+  z-index: 50;
+  min-width: 12rem;
+  max-width: calc(100vw - 2 * var(--spacing-gutter-mobile));
+  padding: var(--spacing-1);
+  background: var(--colors-surface-card);
+  color: var(--colors-ink);
+  border: 1px solid var(--colors-line-strong);
+  border-radius: var(--rounded-sm);
+  font-family: var(--typography-body-font-family);
+  font-size: var(--typography-body-font-size);
+  line-height: var(--typography-body-line-height);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--rounded-sm);
+  color: var(--colors-ink);
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.menuItem[data-highlighted] {
+  background: var(--colors-surface-hover);
+}
+
+/* Radix moves focus to items programmatically; keep the 3 px ring visible for keyboard users. */
+.menuItem:focus-visible {
+  outline: var(--spacing-focus-width) solid var(--colors-focus);
+  outline-offset: calc(-1 * var(--spacing-focus-width));
+}
+
+@media (min-width: 768px) {
+  .topBar {
+    padding-inline: var(--spacing-5);
+  }
+
+  .wide {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .narrow {
+    display: none;
+  }
+}
