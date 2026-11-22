@@ -1,2 +1,6 @@
 # Shell scripts run inside Linux containers; CRLF from a Windows checkout breaks bash.
 *.sh text eol=lf
+
+# Binary documents (reference notes): never convert line endings.
+*.pdf binary
+*.docx binary
