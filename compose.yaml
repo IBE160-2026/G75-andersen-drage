@@ -1,0 +1,90 @@
+# One command starts everything (AD-2): `docker compose up`.
+# Tests: `docker compose run --rm test`. Dev: `docker compose --profile dev up`.
+
+x-proxy-env: &proxy-env
+  OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+  OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-haiku-5.5}
+  GENERATION_TIMEOUT_S: ${GENERATION_TIMEOUT_S:-40}
+  SIMPLER_TIMEOUT_S: ${SIMPLER_TIMEOUT_S:-15}
+  ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+  RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-10}
+
+x-proxy-healthcheck: &proxy-healthcheck
+  test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/status', timeout=3).status == 200 else 1)"]
+  interval: 5s
+  timeout: 5s
+  retries: 10
+  start_period: 10s
+
+services:
+  proxy:
+    build: ./proxy
+    env_file:
+      - path: .env
+        required: false
+    environment: *proxy-env
+    healthcheck: *proxy-healthcheck
+    read_only: true
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      proxy:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  test:
+    profiles: [test]
+    build:
+      context: .
+      dockerfile: e2e/Dockerfile
+    environment:
+      BASE_URL: http://web:3000
+    depends_on:
+      web:
+        condition: service_healthy
+    ipc: host
+
+  proxy-dev:
+    profiles: [dev]
+    build: ./proxy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      <<: *proxy-env
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001,http://127.0.0.1:8000}
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log", "--reload"]
+    volumes:
+      - ./proxy/app:/app/app
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck: *proxy-healthcheck
+
+  web-dev:
+    profiles: [dev]
+    image: node:26-slim
+    working_dir: /app
+    command: ["sh", "-c", "npm ci && npm run dev"]
+    environment:
+      PROXY_ORIGIN: http://proxy-dev:8000
+    volumes:
+      - ./web:/app
+      - web-dev-node-modules:/app/node_modules
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on:
+      proxy-dev:
+        condition: service_healthy
+
+volumes:
+  web-dev-node-modules:

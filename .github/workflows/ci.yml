@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build images
+        run: docker compose --profile test build
+
+      - name: Test suite (same command as locally, no key)
+        run: docker compose run --rm test
+
+      - name: Contract diff (schema.d.ts must match proxy/app/schemas.py)
+        run: |
+          docker compose run --rm --no-deps -v "$PWD/web/api:/repo/web/api" test bash -c \
+            "cd proxy && uv run --frozen python scripts/dump_openapi.py > openapi.json && cd ../web && npm run gen:api"
+          git diff --exit-code -- web/api/schema.d.ts
+          test -z "$(git status --porcelain -- web/api/schema.d.ts)"
+
+      - name: Shut down
+        if: always()
+        run: docker compose --profile test down

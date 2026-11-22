@@ -1,0 +1,24 @@
+[project]
+name = "torsa-proxy"
+version = "0.1.0"
+description = "Thin FastAPI gateway in front of OpenRouter (stores no Note data)."
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "fastapi>=0.165,<0.166",
+    "pydantic>=2.14,<2.15",
+    "pydantic-ai-slim[openrouter]>=2.71,<2.72",
+    "uvicorn>=0.54,<0.55",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2,<9.3",
+    "httpx>=0.28,<0.29",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
