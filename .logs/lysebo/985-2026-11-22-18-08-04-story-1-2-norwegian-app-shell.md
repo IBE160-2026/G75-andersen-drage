@@ -42,6 +42,7 @@ Fortsette story 1.2 fra CHECKPOINT 1: rydde spec-en under 1600 tokens, godkjenne
   - `reference-notes/edge-cases/nb-injeksjon.md` (to injeksjonsforsøk, markør `KODE-RØD-4471`) og `nb-topptekst-bunntekst.pdf` (4 sider, gjentatt topptekst/bunntekst med «Side n av 4»), begge i `reference-notes/README.md`.
   - `.docs/planning-artifacts/architecture/technology-G75.md` (samme kapitler som Bårds technology.md + hva som er beholdt/utelatt) og `arkitektur-oversikt.md` (lesevennlig for sensor og Bård, Mermaid-diagrammer). Begge på norsk.
 - **`2621b25`:** `.gitattributes` merker `*.pdf` og `*.docx` som binære; den nye PDF-en var ren ASCII og ville ellers fått CRLF ved utsjekk på Windows.
+- Branchen `story/1-2-norwegian-app-shell` pushet til origin (ingen PR opprettet ennå).
 - Lukket i issues.md: CHECKPOINT 1, deviations.md, kildereferanse før svar, teknologinotat/arkitekturversjon, injeksjonsnotat og PDF.
 
 ### Åpne punkter
