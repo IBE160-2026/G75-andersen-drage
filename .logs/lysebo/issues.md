@@ -44,4 +44,5 @@
 - [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — neste steg: bmad-build på story 1.1 (løst 2026-11-22: se [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md))
 - [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — slå på branch protection på main i GitHub (krev grønn CI før merge)
 - [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — sterkere lazy-provider-test i proxy/tests/test_status.py (utsatt til Story 1.6)
-- [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — neste steg: story 1.2 etter at 1.1 er merget
+- [x] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — neste steg: story 1.2 etter at 1.1 er merget (løst 2026-11-22: PR #1 merget, 1.2 startet)
+- [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — story 1.2: svar på CHECKPOINT 1 for spec-1-2-norwegian-app-shell.md (godkjenn/gjennomgå, samlet eller delt), deretter implementer
