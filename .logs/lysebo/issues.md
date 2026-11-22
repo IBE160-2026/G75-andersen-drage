@@ -13,7 +13,7 @@
 - [x] 2026-11-05 [prd](993-2026-11-05-14-04-49-prd.md) — lag UX-spesifikasjonen med bmad-ux før arkitekturen (løst 2026-11-12)
 - [x] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — fullfør bmad-ux: innhold i «Dine notater» og sletting, tone, samtykketekst og deretter Finalize (løst 2026-11-12)
 - [x] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — oppdater PRD-en etter UX: presiser FR-12 (sitat etter snudd kort eller besvart spørsmål), legg til «Dine notater» på Start (UJ-2) og sett produktnavnet (§10 spm. 2) (løst 2026-11-12, commit 28344cf)
-- [ ] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — bekreft at det er greit å klikke kildereferansen før kortet er snudd eller spørsmålet besvart
+- [x] 2026-11-10 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — bekreft at det er greit å klikke kildereferansen før kortet er snudd eller spørsmålet besvart (løst 2026-11-22: ja, med markering)
 - [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — PRD-oppdateringen gjelder nå 7 NOTE FOR PRD (EXPERIENCE.md › Open Items): i tillegg Arkiv, viktighetsnivå, samtykke ved første åpning og 320 px (NFR-7) (løst 2026-11-12)
 - [ ] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — godkjenn utkastene i Microcopy-tabellen i EXPERIENCE.md før implementering
 - [x] 2026-11-12 [ux-design](992-2026-11-10-18-52-43-ux-design.md) — arkitektur: AI-leverandørens navn i samtykketeksten, lang-attributt for notatinnhold, hvor samtykket lagres (løst 2026-11-19: AD-10, AD-13, AD-16)
@@ -26,23 +26,28 @@
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — sjekk at ett automatisk nytt forsøk (FR-8) før «Prøv igjen» er ønsket når et notat ikke består FR-7 (løst 2026-11-19: ja for feil proxyen ser, ikke etter Quote Check; PRD-notat FR-7)
 - [x] 2026-11-12 [prd](993-2026-11-05-14-04-49-prd.md) — start bmad-architecture med technology.md som referanse (OpenRouter/modell, UI-rammeverk, lokal proxy) (løst 2026-11-18: startet, se [arkitektur](991-2026-11-18-15-58-21-arkitektur.md))
 - [x] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — fortsett bmad-architecture fra memloggen (lagring, Next↔FastAPI, UI-bibliotek, endepunkter/feilkoder, Demo/Fixtures, feature flags, lang, parse-timeout, test/CI, versjoner) og finaliser (løst 2026-11-19: spine final, se [arkitektur](991-2026-11-18-15-58-21-arkitektur.md))
-- [ ] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag tilpasset teknologinotat (ny fil ved technology.md) og en versjon av arkitekturen for sensor og Bård
+- [x] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag tilpasset teknologinotat (ny fil ved technology.md) og en versjon av arkitekturen for sensor og Bård (løst 2026-11-22: technology-G75.md, arkitektur-oversikt.md)
 - [x] 2026-11-18 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — tekstuttrekk: håndter gjentatte topptekster/bunntekster og tabeller i ekte PDF-er (løst 2026-11-19: AD-8)
 - [x] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — docx-uttrekk: Word-ligninger (OMML) forsvinner (hull i nb-digital-verden.docx); avgjør i arkitekturen/uttrekkshistorien (løst 2026-11-19: godtas tapt i v1, AD-8)
 - [x] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabelluttrekk: én tabellrad på én linje (etikett + tall), slik at tall kan siteres (FR-9); avgjør i arkitekturen/uttrekkshistorien (løst 2026-11-19: AD-8)
 - [x] 2026-11-19 [referansenotater](990-2026-11-19-13-52-22-referansenotater.md) — tabell-docx: sjekk rad 5 (limefeil?) mot kilden, oppgi kilde og år, og slett originalfila i reference-notes/ (løst 2026-11-19: rettet mot SSB 2025, kilde lagt inn)
 - [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — opprett OpenRouter-nøkkel med kredittgrense og nevn det i README
-- [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag injeksjonstest-note og PDF med topptekst/bunntekst i reference-notes/edge-cases/
+- [x] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag injeksjonstest-note og PDF med topptekst/bunntekst i reference-notes/edge-cases/ (løst 2026-11-22: nb-injeksjon.md, nb-topptekst-bunntekst.pdf)
 - [x] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — neste BMad-steg: bmad-spec (spine som companion), deretter bmad-create-epics-and-stories (løst 2026-11-21: bmad-spec hoppet over, se [kuttdato-should](989-2026-11-21-13-14-06-kuttdato-should.md))
 - [x] 2026-11-21 [kuttdato-should](989-2026-11-21-13-14-06-kuttdato-should.md) — neste BMad-steg: bmad-create-epics-and-stories (hver story viser til FR- og AD-ID-er), deretter bmad-sprint-planning (løst 2026-11-22: epics ferdig)
 - [x] 2026-11-21 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — fortsett bmad-create-epics-and-stories i steg 3: gjennomgå Epic 1 (vurder å slå sammen 1.6+1.7 og 1.10+1.11), skriv Epic 2–5, kjør steg 4 (løst 2026-11-22)
 - [x] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — neste BMad-steg: bmad-sprint-planning (løst 2026-11-22)
 - [x] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — M1 2026-11-28: Demo-løkka (1.1–1.14) må virke ende-til-ende; ellers kutt Epic 4, flytt 3.4/3.6 sist (erstattet 2026-11-22 av rekalibrerte milepæler under)
-- [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — opprett .docs/deviations.md: Hurtigtaster flyttet til Should (UX-DR16), ny nøkkel `panic.start` inn i EXPERIENCE.md
+- [x] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — opprett .docs/deviations.md: Hurtigtaster flyttet til Should (UX-DR16), ny nøkkel `panic.start` inn i EXPERIENCE.md (løst 2026-11-22: D-1–D-3)
 - [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — milepæler (5 t/dag): M0 26.11 (1.1–1.4), M1 1.12 (Demo-løkka), M2 4.12 (Epic 2 + prøvekjøring ren klon), Should-kutt 6.12, M3 8.12, frys 9.12; logg timer brukt mot budsjett
 - [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — vurder ASCII-tittel for story 1.10 (nøkkel/branch med «ø») (løst 2026-11-22)
 - [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — neste steg: bmad-build på story 1.1 (løst 2026-11-22: se [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md))
 - [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — slå på branch protection på main i GitHub (krev grønn CI før merge)
 - [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — sterkere lazy-provider-test i proxy/tests/test_status.py (utsatt til Story 1.6)
 - [x] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — neste steg: story 1.2 etter at 1.1 er merget (løst 2026-11-22: PR #1 merget, 1.2 startet)
-- [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — story 1.2: svar på CHECKPOINT 1 for spec-1-2-norwegian-app-shell.md (godkjenn/gjennomgå, samlet eller delt), deretter implementer
+- [x] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — story 1.2: svar på CHECKPOINT 1 for spec-1-2-norwegian-app-shell.md (godkjenn/gjennomgå, samlet eller delt), deretter implementer (løst 2026-11-22: godkjent, implementert og committet i 7ab8e08)
+- [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — manuell tastatursjekk av / og /innstillinger ved 320 px (spec › Manual checks)
+- [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — e2e-test mangler: fokus tilbake til 'Mer' ved 'Innstillinger' valgt mens man står på /innstillinger
+- [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — se over technology-G75.md og arkitektur-oversikt.md: greit å navngi Bård Pettersen / «referansen fra Bård»?
+- [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — neste steg: PR for story 1.2 og grønn CI, deretter story 1.3 (Samtykke) — start med Microcopy-bolken for Samtykke
+- [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — story 1.5: lag de øvrige kanttilfellene (feil type, for kort, skannet PDF, ødelagt/passordbeskyttet, ikke-UTF-8)
