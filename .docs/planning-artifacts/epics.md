@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2]
+stepsCompleted: [1, 2, 3, 4]
 inputDocuments:
   - .docs/planning-artifacts/prds/prd-G75-andersen-drage-2026-11-05/prd.md
   - .docs/planning-artifacts/architecture/architecture-G75-andersen-drage-2026-11-18/ARCHITECTURE-SPINE.md
@@ -189,14 +189,26 @@ The student returns to 'Dine notater', reopens or re-supplies a Note without a n
 **FRs covered:** FR-2, FR-4, FR-15, FR-16, FR-19, FR-21, FR-25
 
 ### Epic 4: Should extras (cut by 2026-12-06)
-Independent, cuttable stories, each behind its own flag in `web/features.ts` (AD-17); a cut story keeps its flag `false` and its entry point hidden. Built in reverse cut order: Importance Level, Arkiv, dark mode, export/import, Panic Mode. Tier: Should.
-**FRs covered:** FR-27, FR-26, (dark mode: UX-DR34), FR-22, FR-20
+Independent, cuttable stories, each behind its own flag in `web/features.ts` (AD-17); a cut story keeps its flag `false` and its entry point hidden. Built in reverse cut order: keyboard shortcuts, Importance Level, Arkiv, dark mode, export/import, Panic Mode. Tier: Should (keyboard shortcuts moved here from Epic 2 by the 2026-11-22 pre-mortem; no FR, NFR-6 is met by Stories 2.2–2.3).
+**FRs covered:** (shortcuts: UX-DR16), FR-27, FR-26, (dark mode: UX-DR34), FR-22, FR-20
 
 ### Epic 5: Ready for delivery
 The examiner can verify the delivery: content quality measured on the reference notes, accessibility verified by hand, README complete, and a fresh-clone run logged before 2026-12-12. No new FRs.
 **Requirements covered:** DR-1, DR-3, DR-9, NFR-6, SM-1–SM-4
 
 ---
+
+## Milestones and re-plan rule
+
+Added by the 2026-11-22 pre-mortem (solo developer, 36 stories, 20 days).
+
+- **M1 — 2026-11-28:** Demo loop works end to end (Stories 1.1–1.14). If missed: Epic 4 is cut entirely and Stories 3.4 and 3.6 move to the end of the queue.
+- **M2 — 2026-12-02:** Epic 2 done; Core loop for UJ-1 and UJ-3 complete. A rehearsal of Story 5.4 (fresh-clone run) follows immediately.
+- **M3 — 2026-12-06:** Epic 3 done; the Should cut is decided here (PRD §8.1). Unstarted Epic 4 stories keep their flags `false`.
+- **Feature freeze — 2026-12-09:** after this date only Epic 5 and bug fixes.
+- **Re-plan rule:** at each milestone, compare done stories with the plan; if behind, cut in the stated order and record each cut in `.docs/deviations.md` (DR-4, DR-9).
+
+**Definition of done (every story):** acceptance criteria met; tests added and green in CI; README updated wherever the story changes setup, commands, configuration or behaviour the README describes; PR reviewed (DR-8).
 
 **Story reference convention.** Every story carries a **Refs** line listing the FR-, AD-, NFR-, DR- and UX-DR-IDs it implements (DR-4). PRs name the story ID and its FR-IDs (DR-7).
 
@@ -260,7 +272,7 @@ So that the app is usable before any study feature exists and every later screen
 
 **Given** `web/features.ts`
 **When** it is inspected
-**Then** it exports one boolean per Should feature (`panicMode`, `exportImport`, `archive`, `importance`, `darkMode`), all `false`
+**Then** it exports one boolean per Should feature (`shortcuts`, `panicMode`, `exportImport`, `archive`, `importance`, `darkMode`), all `false`
 **And** while `darkMode` is `false` the inline script in `app/layout.tsx` always sets `data-theme="light"` before paint
 
 **Given** any screen
@@ -305,6 +317,7 @@ So that nothing leaves my browser without my agreement.
 **Given** the Consent dialog
 **When** I press 'Nei takk, vis demo' (`consent.decline`)
 **Then** the decline is stored, live generation is off, and the start screen shows `consent.declined`, whose link reopens the Consent dialog
+**And** landing on the start screen is interim: FR-5 requires decline → Demovelger, which Story 1.14 delivers by changing the decline target (recorded as a planned interim state, DR-4)
 
 **Given** `core/gate.ts`
 **When** `canSend(settings, status, mode)` is called
@@ -364,9 +377,14 @@ As a student,
 I want to upload my Word documents and PDF lecture notes,
 So that I can use the files I actually have.
 
-**Refs:** FR-1 (`.docx`, PDF), FR-3 (`err.scanned`, `err.unreadable`) · AD-8, AD-9 · DR-3 (reference notes)
+**Refs:** FR-1 (`.docx`, PDF), FR-3 (`err.scanned`, `err.unreadable`) · AD-8, AD-9, AD-13 (injection test note) · DR-3 (reference notes)
 
 **Acceptance Criteria:**
+
+**Given** the repository
+**When** this story is done
+**Then** `reference-notes/` holds three shareable reference notes (`nb-smidig-scrum.md`, `nb-digital-verden.docx`, `en-unit-testing.pdf`; ≥ 1 Norwegian), each with a short file listing its expected Key Concepts
+**And** `reference-notes/edge-cases/` holds one file per rejection case (wrong type, too short, too long, scanned PDF, corrupt/password-protected file, non-UTF-8 text) plus the prompt-injection test note used by Story 1.6
 
 **Given** a `.docx` file
 **When** it is extracted in the worker
@@ -483,21 +501,39 @@ So that I never study something the AI made up.
 ### Story 1.9: Generate a Study Set from an uploaded Note
 
 As a student,
-I want to submit my Note and see clear progress, and a clear way forward if something fails,
-So that I am never left facing a silent or endless spinner.
+I want to submit my Note and follow clear progress until my Study Set is ready,
+So that I get from file to verified content in one smooth step.
 
-**Refs:** FR-5 (send gate), FR-8, FR-10, FR-11, FR-24 · AD-6, AD-7, AD-10, AD-11, AD-19, AD-20, AD-21 (`notes`, `studySets`) · NFR-5, NFR-8 · UX-DR23, UX-DR26
+**Refs:** FR-5 (send gate), FR-8, FR-11 (progress) · AD-6, AD-7, AD-10, AD-11, AD-19, AD-20, AD-21 (`notes`, `studySets`) · NFR-5 · UX-DR26
 
 **Acceptance Criteria:**
 
 **Given** a valid Note, Consent accepted and a key configured
 **When** I submit it
 **Then** the `api/` client calls `canSend` with fresh settings, sends one `POST /api/study-set` with an `AbortSignal`, and Genererer shows the generation progress (determinate bar, `gen.status` steps announced once via `role="status"`, Note meta "{filnavn} · {n} ord · {m} avsnitt")
-**And** while it is pending the drop zone is disabled and a second submit returns the same pending promise (single-flight per Note Hash)
+**And** while it is pending the drop zone is disabled
 
 **Given** the Proxy answers with a `StudySet`
 **When** `verifyStudySet` returns ok
-**Then** the Note record (`title`, `sourceType`, `wordCount`, `passages`, `normalizationVersion`, `currentCacheKey`, `archived: false`, `importanceLevel: 2`, `lastPractisedAt: null`, `schemaVersion`) and the `VerifiedStudySet` are written through `web/storage/` (IndexedDB `notes` and `studySets`, Zod-validated) in one transaction, and I move to Notatoversikt
+**Then** the Note record (`title`, `sourceType`, `wordCount`, `passages`, `normalizationVersion`, `currentCacheKey`, `archived: false`, `importanceLevel: 2`, `lastPractisedAt: null`, `schemaVersion`) and the `VerifiedStudySet` are written through `web/storage/` (IndexedDB `notes` and `studySets`, Zod-validated) in one transaction, and I move to Notatoversikt (a placeholder screen showing the Note title until Story 1.11)
+
+**Given** any failure in this story's scope
+**When** it occurs
+**Then** Genererer shows `err.generation` and nothing is stored (detailed error states follow in Story 1.10)
+
+**Given** Playwright with a stubbed Proxy
+**When** the happy path runs
+**Then** upload → Genererer → stored records → Notatoversikt completes with exactly one request
+
+### Story 1.10: Generation errors, 'Prøv igjen' and interrupted generation
+
+As a student,
+I want a clear way forward whenever generation fails or I leave mid-way,
+So that I am never left facing a silent or endless spinner or a half-saved Note.
+
+**Refs:** FR-5 (send gate), FR-8, FR-10, FR-11, FR-24 · AD-6, AD-7, AD-11 · NFR-5, NFR-8 · UX-DR21 (pending), UX-DR23
+
+**Acceptance Criteria:**
 
 **Given** a timeout (browser abort at 90 s), 429, 5xx, network error, non-JSON body or unknown code
 **When** generation fails
@@ -507,9 +543,9 @@ So that I am never left facing a silent or endless spinner.
 **When** the result is shown
 **Then** the matching message with 'Prøv igjen' is shown, there is no automatic retry, and nothing is stored
 
-**Given** 'Prøv igjen'
-**When** I press it (once or twice quickly)
-**Then** exactly one fresh generation starts
+**Given** a pending generation
+**When** I submit again, or press 'Prøv igjen' once or twice quickly
+**Then** the second call returns the same pending promise (single-flight per Note Hash) and exactly one fresh generation starts; 'Prøv igjen' bypasses the cache
 
 **Given** Consent declined
 **When** I submit a valid Note
@@ -525,7 +561,7 @@ So that I am never left facing a silent or endless spinner.
 **Then** double submit, double 'Prøv igjen' and reload mid-generation each lead to at most one generation and no partial record
 **And** a test asserts that every Proxy error code is a key in `messages.ts`
 
-### Story 1.10: Notatoversikt with summary, Key Concepts and source panel
+### Story 1.11: Notatoversikt with summary, Key Concepts and source panel
 
 As a student,
 I want to see the core of my Note — summary, Key Concepts and the source text side by side,
@@ -562,7 +598,7 @@ So that I immediately know what matters and where it comes from.
 **When** it is checked
 **Then** nothing scrolls horizontally, long Norwegian compounds wrap, and axe reports no serious or critical violations
 
-### Story 1.11: Jump from a source reference to the highlighted Quote
+### Story 1.12: Jump from a source reference to the highlighted Quote
 
 As a student,
 I want to click "Kilde: P4" and see the exact sentence in my own Note highlighted,
@@ -597,7 +633,7 @@ So that I can check every Item against my source and return to where I was.
 **Then** it uses `Mark`/`MarkText` with a `CanvasText` outline
 **And** the reference-jump component takes the return context as a parameter so Round and Resultat screens reuse it
 
-### Story 1.12: Record Fixtures and compare models on the reference notes
+### Story 1.13: Record Fixtures and compare models on the reference notes
 
 As the developer (Tor),
 I want recorded model responses for every reference note and a measured model choice,
@@ -615,7 +651,11 @@ So that Demo Mode, the tests and the exam-day fallback work without a key, and t
 **When** I run `proxy/scripts/record_fixtures.py`
 **Then** it calls the live model through `llm.py` and writes `proxy/fixtures/{noteHash}.json` = `{studySet, simpler: {<itemId>: <raw>}, model, promptVersion}` with raw model responses (Simpler entries for a representative set of Items)
 
-**Given** recorded responses for `anthropic/claude-haiku-5.5`, `openai/gpt-6-luna` and `google/gemini-3.5-flash-lite`
+**Given** a time-box of at most one working day for this comparison
+**When** it is planned
+**Then** at least two models are recorded (the provisional default and one alternative); the third is added only if time allows, and a skipped model is noted in the `.logs/` entry
+
+**Given** recorded responses for `anthropic/claude-haiku-5.5`, `openai/gpt-6-luna` and, if recorded, `google/gemini-3.5-flash-lite`
 **When** I run `web/scripts/evaluate.ts`
 **Then** it reports per model and reference note the Quote Check pass rate (SM-3), surviving Items, and generation and Simpler timings (NFR-4)
 **And** the chosen model is set as the default `OPENROUTER_MODEL`, and the result is logged in `.logs/`
@@ -625,7 +665,7 @@ So that Demo Mode, the tests and the exam-day fallback work without a key, and t
 **Then** a pytest validates every Fixture against the current schema, and a Vitest asserts that each reference note hashes to its Fixture's `noteHash`
 **And** any change to extraction, Normalization, splitting or the schema re-records the Fixtures in the same commit
 
-### Story 1.13: Demo Mode with the bundled sample notes
+### Story 1.14: Demo Mode with the bundled sample notes
 
 As the examiner,
 I want to try the app with bundled sample notes and no API key,
@@ -667,3 +707,690 @@ So that I can see the whole result without configuring anything.
 **Given** Playwright
 **When** the Demo path runs in a fresh browser context with no key
 **Then** decline → Demovelger → Norwegian sample → Notatoversikt with Summary Points and a working reference jump completes, with no request reaching the AI provider
+
+## Epic 2: Practise in Rounds
+
+The student works through Flashcards and a Quiz, sees a scored Resultat with sources, and the next Round starts with what they do not yet know. Completes the Core loop of UJ-1 and UJ-3.
+
+### Story 2.1: Start a Round from Notatoversikt
+
+As a student,
+I want to press 'Start runde' and get a Round built from what I do not yet know,
+So that my limited time goes to the right concepts.
+
+**Refs:** FR-18 · AD-3, AD-11, AD-21 (`conceptProgress`, `rounds`) · NFR-6, NFR-7 · UX-DR7, UX-DR8, UX-DR15, UX-DR19 ('Start runde')
+
+**Acceptance Criteria:**
+
+**Given** `core/composeRound(input)` with Mastery States, last-shown times, last-used Quiz Question per concept, Centrality Ranks and surviving Items per concept
+**When** it runs
+**Then** it returns at most 10 concepts; not-covered concepts are never included; all shaky and new concepts are included up to 8 (shaky before new, least recently shown first, ties by Centrality Rank); `max(1, round(0.2 × n))` known concepts are added, least recently shown first (all, if fewer exist); order is shaky → new → known
+**And** each concept contributes all its surviving Flashcards plus, if it has one, the least recently used Quiz Question
+**And** if no eligible concept is shaky or new, it returns a review Round of up to 10 known concepts, least recently shown first, flagged `review: true`
+
+**Given** Vitest
+**When** the suite runs
+**Then** every rule above has a unit test, including the two PRD test cases: 3 shaky + 5 known → Round of 4 (3 shaky, then the least recently shown known); a Round of 4 where one concept has no Quiz Question → Flashcards of all 4 and a Quiz of 3
+
+**Given** Notatoversikt with at least one eligible concept and no Round in progress
+**When** I press 'Start runde' (`overview.start`)
+**Then** `conceptProgress` records exist for every eligible concept (created as `new` on first use), and in one IndexedDB transaction the Round is stored in `rounds` (concept IDs, Item IDs in order, `startedAt`, empty answers) and each included concept's last-shown time is set
+**And** the Round screen opens with `h1` "Runde n", the progress line "Runde n · Kort x av y", the `aria-hidden` progress bar, the current concept's Mastery chip, and the same split layout / mobile tabs as Notatoversikt
+**And** a review Round shows `round.review` at its start
+
+**Given** a Round in `rounds`
+**When** it is active
+**Then** it is never recomposed; its stored Item list is the only source for the Round screens
+
+### Story 2.2: Review Flashcards and mark them
+
+As a student,
+I want to see a Flashcard, reveal the answer with its source and mark whether I knew it,
+So that the app learns what I know and I can check the answer against my Note.
+
+**Refs:** FR-12 (Flashcards), FR-13, FR-17 · AD-3, AD-11, AD-21 (one transaction per answer) · NFR-6 · UX-DR11, UX-DR12, UX-DR13, UX-DR18, UX-DR21
+
+**Acceptance Criteria:**
+
+**Given** `core/updateMastery(state, signal)`
+**When** it is called
+**Then** it implements the FR-17 table (new/shaky/known × correct/wrong) as one pure function with one unit test per row
+
+**Given** a Round in its Flashcard part
+**When** a Flashcard renders
+**Then** it is a labelled Flashcard region headed "Kort {x} av {y}", with the concept chip, the front in `card-front` serif and the source reference "Kilde: Pn" visible, and no Quote
+
+**Given** the front
+**When** I press 'Snu kortet'
+**Then** the back shows the answer, a dashed divider and the Quote block, and focus moves to the answer
+
+**Given** a revealed Flashcard
+**When** I press 'Kunne det' or 'Kunne det ikke'
+**Then** `updateMastery` runs and, in one transaction, the concept's Mastery State and the answer on the Round are stored; the Mastery chip updates; the next Flashcard shows with focus on its heading
+**And** after the last Flashcard the Round moves to its Quiz part (or to Resultat if the Round has no Quiz Questions)
+
+**Given** the source reference on a Flashcard
+**When** I activate it
+**Then** the reference jump from Story 1.12 runs with `return.label` 'Tilbake til kortet'
+
+**Given** a keyboard only (Tab / Enter / Space on buttons)
+**When** I work through the Flashcards
+**Then** reveal and both marks work, and axe reports no serious or critical violations on the Flashcard screen at desktop and 320 px
+
+### Story 2.3: Answer Quiz Questions
+
+As a student,
+I want to answer multiple-choice questions and see at once whether I was right, with the source,
+So that I test myself and learn from my mistakes immediately.
+
+**Refs:** FR-12 (Quiz), FR-14 (answering), FR-17 · AD-11, AD-21 · NFR-6 · UX-DR11, UX-DR12, UX-DR14, UX-DR15
+
+**Acceptance Criteria:**
+
+**Given** the Quiz part of a Round
+**When** a Quiz Question renders
+**Then** it is a labelled Quiz region headed "Spørsmål {x} av {y}" with no card container, showing the stem, the source reference and four full-width options A–D, and no Quote; the progress line reads "Runde n · Spørsmål x av y"
+
+**Given** an unanswered Quiz Question
+**When** I select an option
+**Then** it is answered at once: the answer is stored in one transaction with the Mastery update (`updateMastery`), the correct option shows ✓ in known colours, a wrong chosen option shows ✗ in shaky colours, and `quiz.correct` or `quiz.wrong` ("Det var nok feil, rett svar er {svar}.") is announced via `aria-live="polite"`, followed by the Quote block
+**And** the other options become `aria-disabled` with full ink contrast and a muted border, and focus stays on the chosen option
+
+**Given** an answered Quiz Question
+**When** I press `quiz.next`
+**Then** the next question shows with focus on its heading; on the last question the control reads 'Se resultatet' and opens Resultat
+
+**Given** the source reference
+**When** I activate it before or after answering
+**Then** the reference jump runs with `return.label` 'Tilbake til spørsmålet'
+
+**Given** a Flashcard and a Quiz Question for the same concept with opposite signals
+**When** both are answered
+**Then** the latest signal decides the Mastery State
+
+**Given** the Quiz screen
+**When** checked at desktop and 320 px
+**Then** it is fully keyboard-operable and axe reports no serious or critical violations
+
+### Story 2.4: Resultat with score and sources
+
+As a student,
+I want to see my score and, per question, my answer, the right answer and the source,
+So that I know where I stand and can check what I got wrong in my own Note.
+
+**Refs:** FR-12 (Resultat), FR-14 (scoring) · AD-3, AD-21 · NFR-6 · UX-DR11, UX-DR17, UX-DR19 (updated chips)
+
+**Acceptance Criteria:**
+
+**Given** `core/score(answers, questions)`
+**When** it runs
+**Then** it returns correct count out of the number of Quiz Questions asked, deterministically, with no AI call, and has unit tests (all right, all wrong, mixed, Round with fewer questions than concepts)
+
+**Given** a finished Quiz
+**When** Resultat opens
+**Then** the `h1` shows `result.score` ("{n} av {m} riktige"), and each Quiz Question has a row with `h2` "Spørsmål {x}", the question in serif, `result.yours` with ✓/✗ (`aria-hidden`, plus text), `result.correct` only on missed questions, and the Quote block with its source reference
+
+**Given** a source reference on a Resultat row
+**When** I activate it
+**Then** the reference jump runs with `return.label` 'Tilbake til resultatet', and returning puts focus back on that reference
+
+**Given** Resultat
+**When** I press 'Tilbake til oversikten'
+**Then** Notatoversikt shows each concept's updated Mastery chip ('ny' / 'usikker' / 'kan'), and the Round is stored as completed with `completedAt`
+
+**Given** Resultat at desktop and 320 px
+**When** checked
+**Then** axe reports no serious or critical violations
+
+### Story 2.5: The next Round targets my weak spots
+
+As a student,
+I want each new Round to start with what I got wrong and to vary the questions,
+So that repeated practice moves me forward instead of repeating the same thing.
+
+**Refs:** FR-18 (rotation, review Round), FR-23 (full Demo loop) · AD-11, AD-21 · DR-2 · UX-DR15
+
+**Acceptance Criteria:**
+
+**Given** a completed Round
+**When** I start the next Round from Resultat or Notatoversikt
+**Then** it is composed by `composeRound` from the stored Mastery States and last-shown times, its number is n + 1, and shaky concepts come first
+
+**Given** a concept with several surviving Quiz Questions
+**When** consecutive Rounds include it
+**Then** the Quiz Question used is stored as last-used per concept when the Round starts, and the next Round picks the least recently used one
+
+**Given** all eligible concepts are known
+**When** I start a Round
+**Then** it is a review Round and `round.review` is shown
+
+**Given** a closed and reopened browser tab (same session data)
+**When** I open the Note again
+**Then** Mastery States and last-shown times are unchanged (resuming an interrupted Round is Epic 3)
+
+**Given** Playwright in Demo Mode with no key
+**When** the full UJ-1 loop runs on the Norwegian sample (Notatoversikt → Flashcards → Quiz → Resultat → reference jump → next Round)
+**Then** it completes, the next Round starts with the concepts marked wrong, and no request reaches the AI provider
+
+## Epic 3: Come back and go deeper
+
+The student returns to 'Dine notater', reopens or re-supplies a Note without a new AI call, keeps progress across restarts and interrupted Rounds, sees the Readiness Score with its gap note, can paste text, and can ask for a simpler explanation.
+
+**Build order (priority):** 3.1 → 3.2 → 3.5 → 3.3 → 3.7 → 3.4 → 3.6. Numbering is kept. If M3 is at risk, 3.6 is cut first, then 3.4; each cut changes a PRD Then priority and is recorded in `.docs/deviations.md`.
+
+### Story 3.1: 'Dine notater' start screen
+
+As a student coming back,
+I want to see all my Notes with when I last practised them and open one directly,
+So that I can pick up where I left off without uploading again.
+
+**Refs:** FR-25, FR-11 (`start.empty`) · AD-10, AD-11, AD-21 (`notes.lastPractisedAt`) · NFR-6, NFR-7 · UX-DR3, UX-DR5 (brand link), UX-DR24, UX-DR29 (base row)
+
+**Acceptance Criteria:**
+
+**Given** Consent has been decided
+**When** the app opens or I activate the brand link
+**Then** 'Dine notater' shows (`h1` "Dine notater", `document.title` "Dine notater · Torsas læringsassistent") with every non-archived Note as a `<li>` in a `<ul>`, ordered by last practised (most recent first, never-practised last)
+**And** below the list `h2` 'Legg til et notat' holds the drop zone
+
+**Given** a Note row
+**When** it renders
+**Then** the title is a real link stretched over the row, truncated titles keep the full title as accessible name and `title`, and the meta line shows `row.lastPractised` ("Sist øvd i dag" / "i går" / "for {n} dager siden" / "Ikke øvd ennå")
+
+**Given** a row link
+**When** I activate it
+**Then** Notatoversikt opens from the stored records with no request to the Proxy
+
+**Given** no stored Notes
+**When** 'Dine notater' renders
+**Then** the empty state `start.empty` is the `h1`, with the next-step line and the upload / demo actions, and the 'Legg til et notat' heading is not shown
+
+**Given** a Round is completed (Resultat reached)
+**When** it is stored
+**Then** the Note's `lastPractisedAt` is set in the same transaction, and the list order updates
+
+**Given** Vitest and Playwright
+**When** the suites run
+**Then** `row.lastPractised` formatting (today, yesterday, n days, never) is unit-tested, and opening a stored Note asserts zero Proxy requests
+
+### Story 3.2: Readiness Score and gap note
+
+As a student,
+I want to see how ready I am as a percentage, and how much of my Note the app could not cover,
+So that I can judge whether to keep practising and not trust the score blindly.
+
+**Refs:** FR-19 · AD-3, AD-21 (Readiness never stored) · NFR-9 · UX-DR5, UX-DR6 (Status strip), UX-DR19, UX-DR29 (row meta)
+
+**Acceptance Criteria:**
+
+**Given** `core/readiness(concepts, progress)`
+**When** it runs
+**Then** it returns known ÷ eligible as a whole percent with halves rounded up (5/8 → 63 %), `null` with zero eligible concepts, and the count of not-covered concepts, with unit tests for each case
+
+**Given** an open Note with at least one eligible concept
+**When** any screen renders
+**Then** the top bar (desktop) and the Status strip (mobile) show `readiness` ("Klar for eksamen {n} %", 0 % before the first Round), and Notatoversikt shows it in `headline` size
+**And** with zero eligible concepts no score is shown anywhere
+
+**Given** at least one not-covered concept
+**When** the score is shown
+**Then** the gap note is always beside it (`readiness.gapOne` for 1, else "{k} begreper uten verifiserte elementer")
+
+**Given** a mark or answer
+**When** it is stored
+**Then** the score is recomputed on render and never persisted
+
+**Given** 'Dine notater'
+**When** a row renders
+**Then** its meta shows the score and, only when the count is above 0, the gap note
+
+### Story 3.3: Recognize a known Note and reuse the cache
+
+As a student,
+I want uploading the same notes again to bring back my Study Set and progress without a new AI call,
+So that I save time and cost and never lose what I have learned.
+
+**Refs:** FR-4 · AD-9 (cache key), AD-19, AD-21 (replace Study Set + prune progress) · NFR-5
+
+**Acceptance Criteria:**
+
+**Given** a Note whose Note Hash is stored and whose `currentCacheKey` equals `{noteHash}:{promptVersion}:{model}` from `/api/status`
+**When** I upload it again (any file name)
+**Then** its stored Notatoversikt opens with its Mastery States and no request reaches the Proxy
+
+**Given** a stored Note whose cache key differs (prompt version or model changed)
+**When** I re-supply it
+**Then** a new generation runs; on success the old Study Set is replaced and, in one transaction, `conceptProgress` is kept for concept IDs present in the new set and pruned for the rest, and `currentCacheKey` is updated
+
+**Given** an archived Note (`archived: true`, set directly in the test)
+**When** I re-supply it
+**Then** it is restored (`archived: false`) with its history intact
+
+**Given** a failed generation or one below the minimums
+**When** it ends
+**Then** nothing is cached and an existing Study Set is untouched
+
+**Given** 'Prøv igjen'
+**When** it starts a generation for a known Note
+**Then** it bypasses the cache
+
+**Given** Vitest and Playwright
+**When** the suites run
+**Then** cache hit (zero requests), cache-key change with Mastery kept, and archived restore are tested
+
+### Story 3.4: Paste text as a Note
+
+As a student,
+I want to paste text instead of uploading a file,
+So that I can use notes from anywhere, such as a web page or a chat.
+
+**Refs:** FR-2, FR-3, FR-4 (reconnect) · AD-8, AD-9 · NFR-6 · UX-DR25
+
+**Acceptance Criteria:**
+
+**Given** the start area
+**When** it renders
+**Then** a text area with a visible label 'Lim inn tekst' and the button `start.paste.submit` ("Lag kort og quiz") is shown beside the drop zone
+
+**Given** pasted text
+**When** I submit it
+**Then** it runs through the same pipeline as a `.txt` file (paragraphs, Normalization, Passages, Note Hash) with the same rejections (`err.noText`, `err.tooShort`, `err.tooLong`) shown inline at the text area via `aria-describedby` + `aria-invalid`
+**And** the Note is titled from its first line (truncated) with `sourceType: "paste"`
+
+**Given** text earlier uploaded as a `.txt` file
+**When** I paste the same text
+**Then** it has the same Note Hash and reconnects to the same Note (Story 3.3)
+
+**Given** a generation is pending
+**When** I look at the start area
+**Then** both the text area submit and the drop zone are disabled
+
+### Story 3.5: Survive an interrupted Round
+
+As a student,
+I want a Round I left or reloaded to be kept,
+So that closing the tab by accident never costs me my answers.
+
+**Refs:** FR-15 · AD-11, AD-21 (one transaction per answer; active Round resumed, never recomposed) · NFR-8 · UX-DR20
+
+**Acceptance Criteria:**
+
+**Given** a Round with at least one answer and no `completedAt`
+**When** I reload or reopen the Note
+**Then** Notatoversikt shows `banner.interrupted` ("Du har en uferdig runde ({n} av {m} besvart).") with 'Fortsett' (primary) and 'Ny runde' (secondary), and 'Start runde' is hidden
+
+**Given** the banner
+**When** I press 'Fortsett'
+**Then** the stored Round resumes at the first unanswered Item, with its original Item list
+
+**Given** the banner
+**When** I press 'Ny runde'
+**Then** the old Round is marked incomplete, its answered questions stay scored in Mastery, and a new Round is composed
+
+**Given** Playwright
+**When** the page is reloaded mid-Flashcards and mid-Quiz
+**Then** every given answer is kept, the banner shows the right counts, and both 'Fortsett' and 'Ny runde' work
+
+### Story 3.6: Explain Simpler
+
+As a student who does not understand an answer,
+I want to ask for a simpler explanation that still comes from my Note,
+So that I can understand it without trusting made-up content.
+
+**Refs:** FR-16, FR-23 (Fixtures) · AD-3, AD-6, AD-7 (`SIMPLER_TIMEOUT_S=15`, one attempt), AD-11 (single-flight per Item ID), AD-12, AD-19 (Quote Check), AD-21 (not persisted) · NFR-4, NFR-5 · UX-DR12
+
+**Acceptance Criteria:**
+
+**Given** `POST /api/simpler` with `{mode, noteHash, itemId, passages}` (the Item's context)
+**When** the Proxy handles it live
+**Then** it makes exactly one model call with the same routing and data delimiting as Story 1.6, validates against a Pydantic `SimplerExplanation` (text, `passageId`, `quote`), and returns `{code: "simpler.fail"}` on any failure or timeout, with no retry
+**And** with `mode: "demo"` it serves the Fixture's `simpler[itemId]` through the same validation, or `simpler.fail` when there is none
+**And** `web/api/schema.d.ts` is regenerated and committed
+
+**Given** the back of a Flashcard or an answered Quiz Question
+**When** I press 'Forklar enklere' (`simpler.button`)
+**Then** `canSend` is checked, one request is sent (a second press while pending reuses it), and an inline loading state shows in place
+
+**Given** a response
+**When** its Quote passes the Quote Check in the browser
+**Then** the Simpler Explanation shows with its Quote block and reference, in the Note's language (`lang`)
+**And** if the Quote fails, or any error occurs, `simpler.fail` is shown with the Item's own Quote
+
+**Given** a Simpler Explanation
+**When** I move to another Item or reload
+**Then** it is not stored, and no request is ever sent without a press
+
+**Given** pytest, Vitest and Playwright
+**When** the suites run
+**Then** the one-attempt rule, the 15 s timeout, Quote-Check rejection and the Demo path are tested
+
+### Story 3.7: Robust storage
+
+As a student,
+I want the app to keep working when browser storage is broken, full or unavailable, and to warn me about its limits,
+So that I never get stuck and know when my progress is at risk.
+
+**Refs:** FR-21 · AD-10, AD-21 · NFR-8 · DR-1 (README) · UX-DR32 (Lagring)
+
+**Acceptance Criteria:**
+
+**Given** stored records with an older `schemaVersion`
+**When** they are read
+**Then** they are migrated by tested migration functions; data that fails Zod validation or has an unknown version is reset for that Note only, with `storage.reset`
+
+**Given** IndexedDB is unavailable or a write fails with a quota error
+**When** I use the app
+**Then** it falls back to in-memory storage for the session, shows `storage.unavailable` persistently, and the full study loop keeps working
+
+**Given** the first visit after Consent
+**When** the start screen shows
+**Then** `storage.warning` is shown once, the fact is stored in settings, and afterwards the text is visible in Innstillinger › Lagring
+
+**Given** two tabs on the same Note
+**When** both write
+**Then** the last write wins, and the README documents this and the browser storage-deletion risk
+
+**Given** Vitest and Playwright
+**When** the suites run
+**Then** each migration, the per-Note reset, and storage full/unavailable (NFR-8) are tested
+
+## Epic 4: Should extras (cut by 2026-12-06)
+
+Independent, cuttable stories, each behind its own flag in `web/features.ts` (AD-17). The completing story turns its flag on in its last commit; a cut story keeps its flag `false` and its entry point hidden. Every story's tests also pass with its flag off.
+
+### Story 4.1: Keyboard shortcuts for Flashcards and Quiz
+
+As a student practising quickly,
+I want to flip, mark and answer with single keys,
+So that I can keep my hands on the keyboard through a whole Round.
+
+**Refs:** NFR-6 (WCAG 2.1.4) · AD-10 (settings), AD-17 (`shortcuts`) · UX-DR16, UX-DR32 ('Hurtigtaster')
+
+**Acceptance Criteria:**
+
+**Given** `features.shortcuts` is `true`, 'Hurtigtaster' is on (default) and focus is inside the Flashcard region on a non-control element
+**When** I press Space, 1 or 2
+**Then** Space reveals the card (and never scrolls), 1 = 'Kunne det ikke', 2 = 'Kunne det'; Space on a revealed card and 1/2 before reveal do nothing
+
+**Given** focus inside an unanswered Quiz region on a non-control element
+**When** I press 1–4
+**Then** option A–D is chosen; 1–4 after answering do nothing
+
+**Given** a dialog or menu is open, focus is on a button, link, checkbox or text field, or 'Hurtigtaster' is off
+**When** I press any of these keys
+**Then** the key keeps its native behaviour
+
+**Given** Innstillinger › Studier
+**When** I toggle 'Hurtigtaster' (`settings.shortcuts`, Radix Switch with visible `toggle.state`)
+**Then** the change takes effect at once and is persisted in localStorage settings
+
+**Given** shortcuts are on and the device is not touch-only
+**When** buttons with shortcuts render
+**Then** they show mono keyboard hints ('Mellomrom' via `kbd.space`) that are `aria-hidden`, with the shortcut exposed via `aria-keyshortcuts`; hints are hidden when shortcuts are off or on touch-only devices
+
+**Given** Vitest and Playwright
+**When** the suites run
+**Then** each firing condition above is tested, and the loop Space → 2 → Space works through a Round without Tab
+
+**Given** `features.shortcuts` is `false`
+**When** a Round renders
+**Then** no shortcut fires, no keyboard hints show, and the 'Hurtigtaster' row is hidden; reveal, marks and answers still work by Tab / Enter / Space on the buttons (Stories 2.2, 2.3)
+
+### Story 4.2: Importance Level on Notes
+
+As a student with several exams,
+I want to mark how important each Note is,
+So that the most important ones stay at the top of my list.
+
+**Refs:** FR-27 · AD-17 (`importance`), AD-21 (`notes.importanceLevel`) · NFR-6 · UX-DR29, UX-DR30
+
+**Acceptance Criteria:**
+
+**Given** `features.importance` is `true`
+**When** a row in 'Dine notater' renders
+**Then** it has a native `<select>` with "1 – viktigst" / "2 – middels" / "3 – minst" (default 2), accessible name `importance.name`, as a sibling Tab stop after the title link, never inside it
+
+**Given** the list
+**When** it renders
+**Then** it is ordered by Importance Level (1 first), then by last practised
+
+**Given** I change a Note's level
+**When** the change is stored
+**Then** the list re-orders at once, focus stays on the same Note's select, `importance.changed` ("{tittel}: viktighet {n}, nå nummer {p} i listen.") is announced politely, and the order survives a reload
+**And** the level affects only list order, never Rounds or the Readiness Score
+
+**Given** `features.importance` is `false`
+**When** the list renders
+**Then** no select is shown and the list is ordered by last practised only
+
+### Story 4.3: Arkiv: archive, restore and permanent delete
+
+As a student finished with an exam,
+I want to archive Notes, restore them, and delete them for good when I am sure,
+So that my list stays short without losing history by accident.
+
+**Refs:** FR-26 · AD-10 (settings), AD-17 (`archive`), AD-21 (delete/archive over all records) · NFR-6 · UX-DR27 (delete dialog), UX-DR29 (Arkiv variant), UX-DR31, UX-DR32 (Sletting)
+
+**Acceptance Criteria:**
+
+**Given** `features.archive` is `true`
+**When** I press 'Arkiver' (`archive.button`, accessible name "Arkiver {tittel}") on a row
+**Then** the Note is archived with no confirmation, keeping all records; the row is removed; the toast `archive.toast` (bottom centre, `role="status"`) offers 'Angre' and 'Vis arkiv'; focus moves to the next row's title link (previous row if it was last, `h1` if the list is now empty)
+**And** 'Angre' restores the Note to its place and focuses its title; the toast is replaced by the next action's status
+
+**Given** the Arkiv screen
+**When** it renders
+**Then** archived Notes are listed with no link and the actions 'Gjenopprett' / 'Slett for godt', or `archive.empty` when there are none
+
+**Given** 'Gjenopprett'
+**When** I press it
+**Then** the Note returns to 'Dine notater' with its history intact, `restore.done` is announced, and focus moves per the focus rules
+
+**Given** 'Slett for godt' with `settings.deleteWarning` on (default)
+**When** I press it
+**Then** the `delete.confirm` dialog opens with initial focus on 'Avbryt', Esc cancels, and 'Ikke spør igjen' turns the warning off
+**And** 'Slett' removes the Note's records from `notes`, `studySets`, `conceptProgress` and `rounds` in one transaction and announces `delete.done`
+
+**Given** Innstillinger › Sletting
+**When** I toggle 'Spør før notater slettes for godt' (`settings.deleteWarning`)
+**Then** the change persists and takes effect at once
+
+**Given** Vitest and Playwright
+**When** the suites run
+**Then** archive → undo, archive → restore, delete with and without the dialog, and the focus rules are tested, and a deleted Note leaves no record in any store
+
+### Story 4.4: Kveldsmodus (dark mode)
+
+As a student studying late,
+I want a dark theme that follows my system or my own choice,
+So that reading in the evening is comfortable.
+
+**Refs:** AD-15, AD-17 (`darkMode`) · NFR-6 · UX-DR1, UX-DR6 ('Mer'), UX-DR34
+
+**Acceptance Criteria:**
+
+**Given** `features.darkMode` is `true`
+**When** the app first opens
+**Then** the theme follows `prefers-color-scheme`, and the inline script in `app/layout.tsx` sets `data-theme` before paint so no wrong theme flashes
+
+**Given** the theme toggle (top bar on desktop, 'Mer' menu on mobile)
+**When** I press it
+**Then** the theme switches, its accessible name is `theme.toggle` ('Bytt til mørk modus' / 'Bytt til lys modus'), and the choice is persisted in settings and wins over the system preference
+
+**Given** Kveldsmodus
+**When** any screen renders
+**Then** it uses the `-dark` tokens, sans chrome with uppercase tracked panel labels, and a single soft shadow on Flashcard, dialogs and toast, with the layout identical to Lesesal
+
+**Given** Playwright + axe
+**When** the main screens are checked in both themes
+**Then** there are no serious or critical violations and the DESIGN.md contrast pairs hold
+
+**Given** `features.darkMode` is `false`
+**When** the app renders
+**Then** no toggle is shown and the theme is always light
+
+### Story 4.5: Export and import progress
+
+As a student switching browser or computer,
+I want to export a Note's Study Set and progress to a file and import it elsewhere,
+So that I do not lose my progress when browser data is deleted.
+
+**Refs:** FR-22 · AD-9, AD-10 (Zod on import), AD-17 (`exportImport`), AD-19, AD-21 (export format) · UX-DR32 (Lagring)
+
+**Acceptance Criteria:**
+
+**Given** `features.exportImport` is `true`
+**When** I open Innstillinger › Lagring
+**Then** I can pick a Note and export it, and I can choose a file to import
+
+**Given** an export
+**When** it is written
+**Then** the file is JSON `{format: "torsa-export", exportVersion: 1, note, studySet, conceptProgress, rounds}` named after the Note title, containing the `VerifiedStudySet` only
+
+**Given** an import file
+**When** it is read
+**Then** it is Zod-validated, the Note Hash is recomputed from its Passages and must match, and the Study Set is re-run through `verifyStudySet`; only then are the records written in one transaction (replacing any existing records for that Note Hash)
+
+**Given** an invalid, incompatible or tampered file
+**When** I import it
+**Then** `import.invalid` is shown and existing progress is untouched
+
+**Given** Vitest and Playwright
+**When** the suites run
+**Then** export → delete → import restores identical Mastery and Rounds, and each rejection case (wrong format, wrong version, hash mismatch, failed Quote Check) is tested
+
+### Story 4.6: Panic Mode «Eksamen om en time»
+
+As a student with an exam in one hour,
+I want a Round with only the most central concepts,
+So that I spend my last hour on what matters most.
+
+**Refs:** FR-20, FR-18 (items per concept) · AD-3, AD-17 (`panicMode`), AD-21 · DR-4 (new Microcopy key recorded)
+
+**Acceptance Criteria:**
+
+**Given** `core/composePanicRound(input)`
+**When** it runs
+**Then** it returns the 10 eligible concepts with the best Centrality Rank (all, if fewer than 10), ordered shaky → new → known, each contributing items as in FR-18, with unit tests for ≥ 10, < 10 and mixed states
+
+**Given** `features.panicMode` is `true` and Notatoversikt with no interrupted Round
+**When** I press 'Eksamen om en time' (secondary button beside 'Start runde')
+**Then** a Round composed by `composePanicRound` starts through the same Round transaction as Story 2.1, and its start shows the new key `panic.start` ("Eksamen om en time: de {n} viktigste begrepene.")
+**And** `panic.start` is added to `messages.ts` and recorded as a deviation to update EXPERIENCE.md (DR-9)
+
+**Given** a Panic Round
+**When** it runs
+**Then** Flashcards, Quiz, Resultat and Mastery behave as a normal Round
+
+**Given** `features.panicMode` is `false`
+**When** Notatoversikt renders
+**Then** no Panic Mode entry is shown
+
+## Epic 5: Ready for delivery
+
+The examiner can verify the delivery: content quality measured on the reference notes, accessibility verified by hand, README complete, and a fresh-clone run logged before 2026-12-12. No new FRs.
+
+### Story 5.1: Measure content quality on the reference notes
+
+As the developer (Tor),
+I want a documented, repeatable measurement of concept coverage, grounding and pass rate on the reference notes,
+So that the examiner can see that the Study Sets are good, not only well-formed.
+
+**Refs:** DR-3, DR-5 · SM-1, SM-2, SM-3, SM-6, SM-C1, SM-C2 · AD-13 (`evaluate.ts`)
+
+**Acceptance Criteria:**
+
+**Given** the three reference notes and their expected Key Concepts (Story 1.5)
+**When** I write the rubric
+**Then** `.docs/quality/rubric.md` defines a match as the same term or a clear synonym, and how a spot-check Item is judged as "follows from the cited Passage"
+
+**Given** the chosen model and current `PROMPT_VERSION`
+**When** I run `web/scripts/evaluate.ts` and the manual review on each reference note
+**Then** `.docs/quality/report.md` records per note: SM-1 coverage (≥ 80 % of expected concepts matched by a covered concept), SM-3 Quote Check pass rate (≥ 80 % of generated Items), and an SM-2 spot check of a stated sample size (≥ 90 % follow from the cited Passage), with model, prompt version and date
+
+**Given** a metric is missed
+**When** I act on it
+**Then** I follow the PRD order (tune the prompt, then try another model), re-record Fixtures and bump `PROMPT_VERSION` per Story 1.13, and re-measure; thresholds, Normalization and minimum Quote length are never loosened without a PRD update (SM-C2)
+
+**Given** SM-6
+**When** I compare preparing one note with the app against by hand
+**Then** a short qualitative self-test log is saved in `.logs/`, with no pass threshold
+
+**Given** the README
+**When** it is read
+**Then** it links to the rubric and the report
+
+### Story 5.2: Manual keyboard and accessibility check
+
+As a student who uses a keyboard or assistive technology,
+I want the whole study loop verified by hand, not only by axe,
+So that I can actually use the app the way I need to.
+
+**Refs:** NFR-6, NFR-7 · DR-7 (issues), DR-8 · UX-DR35 (manual keyboard checklist for UJ-1)
+
+**Acceptance Criteria:**
+
+**Given** `.docs/qa/keyboard-checklist.md`
+**When** it is written
+**Then** it lists every step of UJ-1 (Consent → upload → Genererer → Notatoversikt → Flashcards → Quiz → Resultat → reference jump and return → next Round) with the expected focus target and keys per step
+
+**Given** the checklist
+**When** I run it by hand in Chromium and Firefox
+**Then** each step is recorded pass/fail with keyboard only, at 320 px width, at 200 % zoom, and in forced-colors mode, plus a short NVDA pass over Consent, a Flashcard, a Quiz answer and Resultat
+
+**Given** a failure
+**When** it is found
+**Then** it is fixed in a story-scoped PR or recorded as a GitHub issue linked from the checklist; serious failures block delivery
+
+**Given** the README
+**When** it is read
+**Then** it links to the completed checklist with the date it was run
+
+### Story 5.3: Complete README and planning documents that match the app
+
+As the examiner,
+I want a README that gets me running and planning documents that describe what was actually built,
+So that I can assess the delivery without guessing.
+
+**Refs:** DR-1, DR-4, DR-6, DR-9 · AD-17 (flags), consistency conventions (README obligations)
+
+**Acceptance Criteria:**
+
+**Given** the README
+**When** it is reviewed against DR-1
+**Then** it contains prerequisites with versions, `docker compose up`, the test command, configuration (`.env.example`, OpenRouter key with a credit limit), a screenshot, Demo Mode as the default path, a folder overview, links to planning documents, `.logs/`, the QA log and tests, and the team status (solo by Tor; Lasse S. Drage dropped out before the brief)
+**And** it states the OMML limitation, last write wins across tabs, and the browser storage-deletion warning
+
+**Given** the delivered app
+**When** the planning documents are compared with it
+**Then** the PRD, EXPERIENCE.md, the architecture spine and `epics.md` are updated where they differ, and `.docs/deviations.md` lists every dropped or changed feature with its reason (including each Should flag left `false` and the `panic.start` key)
+
+**Given** the repository root
+**When** it is inspected
+**Then** there are no stray files, and `.gitignore` covers dependencies, build output and `.env` (DR-6)
+
+### Story 5.4: Fresh-clone run before delivery
+
+As the examiner,
+I want proof that the project runs from the README on a clean machine,
+So that I know my own attempt will work.
+
+**Refs:** DR-1, DR-2, DR-9 · SM-4, SM-5 · FR-23
+
+**Acceptance Criteria:**
+
+**Given** milestone M2 (2026-12-02)
+**When** it is reached
+**Then** a rehearsal of this story is run and logged, and its README/CI findings are fixed before the feature freeze
+
+**Given** a machine (or clean VM / user account) with no prior setup except Docker
+**When** I clone the repository and follow the README word for word
+**Then** a Demo Mode Round is completed within 15 minutes from clone, with the time measured (SM-4)
+
+**Given** the same clone
+**When** I run the documented test command
+**Then** it passes with no API key, and the latest CI run on `main` is green (SM-5)
+
+**Given** the run
+**When** it is finished
+**Then** a log in `.logs/` records the date (no later than 2026-12-12), environment, timings, every README step that was unclear or wrong, and the fixes made; any fix triggers a re-run of the affected steps
