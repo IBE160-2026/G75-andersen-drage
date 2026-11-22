@@ -15,7 +15,7 @@ Fortsette story 1.1 (one-command start med tom app og grønn testkjøring) fra d
 - Docker Desktop var ikke startet; startet den.
 - Verifisering: `docker compose up -d --build` OK; `GET /api/status` → `{"keyConfigured":false,"model":"anthropic/claude-haiku-5.5","provider":"OpenRouter","promptVersion":"0"}`; `docker compose run --rm test` exit 0 (Vitest 1, pytest 4, Playwright 2 bestått); kontrakt regenerert i test-imaget uten drift i `web/api/schema.d.ts`; `docker compose down` rent.
 - Spec satt til `done`; `1-1-…` i `sprint-status.yaml` satt til `review`.
-- Commit `4ce881403ffecb799bb30c9e3885804a048b8924` på `story/1-1-one-command-start` (ikke pushet).
+- Commit `4ce881403ffecb799bb30c9e3885804a048b8924` på `story/1-1-one-command-start`, pushet til origin 2026-11-22 (ingen PR ennå; CI kjører bare på PR og push til main).
 - Lukket åpent punkt «neste steg: bmad-build på story 1.1».
 
 ### Åpne punkter
