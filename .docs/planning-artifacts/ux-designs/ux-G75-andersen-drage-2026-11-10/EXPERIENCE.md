@@ -96,7 +96,7 @@ Correct-answer feedback phrasing: Microcopy (`quiz.correct`, `quiz.wrong`).
 
 ## Microcopy (bokmål)
 
-The UI strings for every state. **Status:** all strings are drafts by Claude in the teacher voice, awaiting Tor's approval `[ASSUMPTION]`. Exceptions: rows marked *(approved)* were approved by Tor (memlog 2026-11-12); rows marked *(decided)* were fixed by a memlog decision. `{…}` = variable. Strings marked (AT) are for assistive technology only (accessible names, visually hidden text, live-region announcements). Rows are grouped by surface in flow order.
+The UI strings for every state. **Status:** all strings are drafts by Claude in the teacher voice, awaiting Tor's approval `[ASSUMPTION]`. Exceptions: rows marked *(approved)* were approved by Tor (memlog 2026-11-12; Global and `start.empty` on 2026-11-22); rows marked *(decided)* were fixed by a memlog decision. `{…}` = variable. Strings marked (AT) are for assistive technology only (accessible names, visually hidden text, live-region announcements). Rows are grouped by surface in flow order.
 
 | Key | State / place | Norwegian string |
 |---|---|---|
@@ -107,13 +107,13 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | consent.accept / decline | Samtykke, buttons | "Jeg forstår, fortsett" / "Nei takk, vis demo" |
 | consent.declined | Start, after declining | "Du har ikke godtatt at notater sendes til {leverandør}. Du kan bruke demomodus, eller [godta nå]." (link opens the Consent dialog; also in Innstillinger) |
 | **Global** | | |
-| skip.link | First Tab stop | 'Gå til hovedinnhold' |
-| topbar.more | Mobile top bar | 'Mer' |
+| skip.link | First Tab stop *(approved)* | 'Gå til hovedinnhold' |
+| topbar.more | Mobile top bar *(approved)* | 'Mer' |
 | theme.toggle | Theme toggle, accessible name (AT) *(approved)* | 'Bytt til mørk modus' / 'Bytt til lys modus' |
-| demo.indicator | Top bar, Demo Mode on | "Demomodus" (link to Innstillinger) |
-| err.prefix | Before every error message (visible or AT) | "Feil:" |
+| demo.indicator | Top bar, Demo Mode on *(approved)* | "Demomodus" (link to Innstillinger) |
+| err.prefix | Before every error message (visible or AT) *(approved)* | "Feil:" |
 | **Start** | | |
-| start.empty | 'Dine notater' empty (the first string is the `h1`) | "Dine notater: ingen ennå" + "Last opp en fil, lim inn tekst eller prøv et eksempelnotat." |
+| start.empty | 'Dine notater' empty (the first string is the `h1`) *(approved)* | "Dine notater: ingen ennå" + "Last opp en fil, lim inn tekst eller prøv et eksempelnotat." |
 | start.dropzone | Drop zone | "Slipp en fil her eller velg fil" · ".txt .md .docx .pdf · maks 10 MB" |
 | start.paste.submit | Text area button | "Lag kort og quiz" |
 | err.type | Unsupported file type | "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf." |
@@ -194,7 +194,7 @@ Behavioral. Visual specs in `DESIGN.md` › Components (same names, same order);
 | Focus ring | All interactive elements | Appears on keyboard focus (`:focus-visible`), not on mouse click. |
 | Source panel | Notatoversikt, Round, Resultat | Always present on desktop, after the study panel in DOM. Scrolls independently; its scroll container is one Tab stop so keyboard users can scroll it. |
 | Passage | Source panel | Static text; becomes **active** when targeted by a source reference; programmatically focusable (`tabindex="-1"`), not a Tab stop. |
-| Source reference ("Kilde: P4") | Flashcard front and back, Quiz Question, Summary Point, Simpler Explanation, Resultat | Mouse or keyboard activation runs the reference jump (sequence: Interaction Primitives › Reference jump; FR-12). Allowed before reveal/answer (student's choice to peek) `[ASSUMPTION]`. |
+| Source reference ("Kilde: P4") | Flashcard front and back, Quiz Question, Summary Point, Simpler Explanation, Resultat | Mouse or keyboard activation runs the reference jump (sequence: Interaction Primitives › Reference jump; FR-12). Allowed before reveal/answer (student's choice to peek; confirmed by Tor 2026-11-22). |
 | Quote highlight | Source panel | Exactly one at a time; replaced by the next activation. The `<mark>` is bracketed by visually hidden `quote.start` / `quote.end` text, so screen readers hear where the Quote begins and ends inside the Passage. |
 | Return control | Top of source panel (desktop) / 'Kilde' tab (mobile) | Appears after every reference jump, both widths (sequence and return: Interaction Primitives › Reference jump). Shows `return.label`; the label follows context (kort / spørsmål / resultat). The target Passage carries `return.hint` via `aria-describedby`. Persistent until the next jump or Item change; no timer. |
 | Flashcard | Runde: flashcards | Front: question + source reference only (Quote would give the answer away). 'Snu kortet' (Space) reveals back: answer + Quote + reference. After reveal: 'Kunne det ikke' (1) / 'Kunne det' (2) mark the card and advance to the next one; mark saved immediately and updates Mastery State (FR-13, FR-17). 'Forklar enklere' available on the back `[ASSUMPTION]`. The card is a labeled region (the **Flashcard region**) whose heading is "Kort {x} av {y}". |
@@ -392,7 +392,7 @@ The PRD Update run of 2026-11-12 adopted items 1–7 (FR-12, FR-25, FR-26, FR-27
 
 **[OPEN]**: provider name in Consent; Note-language `lang` attribute; where Consent is stored (UJ-2 failure path); qualities liked in 'Logically' / 'Open notebook'. Labels, error strings and empty copy are drafted in Microcopy (awaiting approval).
 
-**[ASSUMPTION] carried from memlog:** student may open the source reference before reveal/answer; "du" form; no exclamation marks; ties broken by last practiced; stakes (graded IBE160, examiner looks for wireframes) not yet confirmed by Tor.
+**[ASSUMPTION] carried from memlog:** student may open the source reference before reveal/answer (confirmed by Tor 2026-11-22); "du" form; no exclamation marks; ties broken by last practiced; stakes (graded IBE160, examiner looks for wireframes) not yet confirmed by Tor.
 
 ## Known drift
 
