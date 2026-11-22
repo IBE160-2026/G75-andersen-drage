@@ -539,7 +539,7 @@ So that I get from file to verified content in one smooth step.
 **When** the happy path runs
 **Then** upload → Genererer → stored records → Notatoversikt completes with exactly one request
 
-### Story 1.10: Generation errors, 'Prøv igjen' and interrupted generation
+### Story 1.10: Generation errors, retry and interrupted generation
 
 As a student,
 I want a clear way forward whenever generation fails or I leave mid-way,

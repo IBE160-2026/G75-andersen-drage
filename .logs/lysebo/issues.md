@@ -40,5 +40,5 @@
 - [x] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — M1 2026-11-28: Demo-løkka (1.1–1.14) må virke ende-til-ende; ellers kutt Epic 4, flytt 3.4/3.6 sist (erstattet 2026-11-22 av rekalibrerte milepæler under)
 - [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — opprett .docs/deviations.md: Hurtigtaster flyttet til Should (UX-DR16), ny nøkkel `panic.start` inn i EXPERIENCE.md
 - [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — milepæler (5 t/dag): M0 26.11 (1.1–1.4), M1 1.12 (Demo-løkka), M2 4.12 (Epic 2 + prøvekjøring ren klon), Should-kutt 6.12, M3 8.12, frys 9.12; logg timer brukt mot budsjett
-- [ ] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — vurder ASCII-tittel for story 1.10 (nøkkel/branch med «ø»)
+- [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — vurder ASCII-tittel for story 1.10 (nøkkel/branch med «ø») (løst 2026-11-22)
 - [ ] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — neste steg: bmad-build på story 1.1
