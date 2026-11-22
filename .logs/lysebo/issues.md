@@ -34,5 +34,8 @@
 - [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — opprett OpenRouter-nøkkel med kredittgrense og nevn det i README
 - [ ] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — lag injeksjonstest-note og PDF med topptekst/bunntekst i reference-notes/edge-cases/
 - [x] 2026-11-19 [arkitektur](991-2026-11-18-15-58-21-arkitektur.md) — neste BMad-steg: bmad-spec (spine som companion), deretter bmad-create-epics-and-stories (løst 2026-11-21: bmad-spec hoppet over, se [kuttdato-should](989-2026-11-21-13-14-06-kuttdato-should.md))
-- [ ] 2026-11-21 [kuttdato-should](989-2026-11-21-13-14-06-kuttdato-should.md) — neste BMad-steg: bmad-create-epics-and-stories (hver story viser til FR- og AD-ID-er), deretter bmad-sprint-planning
-- [ ] 2026-11-21 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — fortsett bmad-create-epics-and-stories i steg 3: gjennomgå Epic 1 (vurder å slå sammen 1.6+1.7 og 1.10+1.11), skriv Epic 2–5, kjør steg 4
+- [x] 2026-11-21 [kuttdato-should](989-2026-11-21-13-14-06-kuttdato-should.md) — neste BMad-steg: bmad-create-epics-and-stories (hver story viser til FR- og AD-ID-er), deretter bmad-sprint-planning (løst 2026-11-22: epics ferdig)
+- [x] 2026-11-21 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — fortsett bmad-create-epics-and-stories i steg 3: gjennomgå Epic 1 (vurder å slå sammen 1.6+1.7 og 1.10+1.11), skriv Epic 2–5, kjør steg 4 (løst 2026-11-22)
+- [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — neste BMad-steg: bmad-sprint-planning
+- [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — M1 2026-11-28: Demo-løkka (1.1–1.14) må virke ende-til-ende; ellers kutt Epic 4, flytt 3.4/3.6 sist
+- [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — opprett .docs/deviations.md: Hurtigtaster flyttet til Should (UX-DR16), ny nøkkel `panic.start` inn i EXPERIENCE.md
