@@ -1,0 +1,87 @@
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when its first story starts (via build's sprint sync)
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates the next story after the previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; the status view surfaces open ones
+generated: 11-22-2026 13:13
+last_updated: 11-22-2026 13:13
+project: G75-andersen-drage
+project_key: NOKEY
+tracking_system: file-system
+story_location: .docs/implementation-artifacts
+development_status:
+  epic-1: backlog
+  1-1-one-command-start-with-an-empty-app-and-a-green-test-run: backlog
+  1-2-norwegian-app-shell-with-design-tokens-and-accessible-struct: backlog
+  1-3-consent-gate-and-innstillinger-samtykke: backlog
+  1-4-upload-a-text-or-markdown-note-and-reject-unusable-input: backlog
+  1-5-upload-docx-and-text-based-pdf-notes: backlog
+  1-6-proxy-generates-and-validates-a-study-set: backlog
+  1-7-proxy-guards-origin-rate-limit-and-no-data-retention: backlog
+  1-8-verify-the-study-set-in-the-browser-quote-check-and-minimums: backlog
+  1-9-generate-a-study-set-from-an-uploaded-note: backlog
+  1-10-generation-errors-prøv-igjen-and-interrupted-generation: backlog
+  1-11-notatoversikt-with-summary-key-concepts-and-source-panel: backlog
+  1-12-jump-from-a-source-reference-to-the-highlighted-quote: backlog
+  1-13-record-fixtures-and-compare-models-on-the-reference-notes: backlog
+  1-14-demo-mode-with-the-bundled-sample-notes: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-start-a-round-from-notatoversikt: backlog
+  2-2-review-flashcards-and-mark-them: backlog
+  2-3-answer-quiz-questions: backlog
+  2-4-resultat-with-score-and-sources: backlog
+  2-5-the-next-round-targets-my-weak-spots: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-dine-notater-start-screen: backlog
+  3-2-readiness-score-and-gap-note: backlog
+  3-3-recognize-a-known-note-and-reuse-the-cache: backlog
+  3-4-paste-text-as-a-note: backlog
+  3-5-survive-an-interrupted-round: backlog
+  3-6-explain-simpler: backlog
+  3-7-robust-storage: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-keyboard-shortcuts-for-flashcards-and-quiz: backlog
+  4-2-importance-level-on-notes: backlog
+  4-3-arkiv-archive-restore-and-permanent-delete: backlog
+  4-4-kveldsmodus-dark-mode: backlog
+  4-5-export-and-import-progress: backlog
+  4-6-panic-mode-eksamen-om-en-time: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-measure-content-quality-on-the-reference-notes: backlog
+  5-2-manual-keyboard-and-accessibility-check: backlog
+  5-3-complete-readme-and-planning-documents-that-match-the-app: backlog
+  5-4-fresh-clone-run-before-delivery: backlog
+  epic-5-retrospective: optional
