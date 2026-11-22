@@ -200,13 +200,27 @@ The examiner can verify the delivery: content quality measured on the reference 
 
 ## Milestones and re-plan rule
 
-Added by the 2026-11-22 pre-mortem (solo developer, 36 stories, 20 days).
+Added by the 2026-11-22 pre-mortem; recalibrated the same day to **5 active developer hours per day** (solo, AI-assisted; ≈ 100 h from 2026-11-22 to 2026-12-11). Budgets are Tor's active time (supervision, review, manual verification, environment debugging), not AI run time.
 
-- **M1 — 2026-11-28:** Demo loop works end to end (Stories 1.1–1.14). If missed: Epic 4 is cut entirely and Stories 3.4 and 3.6 move to the end of the queue.
-- **M2 — 2026-12-02:** Epic 2 done; Core loop for UJ-1 and UJ-3 complete. A rehearsal of Story 5.4 (fresh-clone run) follows immediately.
-- **M3 — 2026-12-06:** Epic 3 done; the Should cut is decided here (PRD §8.1). Unstarted Epic 4 stories keep their flags `false`.
-- **Feature freeze — 2026-12-09:** after this date only Epic 5 and bug fixes.
-- **Re-plan rule:** at each milestone, compare done stories with the plan; if behind, cut in the stated order and record each cut in `.docs/deviations.md` (DR-4, DR-9).
+| Epic | Budget (active h) | Days at 5 h |
+|---|---|---|
+| Epic 1 | 45–55 | ≈ 10 |
+| Epic 2 | 13–17 | ≈ 3 |
+| Epic 3 | 18–22 (3.4 + 3.6 ≈ 6) | ≈ 4 |
+| Epic 4 | 15–20 | only if ahead |
+| Epic 5 | 10–14 | ≈ 3 |
+| **Total without Epic 4** | **≈ 86–108** | **≈ 20** |
+
+The plan fits only without Epic 4 and at mid-range estimates; there is no slack beyond the cut order below.
+
+- **M0 — 2026-11-26 (early warning):** Stories 1.1–1.4 done (compose, CI, shell, Consent, `.txt`/`.md` upload). If missed: Story 1.13 records one model only (the provisional default stays) and 3.6 is cut now.
+- **M1 — 2026-12-01:** Demo loop works end to end (Stories 1.1–1.14). If missed by more than one day: cut 3.6 and 3.4.
+- **M2 — 2026-12-04:** Epic 2 done; Core loop for UJ-1 and UJ-3 complete. A rehearsal of Story 5.4 (fresh-clone run) follows the same day.
+- **Should cut — 2026-12-06 (PRD §8.1, fixed):** Epic 4 stories not done by this date keep their flags `false`. Expected outcome at 5 h/day: Epic 4 is cut; a story is started only if M2 was reached early.
+- **M3 — 2026-12-08:** Epic 3 done (in its build order; cut items recorded).
+- **Feature freeze — 2026-12-09:** after this date only Epic 5 and bug fixes; Epic 5 runs 2026-12-09 to 2026-12-11, final fresh-clone log by 2026-12-12 (DR-9).
+- **Cut order (whenever behind):** Epic 4 → 3.6 → 3.4 → Story 1.13 reduced to one model → Story 1.5 PDF header/footer removal simplified. Core stories (Epic 1–2) and Epic 5 are never cut.
+- **Re-plan rule:** at each milestone, compare done stories and hours spent with the budget; if behind, cut in the stated order and record each cut in `.docs/deviations.md` (DR-4, DR-9).
 
 **Definition of done (every story):** acceptance criteria met; tests added and green in CI; README updated wherever the story changes setup, commands, configuration or behaviour the README describes; PR reviewed (DR-8).
 
@@ -1379,7 +1393,7 @@ So that I know my own attempt will work.
 
 **Acceptance Criteria:**
 
-**Given** milestone M2 (2026-12-02)
+**Given** milestone M2 (2026-12-04)
 **When** it is reached
 **Then** a rehearsal of this story is run and logged, and its README/CI findings are fixed before the feature freeze
 
