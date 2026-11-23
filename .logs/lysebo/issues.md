@@ -60,5 +60,6 @@
 - [x] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — bekreft at spec-1-4 beholdes samlet (ikke delt), og fortsett bmad-build med implementering av story 1.4 (løst 2026-11-23: beholdt samlet, implementert)
 - [ ] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — manuell sjekk ved 320 px: velg og slipp fil med bare tastatur, synlig fokusring på slippsonen
 - [x] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — kodegjennomgang av story 1.4, deretter status review/done i spec og sprint-status (løst 2026-11-23: review-runde 1, spec done, sprint review, commit a2111fc)
-- [ ] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — PR #4 for story 1.4 (opprettet 2026-11-23): grønn CI og merge; sett deretter 1-4 til done i sprint-status.yaml
-- [ ] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — pull-loggen på lokal main og story-1-4-loggen har begge nummer 983: gi pull-loggen nytt nummer før main pushes eller branchen merges
+- [x] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — PR #4 for story 1.4 (opprettet 2026-11-23): grønn CI og merge; sett deretter 1-4 til done i sprint-status.yaml (løst 2026-11-23: merget i b880d77, 1-4 done)
+- [x] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — pull-loggen på lokal main og story-1-4-loggen har begge nummer 983: gi pull-loggen nytt nummer før main pushes eller branchen merges
+- [ ] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — neste story: 1.5 (opplasting av .docx og tekstbasert PDF)
