@@ -67,6 +67,7 @@ Opprette PR for story 1.2 og følge med på CI (etter `bmad-help`, som anbefalte
 - **Sprint-status:** 1-2 satt til `done` i `a9cd9b6` og pushet til branchen sammen med loggcommiten. CI kjørte på nytt og ble grønn (1m50s, run 45122590740).
 - **Merget:** PR #2 inn i `main` som merge-commit `dc682bc`. Første merge-forsøk feilet på en nettverksfeil mot GitHub, og andre forsøk gikk gjennom.
 - Lukket i issues.md: «PR for story 1.2 og grønn CI» og «merge PR #2 og sett 1-2 til done».
+- **Pushet:** loggcommiten `7f244d0` er pushet til `origin/main` etter `git pull` (allerede oppdatert).
 
 ### Åpne punkter
 - Den manuelle tastatursjekken ved 320 px er fortsatt ikke gjort (står allerede i issues.md).
