@@ -1,0 +1,11 @@
+Datanettverk
+
+Et datanettverk er to eller flere datamaskiner som er koblet sammen slik at de kan utveksle data. Det minste nettverket er to maskiner med en kabel mellom seg, mens det største er Internett, som binder sammen milliarder av enheter over hele verden.
+
+Data sendes i små biter som kalles pakker. Hver pakke har en adresse til mottakeren og et nummer, slik at pakkene kan settes sammen i riktig rekkefølge når de kommer frem. Pakkene kan ta ulike veier gjennom nettet, og en ruter velger for hver pakke hvilken vei den skal gå videre.
+
+IP-adressen identifiserer en maskin på nettet. Fordi tallene er vanskelige å huske, oversetter DNS navn som eksempel.no til IP-adresser. Når du skriver inn en nettadresse, spør maskinen din først en DNS-tjener om hvilken adresse navnet hører til.
+
+TCP sørger for at alle pakkene kommer frem. Mottakeren bekrefter hver pakke, og en pakke som ikke blir bekreftet, sendes på nytt. UDP gjør ikke dette og er derfor raskere, men pakker kan gå tapt. Strømming av lyd og video bruker ofte UDP, fordi en liten feil er bedre enn en lang pause.
+
+Trådløse nettverk bruker radiobølger i stedet for kabler. De er praktiske, men signalet kan fanges opp av alle i nærheten, så trafikken bør krypteres. WPA3 er dagens anbefalte standard for kryptering av trådløse hjemmenett, og et sterkt passord gjør det vanskeligere for uvedkommende å koble seg til.

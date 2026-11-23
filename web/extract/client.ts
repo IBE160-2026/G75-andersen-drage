@@ -1,6 +1,6 @@
 // Main-thread side of extraction (Story 1.4): the type and size checks that run before any byte
 // is read, and the Web Worker round trip with its 15 s kill switch (AD-8). Never rejects.
-import { fileType, type ExtractErrorKey, type ExtractResult } from "./text";
+import { fileType, type ExtractErrorKey, type ExtractResult } from "./types";
 
 /** FR-3: files over 10 MB are rejected before they are read. */
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;

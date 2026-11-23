@@ -4,3 +4,6 @@
 # Binary documents (reference notes): never convert line endings.
 *.pdf binary
 *.docx binary
+
+# Edge-case test files (Story 1.5): bytes are the test data (encodings, truncation), never normalized.
+reference-notes/edge-cases/* -text

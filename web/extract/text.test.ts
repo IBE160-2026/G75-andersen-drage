@@ -1,9 +1,20 @@
-// Text extraction (spec 1.4 I/O & Edge-Case Matrix): decoding, every rejection and hash identity.
-import { describe, expect, it } from "vitest";
+// Text extraction (spec 1.4 and 1.5 I/O & Edge-Case Matrix): decoding, routing, every rejection and hash identity.
+import { readFileSync } from "node:fs";
+import { describe, expect, it, vi } from "vitest";
 import { NORMALIZATION_VERSION } from "../core/passages";
+import { pdfPages, type PdfItem } from "./pdf";
 import { decodeText, extractNote, fileType } from "./text";
 
+// pdfPages stays real unless a test stubs one call (0 pages, the scanned threshold).
+vi.mock("./pdf", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./pdf")>();
+  return { ...actual, pdfPages: vi.fn(actual.pdfPages) };
+});
+/** One page holding `chars` non-whitespace characters. */
+const pageOf = (chars: number): PdfItem[] => [{ str: "x".repeat(chars), transform: [10, 0, 0, 10, 0, 700], width: chars * 5, height: 10 }];
+
 const utf8 = (s: string) => new TextEncoder().encode(s);
+const edge = (name: string) => new Uint8Array(readFileSync(new URL(`../../reference-notes/edge-cases/${name}`, import.meta.url)));
 const words = (n: number, word = "ord") => Array.from({ length: n }, () => word).join(" ");
 /** windows-1252 bytes for Latin-1 text (code points < 256 map one to one, except 0x80–0x9F). */
 const cp1252 = (s: string) => Uint8Array.from(s, (c) => c.charCodeAt(0));
@@ -107,8 +118,54 @@ describe("extractNote", () => {
     expect(await extractNote(name, utf8(valid))).toEqual({ ok: false, error: "err.type" });
   });
 
-  it.each(["rapport.docx", "notat.pdf"])("rejects %s with err.unreadable until Story 1.5", async (name) => {
+  it.each(["rapport.docx", "notat.pdf"])("rejects text bytes misnamed %s with err.unreadable", async (name) => {
     expect(await extractNote(name, utf8(valid))).toEqual({ ok: false, error: "err.unreadable" });
+  });
+
+  it.each(["rapport.docx", "notat.pdf"])("rejects empty bytes named %s with err.unreadable", async (name) => {
+    expect(await extractNote(name, new Uint8Array())).toEqual({ ok: false, error: "err.unreadable" });
+  });
+
+  it("checks the type before parsing: a PDF named .doc is err.type", async () => {
+    expect(await extractNote("notat.doc", edge("nb-topptekst-bunntekst.pdf"))).toEqual({ ok: false, error: "err.type" });
+  });
+
+  it("routes .docx and .pdf by extension, case-insensitive, with encodingFallback false", async () => {
+    for (const [name, file] of [
+      ["Tabell.DOCX", "nb-tabell-digitale-tjenester.docx"],
+      ["Topp.PDF", "nb-topptekst-bunntekst.pdf"],
+    ]) {
+      const result = await extractNote(name, edge(file));
+      if (!result.ok) throw new Error(`${name}: ${result.error}`);
+      expect(result.note.fileName).toBe(name);
+      expect(result.note.encodingFallback).toBe(false);
+      expect(result.note.normalizationVersion).toBe(NORMALIZATION_VERSION);
+    }
+  });
+
+  it("does not detach or change the caller's bytes", async () => {
+    const bytes = edge("nb-topptekst-bunntekst.pdf");
+    const copy = bytes.slice();
+    await extractNote("a.pdf", bytes);
+    await extractNote("b.docx", bytes);
+    expect(bytes).toEqual(copy);
+  });
+
+  it("a PDF with 0 pages is err.unreadable", async () => {
+    vi.mocked(pdfPages).mockResolvedValueOnce([]);
+    expect(await extractNote("tom.pdf", utf8("x"))).toEqual({ ok: false, error: "err.unreadable" });
+  });
+
+  it("scanned threshold: an average of exactly 100 characters per page is not err.scanned, 99 is", async () => {
+    vi.mocked(pdfPages).mockResolvedValueOnce([pageOf(150), pageOf(50)]);
+    // Two long "words": past the scanned check, stopped by the word count.
+    expect(await extractNote("grense.pdf", utf8("x"))).toEqual({ ok: false, error: "err.tooShort" });
+    vi.mocked(pdfPages).mockResolvedValueOnce([pageOf(150), pageOf(48)]);
+    expect(await extractNote("grense.pdf", utf8("x"))).toEqual({ ok: false, error: "err.scanned" });
+  });
+
+  it("checks scanned before word count: an image-only PDF is err.scanned, not err.noText", async () => {
+    expect(await extractNote("skannet.pdf", edge("nb-skannet.pdf"))).toEqual({ ok: false, error: "err.scanned" });
   });
 
   it("rejects an empty file with err.noText", async () => {

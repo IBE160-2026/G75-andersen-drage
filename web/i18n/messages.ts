@@ -47,6 +47,7 @@ export const messages = {
   "err.type": "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf.",
   "err.size": "Filen er større enn 10 MB. Velg en mindre fil.",
   "err.noText": "Fant ingen tekst i filen. Prøv en annen fil, eller lim inn teksten.",
+  "err.scanned": "Skannede PDF-er støttes ikke. Bruk en PDF med tekst, eller lim inn teksten.",
   "err.unreadable": "Filen kunne ikke leses. Prøv å lagre den på nytt, eller lim inn teksten.",
   "err.tooShort": "Notatet er for kort. Det trengs minst 150 ord.",
   "err.tooLong": "Notatet er for langt. Grensen er 15 000 ord; del det opp.",
