@@ -37,6 +37,20 @@ export const messages = {
   // Start
   "start.empty": "Dine notater: ingen ennå",
   "start.empty.next": "Last opp en fil, lim inn tekst eller prøv et eksempelnotat.",
+  // Drop zone (spec 1.4, Decisions). [..] marks the link-styled part; start.dropzone.types is the second line.
+  "start.dropzone": "Slipp en fil her eller [velg fil]",
+  "start.dropzone.types": ".txt .md .docx .pdf · maks 10 MB",
+  // Note meta after a successful extraction (role="status"); Story 1.9 reuses it.
+  "note.meta": "{filnavn} · {ord} ord · {avsnitt} avsnitt",
+
+  // Input rejected (FR-3), inline at the drop zone
+  "err.type": "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf.",
+  "err.size": "Filen er større enn 10 MB. Velg en mindre fil.",
+  "err.noText": "Fant ingen tekst i filen. Prøv en annen fil, eller lim inn teksten.",
+  "err.unreadable": "Filen kunne ikke leses. Prøv å lagre den på nytt, eller lim inn teksten.",
+  "err.tooShort": "Notatet er for kort. Det trengs minst 150 ord.",
+  "err.tooLong": "Notatet er for langt. Grensen er 15 000 ord; del det opp.",
+  "warn.encoding": "Æ, ø og å kan vises feil i dette notatet.",
 
   // Innstillinger
   "settings.h1": "Innstillinger",

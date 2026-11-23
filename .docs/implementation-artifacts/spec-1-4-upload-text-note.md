@@ -2,9 +2,10 @@
 title: 'Story 1.4: Upload a text or Markdown Note and reject unusable input'
 type: 'feature'
 created: '2026-11-23'
-status: 'ready-for-dev'
+status: 'done'
 route: 'dispatch'
-review_loop_iteration: 0
+baseline_commit: '478363173c390781cf08c5e952c073f2afad52df'
+review_loop_iteration: 1
 context:
   - '{project-root}/.docs/implementation-artifacts/epic-1-context.md'
 ---
@@ -34,6 +35,7 @@ context:
 | `.docx`, `.pdf` | accepted type; stub → `err.unreadable` until 1.5 |
 | UTF-8 with BOM | BOM stripped; same hash as without |
 | windows-1252 bytes | decoded as `windows-1252`; non-blocking `warn.encoding` (`role="status"`) |
+| UTF-16 with BOM (`FF FE` / `FE FF`) | decoded as UTF-16 LE/BE, BOM stripped; no `warn.encoding`; same hash as the UTF-8 file (decided 2026-11-23) |
 | `.doc`, `.rtf`, no extension | `err.type`, file never read |
 | > 10 × 1024 × 1024 bytes | `err.size`, file never read |
 | 0 bytes / whitespace only | `err.noText` |
@@ -60,16 +62,16 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `web/core/normalize.ts` + test -- `normalize(text)`: NFKC → hyphen rejoin → collapse whitespace → unify quotes (1.8 Quote Check reuses it).
-- [ ] `web/core/passages.ts` + test -- `toParagraphs`, `toPassages`, `countWords`, `NORMALIZATION_VERSION`, `PASSAGE_LIMIT`.
-- [ ] `web/core/noteHash.ts` + test -- SHA-256 lowercase hex of Passage texts joined by `"\n\n"`.
-- [ ] `web/core/types.ts` -- `Passage {id, text}`, `ExtractedNote {fileName, passages, wordCount, normalizationVersion, encodingFallback}`.
-- [ ] `web/extract/text.ts` + test -- `decodeText(bytes)` (fatal UTF-8, BOM strip, 1252 fallback flag); `extractNote(...)` returns a result or error key, never throws.
-- [ ] `web/extract/worker.ts`; `web/extract/client.ts` + test -- `checkFile(file)`; `extractInWorker(file, {createWorker, timeoutMs = 15000})`, terminates on timeout or error.
-- [ ] `web/components/DropZone/` -- label around a visually hidden input + drop target; `aria-disabled` while processing; first file of a drop only.
-- [ ] `web/app/page.tsx`, `web/i18n/messages.ts` -- wire up; keys per Decisions + `note.meta`.
-- [ ] `e2e/upload.spec.ts` -- every matrix row except the hang, via `setInputFiles` buffers; no `/api/study-set` request; axe with an error shown at desktop and 320 px.
-- [ ] `.docs/deviations.md` D-5 (new/split keys); mark approved EXPERIENCE.md rows; one README line on files and limits.
+- [x] `web/core/normalize.ts` + test -- `normalize(text)`: NFKC → hyphen rejoin → collapse whitespace → unify quotes (1.8 Quote Check reuses it).
+- [x] `web/core/passages.ts` + test -- `toParagraphs`, `toPassages`, `countWords`, `NORMALIZATION_VERSION`, `PASSAGE_LIMIT`.
+- [x] `web/core/noteHash.ts` + test -- SHA-256 lowercase hex of Passage texts joined by `"\n\n"`.
+- [x] `web/core/types.ts` -- `Passage {id, text}`, `ExtractedNote {fileName, passages, wordCount, normalizationVersion, encodingFallback}`.
+- [x] `web/extract/text.ts` + test -- `decodeText(bytes)` (fatal UTF-8, BOM strip, 1252 fallback flag); `extractNote(...)` returns a result or error key, never throws.
+- [x] `web/extract/worker.ts`; `web/extract/client.ts` + test -- `checkFile(file)`; `extractInWorker(file, {createWorker, timeoutMs = 15000})`, terminates on timeout or error.
+- [x] `web/components/DropZone/` -- label around a visually hidden input + drop target; `aria-disabled` while processing; first file of a drop only.
+- [x] `web/app/page.tsx`, `web/i18n/messages.ts` -- wire up; keys per Decisions + `note.meta`.
+- [x] `e2e/upload.spec.ts` -- every matrix row except the hang, via `setInputFiles` buffers; no `/api/study-set` request; axe with an error shown at desktop and 320 px.
+- [x] `.docs/deviations.md` D-5 (new/split keys); mark approved EXPERIENCE.md rows; one README line on files and limits.
 
 **Acceptance Criteria:**
 - Given `docker compose run --rm test` with no key, when run, then all three suites pass.
@@ -77,9 +79,45 @@ context:
 
 ## Implementation Notes
 
+- **Note Hash without `crypto.subtle`:** the Compose test run serves the app from `http://web:3000`, which is not a secure context, so `crypto.subtle` is missing in the browser and worker (`--unsafely-treat-insecure-origin-as-secure` did not take effect in Playwright's Chromium). `core/sha256.ts` is a small pure SHA-256 (no dependency), checked against the FIPS vectors and `node:crypto`; `noteHash()` is therefore synchronous and works on any origin and in Node.
+- **″ before NFKC:** NFKC turns ″ (U+2033) into two ′, so `normalize()` maps ″ → `"` first; the other rules run in the stated order.
+- **Headings and tables:** a heading is a paragraph of its own (Markdown headings are one line). Following AD-8 ("table rows … are separate"), each line starting with `|` is a paragraph of its own, and delimiter rows (`|---|---|`) are dropped. Closing `#`s of a heading are stripped; thematic breaks and setext underlines (`---`, `***`, `___`, `===`, `- - -`, `* * *`) end the paragraph and are dropped; Passages with no letter or digit are dropped.
+- **Review fixes:** UTF-16 LE/BE is decoded by its BOM (no fallback flag); `normalize()` first removes U+00AD, U+200B–U+200D, U+2060 and U+FEFF, rejoins a line-end U+2010 hyphen too, and maps ‴ ‶ ‷ to `"` before NFKC; the drop zone blocks the browser's default for file drags anywhere on the window.
+- **Hash in the DOM:** the `role="status"` meta line carries `data-note-hash`, so e2e can compare hashes; nothing else reads it before 1.9.
+- **"Never read":** e2e counts `new Worker` calls; the main thread never reads the file, so zero workers means the file was not read.
+- **Reference note in the test image:** `e2e/Dockerfile` copies `reference-notes/nb-smidig-scrum.md` for the Vitest smoke test.
+- **Numbers in `note.meta`:** formatted with `Intl.NumberFormat("nb-NO")` (thousands separated by a no-break space).
+
 ## Spec Change Log
 
+- **2026-11-23, review pass 1 (intent_gap BH5/EC6):** Tor decided that UTF-16 files with a BOM are decoded as UTF-16 (new matrix row in the frozen block). He also chose to keep the green implementation and fix this together with the patch findings, instead of the workflow's revert-and-replan loopback. Known-bad state avoided: UTF-16 notes accepted as NUL-interleaved windows-1252 text.
+
 ## Review Triage Log
+
+Review pass 1 (2026-11-23): Blind Hunter (BH), Edge Case Hunter (EC), Verification Gap (VG).
+
+| # | Finding | Verdict | Evidence | Route |
+|---|---------|---------|----------|-------|
+| BH5, EC6 | UTF-16 file (BOM `FF FE`/`FE FF`) decoded as windows-1252 | medium | Not valid UTF-8 → 1252 fallback; NUL-interleaved tokens still contain letters, so a 200-word UTF-16 note passes with garbage text and only `warn.encoding`. The frozen matrix maps every non-UTF-8 file to 1252; decode-as-UTF-16 vs reject is a choice the intent does not make. | intent_gap |
+| BH8, EC3, EC4, EC5 | Markdown structure outside the rule list leaks into Passages | medium | `---`/`***`/`===` lines are joined into paragraph text; `- - -` leaves Passage `"- -"`; `## Tittel ##` keeps `##`; word-less Passages get IDs and count in `note.meta` "avsnitt". | patch |
+| BH7 | Text after a table row is glued onto the row | low | `TABLE_ROW` flushes before a row only, so `"| a | b |\nTekst"` → one paragraph. | patch |
+| BH3 | File dropped outside the zone opens in the browser | medium | Only the `<label>` prevents default on dragover/drop; a near-miss navigates away from the app. | patch |
+| VG1, BH11 | Busy guard ("input and drops ignored while processing", `aria-disabled`) untested | medium | Pre-verified: no test overlaps two uploads or asserts `aria-disabled`; removing the guard keeps the run green. | patch |
+| VG2 | Success → rejection clearing the Note meta untested | low | Pre-verified: no test runs `expectRejected` after `expectAccepted`. | patch |
+| VG3 | `nb-NO` thousands grouping in `note.meta` untested | low | Pre-verified: only a 206-word exact assertion. One more e2e assertion fixes it. | patch |
+| BH9 | `normalize()` keeps soft hyphen / zero-width chars; U+2010 line-end hyphen not rejoined | low | NFKC keeps U+00AD, U+200B–U+200D, U+2060, U+FEFF; `HYPHEN_BREAK` matches ASCII `-` only. One-line correction. | patch |
+| EC10 | `‴ ‶ ‷` expand under NFKC | low | Same mechanism as ″; direct addition to the pre-NFKC mapping. | patch |
+| BH2 | D-5 says EXPERIENCE.md gained `start.dropzone.types`/`note.meta` rows; it did not | low | EXPERIENCE.md hunk only adds *(approved)* tags. Direct doc correction. | patch |
+| BH4 | No busy announcement; old error stays until the new result | low | Text extraction finishes in milliseconds, so the window is negligible; a fix needs new busy UI and strings. | reject |
+| BH6 | `ORDERED` splits hard-wrapped lines starting "17. mai …" | low | Follows the Design Notes rule (`1.` starts a list item); changing it edits this spec. | reject |
+| EC1 | CR-only line endings | low | Classic-Mac files only; the Design Notes fix `\r?\n`, so the fix edits this spec. | reject |
+| EC2 | Code fences not handled | low | Fence lines become word-less Passages (removed by the BH8 patch); `#` inside code is rare in student notes; a fix needs fence state. | reject |
+| BH12, EC9 | Worker not terminated on unmount | low | Text extraction answers in ms; the worker terminates on answer or at 15 s; React 18 ignores the late setState. A fix needs abort plumbing. | reject |
+| BH13 | Drag highlight flickers over child spans | low | `dragleave`→`dragenter` on children re-sets `data-over` in the same frame; a fix needs a counter. | reject |
+| BH10, EC7, EC8 | `isResult` accepts unknown error keys / `note: null` | false | The only sender is `worker.ts`, which posts `extractNote`'s typed result; the case is unreachable. | reject |
+| BH1, VG-other | Spec `in-review` vs sprint `in-progress` | false | The workflow syncs sprint status at presentation; both values are intermediate. | reject |
+| BH14 | `data-note-hash` in the DOM; keyboard test hard-codes `3px` | false | The hook is documented (Implementation Notes); a token change failing the test is visible, not a silent regression. | reject |
+| EC11 | `PASSAGE_LIMIT` counts UTF-16 units | false | "Characters" is not defined as code points; `length` is identical in Node and browsers, which is what the hash needs. | reject |
 
 ## Design Notes
 

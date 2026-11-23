@@ -1,0 +1,48 @@
+/* DESIGN.md › Drop zone (components.drop-zone): dashed ink-muted border, rounded.md, centred text. */
+.zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-6) var(--spacing-4);
+  background: var(--colors-surface);
+  border: 1px dashed var(--colors-ink-muted);
+  border-radius: var(--rounded-md);
+  text-align: center;
+  cursor: pointer;
+}
+
+.zone:hover,
+.zone[data-over] {
+  background: var(--colors-surface-hover);
+}
+
+.zone[data-over] {
+  border-style: solid;
+}
+
+/* The input is visually hidden, so its keyboard focus ring is drawn on the zone. */
+.zone:has(input:focus-visible) {
+  outline: var(--spacing-focus-width) solid var(--colors-focus);
+  outline-offset: var(--spacing-focus-offset);
+}
+
+.zone[data-busy] {
+  cursor: progress;
+  color: var(--colors-ink-muted);
+}
+
+.main {
+  font-size: var(--typography-body-font-size);
+}
+
+.link {
+  color: var(--colors-accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.types {
+  color: var(--colors-ink-muted);
+  font-size: var(--typography-reference-font-size);
+}

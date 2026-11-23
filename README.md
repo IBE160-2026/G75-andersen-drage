@@ -63,6 +63,7 @@ reference-notes/    referansenotater (DR-3)
 - **Tekst:** all synlig tekst ligger i `web/i18n/messages.ts` og hentes med `t("nøkkel")`. Nøklene følger Microcopy-tabellen i EXPERIENCE.md.
 - **Designtokens:** `web/styles/tokens.css` er hentet fra frontmatter i DESIGN.md (`:root` = lys, `[data-theme="dark"]` = mørk). Komponentene bruker bare `var(--token)` i sin egen CSS Module, aldri hex-farger. En Vitest-test sjekker at tokens.css stemmer med DESIGN.md.
 - **Samtykke:** første gang appen åpnes, vises en dialog som sier at notater sendes til OpenRouter (og hvilken modell). Valget lagres i nettleseren (`web/storage/settings.ts`). Samtykket kan trekkes tilbake, eller gis senere, under *Innstillinger › Samtykke*.
+- **Last opp notat:** Start tar imot én fil (velg eller slipp): `.txt` og `.md` leses nå, `.docx` og PDF kommer i Story 1.5. Filen sjekkes i nettleseren før noe sendes: maks 10 MB og 150–15 000 ord, ellers vises en feilmelding ved slippsonen. Teksten deles i avsnitt i en Web Worker (`web/extract/`, avbrytes etter 15 s) etter reglene i `web/core/passages.ts`.
 - **Funksjonsflagg:** `web/features.ts` har ett flagg per Should-funksjon (hurtigtaster, «Eksamen om en time», eksport/import, arkiv, viktighet, mørk modus). Alle er `false`; et inngangspunkt vises bare når flagget er `true`.
 
 Nettleseren kaller bare relative `/api/*`-stier. Next.js videresender dem til Proxy-en (`http://proxy:8000`) på Compose-nettverket. Bare `web` er publisert, på `127.0.0.1:3000`.

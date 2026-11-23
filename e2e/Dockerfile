@@ -18,6 +18,8 @@ COPY proxy proxy
 COPY web web
 COPY e2e e2e
 COPY scripts scripts
+# web/core/passages.test.ts smoke-tests the pipeline on a real reference note.
+COPY reference-notes/nb-smidig-scrum.md reference-notes/nb-smidig-scrum.md
 # Source of truth for the design tokens; web/core/tokens.test.ts reads it at this path.
 COPY .docs/planning-artifacts/ux-designs/ux-G75-andersen-drage-2026-11-10/DESIGN.md .docs/planning-artifacts/ux-designs/ux-G75-andersen-drage-2026-11-10/DESIGN.md
 CMD ["bash", "scripts/test.sh"]
