@@ -56,3 +56,4 @@
 - [x] 2026-11-23 [story-1-3](984-2026-11-23-08-03-53-story-1-3-consent-gate.md) — PR for story 1.3, grønn CI og merge; sett deretter 1-3 til done i sprint-status.yaml (løst 2026-11-23: merget i 6111f9a)
 - [ ] 2026-11-23 [story-1-3](984-2026-11-23-08-03-53-story-1-3-consent-gate.md) — manuell tastatursjekk av samtykkedialogen ved 320 px i ny nettleserprofil
 - [ ] 2026-11-23 [story-1-3](984-2026-11-23-08-03-53-story-1-3-consent-gate.md) — neste story: 1.4 (opplasting av tekst/Markdown), M0 26.11
+- [ ] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — story 1.4 CHECKPOINT 1: svar på lengde (behold/del) og tre åpne spørsmål i spec-1-4-upload-text-note.md, deretter fortsett bmad-build på branch story/1-4-upload-text-note
