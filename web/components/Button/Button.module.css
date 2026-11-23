@@ -1,0 +1,53 @@
+/* DESIGN.md › Button (button-primary / -secondary / -ghost / -disabled). */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--colors-line-strong);
+  border-radius: var(--rounded-sm);
+  font-family: var(--typography-body-font-family);
+  font-size: var(--typography-body-font-size);
+  font-weight: var(--typography-body-font-weight);
+  line-height: var(--typography-body-line-height);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--colors-accent);
+  color: var(--colors-on-accent);
+  border-color: var(--colors-accent);
+}
+
+.primary:hover {
+  text-decoration: underline;
+}
+
+.secondary {
+  background: var(--colors-surface);
+  color: var(--colors-ink);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--colors-ink);
+}
+
+.secondary:hover,
+.ghost:hover {
+  background: var(--colors-surface-hover);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  background: var(--colors-surface);
+  color: var(--colors-ink-disabled);
+  border-color: var(--colors-line);
+  text-decoration: none;
+  cursor: not-allowed;
+}

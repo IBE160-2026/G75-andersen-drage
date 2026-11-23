@@ -1,0 +1,34 @@
+.skipLink {
+  position: absolute;
+  top: var(--spacing-2);
+  left: var(--spacing-2);
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--colors-surface-card);
+  color: var(--colors-accent-strong);
+  border: 1px solid var(--colors-line-strong);
+  border-radius: var(--rounded-sm);
+  text-decoration: underline;
+  transform: translateY(calc(-100% - var(--spacing-6)));
+}
+
+.skipLink:focus,
+.skipLink:focus-visible {
+  transform: none;
+}
+
+.main {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--spacing-6) var(--spacing-gutter-mobile);
+}
+
+@media (min-width: 768px) {
+  .main {
+    padding-inline: var(--spacing-5);
+  }
+}
