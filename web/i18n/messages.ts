@@ -11,10 +11,28 @@ export const messages = {
   "nav.settings": "Innstillinger",
   "nav.label": "Hovedmeny",
   "err.prefix": "Feil:",
+  "err.noKey": "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env.",
 
   // Page titles (document.title = "{side} · {app.brand}")
   "title.notes": "Dine notater",
   "title.settings": "Innstillinger",
+
+  // Samtykke (Consent dialog). {leverandør} is filled from /api/status (spec 1.3, Decisions).
+  "consent.title": "Før du starter",
+  "consent.body":
+    "Notatet ditt sendes til {leverandør} for å lage kort og quiz. Vil du ikke det, kan du prøve appen med eksempelnotater.",
+  "consent.more": "Les mer",
+  "consent.more.b": "OpenRouter sender notatet bare til KI-tjenester som verken lagrer det eller bruker det til trening.",
+  "consent.more.c": "Appen lagrer og logger ikke innholdet i notatene dine.",
+  "consent.more.d": "Notatene og fremgangen din lagres bare i denne nettleseren.",
+  "consent.more.e": "Du kan trekke tilbake samtykket når som helst i Innstillinger.",
+  "consent.accept": "Jeg forstår, fortsett",
+  "consent.decline": "Nei takk, vis demo",
+  // [..] marks the inline link that reopens the Consent dialog.
+  "consent.declined": "Du har ikke godtatt at notater sendes til {leverandør}. Du kan bruke demomodus, eller [godta nå].",
+  "consent.provider.fallback": "OpenRouter",
+  // {leverandør} in consent.body once /api/status has answered.
+  "consent.provider.model": "{provider} (modellen {model})",
 
   // Start
   "start.empty": "Dine notater: ingen ennå",
@@ -22,12 +40,23 @@ export const messages = {
 
   // Innstillinger
   "settings.h1": "Innstillinger",
+  "settings.consent.h2": "Samtykke",
+  "settings.consent.on": "Notatene dine sendes til {leverandør} når du lager kort og quiz.",
+  "settings.consent.on.action": "Trekk tilbake samtykke",
+  "settings.consent.off": "Notatene dine sendes ikke til {leverandør}. Du kan bruke eksempelnotatene.",
+  "settings.consent.off.action": "Godta at notater sendes",
+  "settings.consent.withdrawn": "Samtykket er trukket tilbake.",
 } as const;
 
 export type MessageKey = keyof typeof messages;
 
 export function t(key: MessageKey): string {
   return messages[key];
+}
+
+/** `t()` with `{name}` placeholders filled from `vars`; unknown placeholders are left as is. */
+export function format(key: MessageKey, vars: Record<string, string>): string {
+  return t(key).replace(/\{([^{}]+)\}/g, (match, name: string) => (Object.hasOwn(vars, name) ? vars[name] : match));
 }
 
 /** EXPERIENCE.md › Page structure: "{side} · Torsas læringsassistent". */

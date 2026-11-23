@@ -101,11 +101,16 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | Key | State / place | Norwegian string |
 |---|---|---|
 | **Samtykke** | | |
-| consent.title | Samtykke, dialog heading | "Før du starter" |
-| consent.body | Samtykke, up front | "Notatet ditt sendes til {leverandør} for å lage kort og quiz. Vil du ikke det, kan du prøve appen med eksempelnotater." |
-| consent.more | Samtykke, link | "Les mer" |
-| consent.accept / decline | Samtykke, buttons | "Jeg forstår, fortsett" / "Nei takk, vis demo" |
-| consent.declined | Start, after declining | "Du har ikke godtatt at notater sendes til {leverandør}. Du kan bruke demomodus, eller [godta nå]." (link opens the Consent dialog; also in Innstillinger) |
+| consent.title | Samtykke, dialog heading *(approved)* (2026-11-23) | "Før du starter" |
+| consent.body | Samtykke, up front *(approved)* (2026-11-23) | "Notatet ditt sendes til {leverandør} for å lage kort og quiz. Vil du ikke det, kan du prøve appen med eksempelnotater." ({leverandør} = "OpenRouter (modellen {model})" from `/api/status`, or `consent.provider.fallback` until it answers) |
+| consent.more | Samtykke, link *(approved)* (2026-11-23) | "Les mer" |
+| consent.more.b | Samtykke, behind 'Les mer' *(approved)* (2026-11-23) | "OpenRouter sender notatet bare til KI-tjenester som verken lagrer det eller bruker det til trening." |
+| consent.more.c | Samtykke, behind 'Les mer' *(approved)* (2026-11-23) | "Appen lagrer og logger ikke innholdet i notatene dine." |
+| consent.more.d | Samtykke, behind 'Les mer' *(approved)* (2026-11-23) | "Notatene og fremgangen din lagres bare i denne nettleseren." |
+| consent.more.e | Samtykke, behind 'Les mer' *(approved)* (2026-11-23) | "Du kan trekke tilbake samtykket når som helst i Innstillinger." |
+| consent.accept / decline | Samtykke, buttons *(approved)* (2026-11-23) | "Jeg forstår, fortsett" / "Nei takk, vis demo" |
+| consent.declined | Start, after declining *(approved)* (2026-11-23) | "Du har ikke godtatt at notater sendes til {leverandør}. Du kan bruke demomodus, eller [godta nå]." (link opens the Consent dialog; also in Innstillinger) |
+| consent.provider.fallback | Samtykke, provider name before `/api/status` answers *(approved)* (2026-11-23) | "OpenRouter" |
 | **Global** | | |
 | skip.link | First Tab stop *(approved)* | 'Gå til hovedinnhold' |
 | topbar.more | Mobile top bar *(approved)* | 'Mer' |
@@ -163,9 +168,10 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | archive.restore / delete | Arkiv row actions | 'Gjenopprett' · 'Slett for godt' |
 | delete.confirm | Permanent delete dialog | "Slette {tittel} for godt? Notatet og fremgangen din blir borte." · 'Ikke spør igjen' · 'Avbryt' / 'Slett' |
 | **Innstillinger** | | |
-| settings.consent.on | Innstillinger › Samtykke | "Notatene dine sendes til {leverandør} når du lager kort og quiz." · 'Trekk tilbake samtykke' |
-| settings.consent.off | Innstillinger › Samtykke | "Notatene dine sendes ikke til {leverandør}. Du kan bruke eksempelnotatene." · 'Godta at notater sendes' |
-| settings.consent.withdrawn | After withdrawing, polite status | "Samtykket er trukket tilbake." |
+| settings.consent.h2 | Innstillinger › Samtykke, section heading *(approved)* (2026-11-23) | "Samtykke" |
+| settings.consent.on | Innstillinger › Samtykke *(approved)* (2026-11-23) | "Notatene dine sendes til {leverandør} når du lager kort og quiz." · 'Trekk tilbake samtykke' |
+| settings.consent.off | Innstillinger › Samtykke *(approved)* (2026-11-23) | "Notatene dine sendes ikke til {leverandør}. Du kan bruke eksempelnotatene." · 'Godta at notater sendes' |
+| settings.consent.withdrawn | After withdrawing, polite status *(approved)* (2026-11-23) | "Samtykket er trukket tilbake." |
 | settings.demo | Innstillinger › Studier | 'Demomodus' · "Bruk bare eksempelnotatene, uten kall til {leverandør}." |
 | settings.shortcuts | Innstillinger › Studier | 'Hurtigtaster' · "Mellomrom snur kortet, 1 og 2 merker det, 1–4 velger svar i quizen." |
 | settings.deleteWarning | Innstillinger › Sletting | 'Spør før notater slettes for godt' |

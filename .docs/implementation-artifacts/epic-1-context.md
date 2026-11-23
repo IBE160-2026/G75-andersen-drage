@@ -145,6 +145,9 @@ Stand up the whole system with one command and deliver the first half of the cor
   - 'Start runde' sits at the end.
 - **Source panel:** Passages carry mono IDs P1…, and the scroll region is one Tab stop.
 - **Reference jump:** activating "Kilde: Pn" scrolls to the Passage (instant under reduced motion) and highlights exactly one `<mark>` with hidden `quote.start` / `quote.end`. It focuses the Passage and shows a sticky return control. Esc returns focus to the exact reference.
+- **Source references** ("Kilde: Pn") can always be activated, including before a Flashcard is revealed or a Quiz Question is answered. This is a confirmed decision, not an assumption.
+- **Microcopy status:** most strings are still drafts awaiting approval, so always use keys and never hard-code text. These are approved and final: `skip.link`, `topbar.more`, `theme.toggle`, `demo.indicator`, `err.prefix` and `start.empty`. `gen.back` ('Tilbake til start') is decided. All `consent.*` and `settings.consent.*` strings are approved (2026-11-23); in `consent.body`, `{leverandør}` is "OpenRouter (modellen {model})" from `/api/status`, elsewhere just "OpenRouter". How the Note-language `lang` is handled is still open.
+- **Added shell keys:** `app.brand`, `nav.notes`, `nav.settings`, `nav.label` ("Hovedmeny"), `title.notes`, `title.settings` and `settings.h1`. `start.empty` is split into `start.empty` (the `h1`) and `start.empty.next` (the second line). These are recorded as a deviation, and any further new key needs its own deviation entry.
 - **Voice:** informal bokmål using "du", sentence case and no exclamation marks.
 
 ## Cross-Story Dependencies
@@ -157,4 +160,5 @@ Stand up the whole system with one command and deliver the first half of the cor
 - 1.12 builds on the 1.11 source panel and is reused by the Epic 2 Flashcard, Quiz and Resultat screens.
 - 1.13 needs 1.4–1.8 plus the reference notes. 1.14 needs the 1.13 Fixtures and the send gate.
 - Epic 2 consumes `VerifiedStudySet`, the `covered` flag, Item IDs and the storage schema defined here.
+- Any departure from the planning docs (a new Microcopy key, changed behaviour or a cut feature) goes into the deviations list before delivery. Epic 5 uses that list to bring the planning docs in line.
 - Cut order: if Epic 1 falls behind, cut 1.13 to one model first, then simplify the PDF header and footer removal in 1.5.

@@ -3,3 +3,7 @@
 - source_spec: `.docs/implementation-artifacts/spec-1-1-one-command-start.md`
   summary: Strengthen the lazy-provider test so a provider built at import or lifespan with a key set is detected.
   evidence: `proxy/tests/test_status.py` clears the `get_provider` cache after `app.main` is imported and never enters lifespan (`TestClient` without `with`); rework when Story 1.6 changes `llm.py`.
+
+- source_spec: `.docs/implementation-artifacts/spec-1-3-consent-gate.md`
+  summary: Add pre-hydration e2e checks that the pre-paint script sets `data-consent` to `declined` and `unset` (invalid or newer stored settings), not only `accepted`.
+  evidence: `e2e/consent.spec.ts` observes `data-consent` before hydration only for `accepted`; the `declined`/`unset` assertions run after `AppSettingsProvider` rewrites the attribute, so drift between the inline script and `storage/settings.ts` goes unnoticed. Add when CSS or a story starts depending on the pre-paint value.

@@ -1,0 +1,20 @@
+/* Innstillinger › Samtykke settings row (EXPERIENCE.md › Settings row). */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--colors-line);
+}
+
+.heading {
+  font-family: var(--typography-body-font-family);
+  font-size: var(--typography-body-font-size);
+  font-weight: var(--typography-headline-font-weight);
+  line-height: var(--typography-body-line-height);
+}
+
+/* Always in the layout (even empty) so screen readers register the live region. */
+.status {
+  color: var(--colors-ink-muted);
+}

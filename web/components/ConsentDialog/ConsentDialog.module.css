@@ -1,0 +1,95 @@
+/* DESIGN.md › Dialog: surface-card, rounded.md, spacing.5, centred; full width on mobile,
+   max-height 100dvh with internal scroll. The scrim is an [ASSUMPTION] in DESIGN.md. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: color-mix(in srgb, var(--colors-ink) 50%, transparent);
+}
+
+.content {
+  position: fixed;
+  z-index: 201;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: calc(100vw - 2 * var(--spacing-gutter-mobile));
+  max-width: 32rem;
+  max-height: 100dvh;
+  overflow-y: auto;
+  padding: var(--spacing-5);
+  background: var(--colors-surface-card);
+  color: var(--colors-ink);
+  border: 1px solid var(--colors-line-strong);
+  border-radius: var(--rounded-md);
+}
+
+/* Inside a scroll container the ring is inset so overflow does not clip it. */
+.content :focus-visible {
+  outline-offset: calc(-1 * var(--spacing-focus-width));
+}
+
+.content:focus {
+  outline: none;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--typography-headline-font-family);
+  font-size: var(--typography-headline-font-size);
+  font-weight: var(--typography-headline-font-weight);
+  line-height: var(--typography-headline-line-height);
+}
+
+.body {
+  margin: 0;
+}
+
+.more {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+}
+
+.chevron {
+  width: 1.25em;
+  height: 1.25em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.chevron[data-open="true"] {
+  transform: rotate(90deg);
+}
+
+.points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding-left: var(--spacing-5);
+  color: var(--colors-ink-muted);
+}
+
+.points[hidden] {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--spacing-2);
+}
+
+@media (max-width: 767px) {
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}

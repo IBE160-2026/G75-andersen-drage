@@ -30,6 +30,7 @@ export function Button({ variant = "secondary", pending = false, className, onCl
       {...rest}
       type={type}
       className={buttonClass(variant, className)}
+      data-variant={variant}
       aria-disabled={pending ? true : undefined}
       onClick={handleClick}
     />

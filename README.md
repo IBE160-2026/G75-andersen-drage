@@ -62,6 +62,7 @@ reference-notes/    referansenotater (DR-3)
 - **Skall:** `web/components/AppShell/` rendrer hele appen i nettleseren (først etter mount). Rekkefølgen er alltid lenken «Gå til hovedinnhold» → topplinje → `main`. Hver side bruker `Screen`, som setter `document.title` og flytter fokus til sidens `h1`. Under 768 px samles topplinjen i en «Mer»-meny.
 - **Tekst:** all synlig tekst ligger i `web/i18n/messages.ts` og hentes med `t("nøkkel")`. Nøklene følger Microcopy-tabellen i EXPERIENCE.md.
 - **Designtokens:** `web/styles/tokens.css` er hentet fra frontmatter i DESIGN.md (`:root` = lys, `[data-theme="dark"]` = mørk). Komponentene bruker bare `var(--token)` i sin egen CSS Module, aldri hex-farger. En Vitest-test sjekker at tokens.css stemmer med DESIGN.md.
+- **Samtykke:** første gang appen åpnes, vises en dialog som sier at notater sendes til OpenRouter (og hvilken modell). Valget lagres i nettleseren (`web/storage/settings.ts`). Samtykket kan trekkes tilbake, eller gis senere, under *Innstillinger › Samtykke*.
 - **Funksjonsflagg:** `web/features.ts` har ett flagg per Should-funksjon (hurtigtaster, «Eksamen om en time», eksport/import, arkiv, viktighet, mørk modus). Alle er `false`; et inngangspunkt vises bare når flagget er `true`.
 
 Nettleseren kaller bare relative `/api/*`-stier. Next.js videresender dem til Proxy-en (`http://proxy:8000`) på Compose-nettverket. Bare `web` er publisert, på `127.0.0.1:3000`.
