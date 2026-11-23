@@ -64,10 +64,10 @@ Opprette PR for story 1.2 og følge med på CI (etter `bmad-help`, som anbefalte
 ### Resultat
 - **PR #2 opprettet:** https://github.com/IBE160-2026/G75-andersen-drage/pull/2 (`story/1-2-norwegian-app-shell` → `main`).
 - **CI:** sjekken `test` er grønn (2m4s, run 45122074008).
-- PR-en er ikke merget, og sprint-status 1-2 står fortsatt som `review`.
-- Delvis løst: «PR for story 1.2 og grønn CI» (PR og CI er klare, merge gjenstår).
+- **Sprint-status:** 1-2 satt til `done` i `a9cd9b6` og pushet til branchen sammen med loggcommiten. CI kjørte på nytt og ble grønn (1m50s, run 45122590740).
+- **Merget:** PR #2 inn i `main` som merge-commit `dc682bc`. Første merge-forsøk feilet på en nettverksfeil mot GitHub, og andre forsøk gikk gjennom.
+- Lukket i issues.md: «PR for story 1.2 og grønn CI» og «merge PR #2 og sett 1-2 til done».
 
 ### Åpne punkter
-- Merge PR #2 og sett 1-2 til `done` i sprint-status.yaml (spec-en er allerede `done`).
-- Den manuelle tastatursjekken ved 320 px bør gjøres før merge (står allerede i issues.md).
+- Den manuelle tastatursjekken ved 320 px er fortsatt ikke gjort (står allerede i issues.md).
 - Neste steg etter merge: `bmad-build` på story 1.3 (Samtykke). Start med Microcopy-bolken for Samtykke.

@@ -51,5 +51,5 @@
 - [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — se over technology-G75.md og arkitektur-oversikt.md: greit å navngi Bård Pettersen / «referansen fra Bård»?
 - [x] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — neste steg: PR for story 1.2 og grønn CI, deretter story 1.3 (Samtykke) — start med Microcopy-bolken for Samtykke (løst 2026-11-23: PR #2 opprettet og CI grønn; merge og 1.3 videreført under)
 - [ ] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — story 1.5: lag de øvrige kanttilfellene (feil type, for kort, skannet PDF, ødelagt/passordbeskyttet, ikke-UTF-8)
-- [ ] 2026-11-23 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — merge PR #2 og sett 1-2 til done i sprint-status.yaml
+- [x] 2026-11-23 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — merge PR #2 og sett 1-2 til done i sprint-status.yaml (løst 2026-11-23: merget i dc682bc)
 - [ ] 2026-11-23 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — neste steg etter merge: bmad-build på story 1.3 (Samtykke), start med Microcopy-bolken for Samtykke
