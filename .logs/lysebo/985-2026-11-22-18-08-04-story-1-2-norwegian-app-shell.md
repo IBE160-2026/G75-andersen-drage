@@ -51,3 +51,23 @@ Fortsette story 1.2 fra CHECKPOINT 1: rydde spec-en under 1600 tokens, godkjenne
 - Se over `technology-G75.md` og `arkitektur-oversikt.md`: er det greit å navngi Bård Pettersen og «referansen fra Bård» slik?
 - Story 1.5 må fortsatt lage de øvrige kanttilfellene (feil type, for kort, skannet PDF, ødelagt/passordbeskyttet, ikke-UTF-8).
 - Neste steg: PR for story 1.2 og grønn CI, deretter story 1.3 (Samtykke) — start med Microcopy-bolken for Samtykke.
+
+## 2026-11-23 kl. 07:10 — lysebo
+
+### Oppgave
+Opprette PR for story 1.2 og følge med på CI (etter `bmad-help`, som anbefalte PR → merge → `bmad-build` på story 1.3).
+
+### Plan
+- PR-beskrivelse i samme stil som PR #1, bygget fra spec-en og forrige logg.
+- `gh pr checks` i bakgrunnen; første forsøk stoppet på en nettverksfeil (`dial tcp … connectex`), andre forsøk prøvde på nytt til sjekken var ferdig.
+
+### Resultat
+- **PR #2 opprettet:** https://github.com/IBE160-2026/G75-andersen-drage/pull/2 (`story/1-2-norwegian-app-shell` → `main`).
+- **CI:** sjekken `test` er grønn (2m4s, run 45122074008).
+- PR-en er ikke merget, og sprint-status 1-2 står fortsatt som `review`.
+- Delvis løst: «PR for story 1.2 og grønn CI» (PR og CI er klare, merge gjenstår).
+
+### Åpne punkter
+- Merge PR #2 og sett 1-2 til `done` i sprint-status.yaml (spec-en er allerede `done`).
+- Den manuelle tastatursjekken ved 320 px bør gjøres før merge (står allerede i issues.md).
+- Neste steg etter merge: `bmad-build` på story 1.3 (Samtykke). Start med Microcopy-bolken for Samtykke.
