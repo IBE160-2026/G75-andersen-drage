@@ -119,16 +119,18 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | err.prefix | Before every error message (visible or AT) *(approved)* | "Feil:" |
 | **Start** | | |
 | start.empty | 'Dine notater' empty (the first string is the `h1`) *(approved)* | "Dine notater: ingen ennå" + "Last opp en fil, lim inn tekst eller prøv et eksempelnotat." |
-| start.dropzone | Drop zone | "Slipp en fil her eller velg fil" · ".txt .md .docx .pdf · maks 10 MB" |
+| start.dropzone | Drop zone, first line *(approved)* (2026-11-23) | "Slipp en fil her eller [velg fil]" ([…] = link-styled part) |
+| start.dropzone.types | Drop zone, accepted types line *(approved)* (2026-11-23) | ".txt .md .docx .pdf · maks 10 MB" |
+| note.meta | Start, Note meta after extraction (`role="status"`) *(approved)* (2026-11-23) | "{filnavn} · {ord} ord · {avsnitt} avsnitt" |
 | start.paste.submit | Text area button | "Lag kort og quiz" |
-| err.type | Unsupported file type | "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf." |
-| err.size | > 10 MB | "Filen er større enn 10 MB. Velg en mindre fil." |
-| err.noText | No readable text | "Fant ingen tekst i filen. Prøv en annen fil, eller lim inn teksten." |
+| err.type | Unsupported file type *(approved)* (2026-11-23) | "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf." |
+| err.size | > 10 MB *(approved)* (2026-11-23) | "Filen er større enn 10 MB. Velg en mindre fil." |
+| err.noText | No readable text *(approved)* (2026-11-23) | "Fant ingen tekst i filen. Prøv en annen fil, eller lim inn teksten." |
 | err.scanned | Scanned PDF | "Skannede PDF-er støttes ikke. Bruk en PDF med tekst, eller lim inn teksten." |
-| err.unreadable | File could not be read | "Filen kunne ikke leses. Prøv å lagre den på nytt, eller lim inn teksten." |
-| err.tooShort | < 150 words | "Notatet er for kort. Det trengs minst 150 ord." |
-| err.tooLong | > 15 000 words | "Notatet er for langt. Grensen er 15 000 ord; del det opp." |
-| warn.encoding | Encoding fallback | "Æ, ø og å kan vises feil i dette notatet." |
+| err.unreadable | File could not be read *(approved)* (2026-11-23) | "Filen kunne ikke leses. Prøv å lagre den på nytt, eller lim inn teksten." |
+| err.tooShort | < 150 words *(approved)* (2026-11-23) | "Notatet er for kort. Det trengs minst 150 ord." |
+| err.tooLong | > 15 000 words *(approved)* (2026-11-23) | "Notatet er for langt. Grensen er 15 000 ord; del det opp." |
+| warn.encoding | Encoding fallback *(approved)* (2026-11-23) | "Æ, ø og å kan vises feil i dette notatet." |
 | err.demoOnly | Own file or text in Demo Mode | "Demomodus støtter bare eksempelnotatene." |
 | err.noKey | No API key | "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env." |
 | **Genererer** | | |
