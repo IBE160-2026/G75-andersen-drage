@@ -1,4 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { seedConsent } from "./seed";
+
+test.beforeEach(async ({ page }) => {
+  await seedConsent(page, "accepted");
+});
 
 test("loads the start page", async ({ page }) => {
   await page.goto("/");

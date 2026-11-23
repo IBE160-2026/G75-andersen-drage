@@ -1,11 +1,17 @@
 // Story 1.2: Norwegian app shell (spec I/O & Edge-Case Matrix, NFR-6, NFR-7, NFR-9).
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { seedConsent } from "./seed";
 
 const ROUTES = [
   { path: "/", h1: "Dine notater: ingen ennå", title: "Dine notater · Torsas læringsassistent" },
   { path: "/innstillinger", h1: "Innstillinger", title: "Innstillinger · Torsas læringsassistent" },
 ] as const;
+
+// Story 1.3: these shell tests assume Consent is already given (no dialog).
+test.beforeEach(async ({ page }) => {
+  await seedConsent(page, "accepted");
+});
 
 async function open(page: Page, path: string) {
   await page.goto(path);

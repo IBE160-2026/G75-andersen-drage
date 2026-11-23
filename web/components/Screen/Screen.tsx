@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { pageTitle, type MessageKey } from "../../i18n/messages";
-import { SKIP_LINK_ID } from "../AppShell/AppShell";
+import { SKIP_LINK_ID } from "../AppShell/ids";
 import styles from "./Screen.module.css";
 
 /**
@@ -21,10 +21,13 @@ export function Screen({ title, children }: { title: MessageKey; children: React
     document.title = pageTitle(title);
     const heading = ref.current?.querySelector<HTMLElement>("h1");
     if (!heading) return;
-    heading.focus();
+    const dialogOpen = () => !!document.querySelector('[role="dialog"]');
+    // An open dialog (the Consent gate) owns focus; it hands focus to this h1 when it closes.
+    if (!dialogOpen()) heading.focus();
 
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Tab") return;
+      // Tabs inside an open dialog do not count as the first Tab on this screen.
+      if (event.key !== "Tab" || dialogOpen()) return;
       document.removeEventListener("keydown", onKeyDown, true);
       if (event.shiftKey || document.activeElement !== heading) return;
       const skip = document.getElementById(SKIP_LINK_ID);

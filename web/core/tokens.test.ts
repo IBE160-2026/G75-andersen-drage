@@ -150,7 +150,7 @@ describe("UI text (AD-16)", () => {
     const used = new Set<string>();
     for (const file of uiSources) {
       const src = readFileSync(file, "utf8");
-      for (const m of src.matchAll(/\b(?:t|pageTitle)\(\s*["']([^"']+)["']/g)) used.add(m[1]);
+      for (const m of src.matchAll(/\b(?:t|pageTitle|format)\(\s*["']([^"']+)["']/g)) used.add(m[1]);
       for (const m of src.matchAll(/\btitle="([^"]+)"/g)) used.add(m[1]);
     }
     expect(used.size).toBeGreaterThan(0);
