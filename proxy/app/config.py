@@ -7,9 +7,11 @@ defaults here only matter when running outside Compose (tests, local uv run).
 import os
 from dataclasses import dataclass, field
 
-PROMPT_VERSION = "0"
+PROMPT_VERSION = "1"  # bump on every prompt change (prompts/*.md)
 PROVIDER_NAME = "OpenRouter"
 DEFAULT_MODEL = "anthropic/claude-haiku-5.5"
+# Output cap per model call: 15 concepts x 4 Items + 10 Summary Points, each with a Quote, fit well below this.
+MAX_OUTPUT_TOKENS = 16_000
 
 
 def _split(value: str) -> list[str]:
@@ -21,6 +23,8 @@ class Settings:
     openrouter_api_key: str = ""
     openrouter_model: str = DEFAULT_MODEL
     generation_timeout_s: float = 40.0
+    # Total Proxy deadline per /api/study-set request (AD-7). Fixed, not read from the environment.
+    generation_deadline_s: float = 85.0
     simpler_timeout_s: float = 15.0
     allowed_origins: list[str] = field(default_factory=list)
     rate_limit_per_min: int = 10

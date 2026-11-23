@@ -11,3 +11,7 @@
 - source_spec: `.docs/implementation-artifacts/spec-1-5-upload-docx-pdf.md`
   summary: PDFs whose fonts lack a ToUnicode map may extract as garbage glyphs that pass every FR-3 check and would be sent to the AI.
   evidence: Review pass 1 EC4 (maybe-false). Settle it by extracting a sample of real student PDFs and checking the share of letters; if garbage appears, add a letter-ratio check mapped to err.unreadable.
+
+- source_spec: `.docs/implementation-artifacts/spec-1-6-proxy-study-set.md`
+  summary: MAX_OUTPUT_TOKENS = 16 000 may not fit in the 40 s attempt timeout, so a long valid Study Set could time out (504) instead of finishing.
+  evidence: Review pass 1 BH2 (maybe-false). Settle it in Story 1.13 by measuring real output tokens and tokens per second on the reference notes, then size MAX_OUTPUT_TOKENS and the prompt's field lengths to finish well inside 40 s (NFR-4).
