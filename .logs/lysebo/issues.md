@@ -64,5 +64,5 @@
 - [x] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — pull-loggen på lokal main og story-1-4-loggen har begge nummer 983: gi pull-loggen nytt nummer før main pushes eller branchen merges (løst 2026-11-23: omdøpt til 982)
 - [x] 2026-11-23 [story-1-4](983-2026-11-23-09-14-26-story-1-4-upload-text-note.md) — neste story: 1.5 (opplasting av .docx og tekstbasert PDF) (løst 2026-11-23: implementert, se [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md))
 - [ ] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — PR for story 1.5, grønn CI og merge; sett deretter 1-5 til done i sprint-status.yaml
-- [ ] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — manuell sjekk: slipp nb-digital-verden.docx og en-unit-testing.pdf i appen, se at antall avsnitt i note.meta er rimelig
+- [x] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — manuell sjekk: slipp nb-digital-verden.docx og en-unit-testing.pdf i appen, se at antall avsnitt i note.meta er rimelig (løst 2026-11-23: godkjent av Tor)
 - [ ] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — utsatt: PDF-er med fonter uten ToUnicode kan gi uleselig tekst som godtas (deferred-work.md)
