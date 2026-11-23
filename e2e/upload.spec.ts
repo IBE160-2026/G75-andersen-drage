@@ -1,5 +1,8 @@
-// Story 1.4: upload a text or Markdown Note and reject unusable input (spec I/O & Edge-Case Matrix, FR-1, FR-3).
-// The worker hang (15 s timeout) is covered by Vitest (web/extract/client.test.ts), not here.
+// Stories 1.4 and 1.5: upload a text, Markdown, .docx or PDF Note and reject unusable input
+// (spec I/O & Edge-Case Matrix, FR-1, FR-3). The worker hang (15 s timeout) is covered by Vitest
+// (web/extract/client.test.ts), not here. The .docx/PDF tests run the parsers in the production bundle.
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import { seedConsent } from "./seed";
@@ -12,6 +15,19 @@ const MSG = {
   tooShort: "Notatet er for kort. Det trengs minst 150 ord.",
   tooLong: "Notatet er for langt. Grensen er 15 000 ord; del det opp.",
   encoding: "Æ, ø og å kan vises feil i dette notatet.",
+  scanned: "Skannede PDF-er støttes ikke. Bruk en PDF med tekst, eller lim inn teksten.",
+};
+
+/** A file from reference-notes/ (copied into the test image), under its own name. */
+const note = (path: string): Upload => ({
+  name: path.split("/").pop()!,
+  buffer: readFileSync(join(__dirname, "..", "reference-notes", path)),
+  mimeType: "application/octet-stream",
+});
+/** Note Hashes from web/extract/reference-notes.test.ts: the browser bundle must give the same Passages as Node. */
+const HASH = {
+  docx: "f8e36750fbe1b1c4a6f36af4ed15ec4beb4ce3ec42e78c67cbb8e75baec453d0",
+  pdf: "f0357a9021403b542c0ec830875e43b9af01359c8db9e054773bb85af10248ed",
 };
 
 const words = (n: number, word = "ord") => Array.from({ length: n }, () => word).join(" ");
@@ -219,9 +235,70 @@ test.describe("accepted", () => {
   });
 });
 
+test.describe(".docx and PDF", () => {
+  test("a real .docx and a real text PDF give the Note meta and the same Note Hash as Vitest", async ({ page }) => {
+    await upload(page, note("nb-digital-verden.docx"));
+    expect(await expectAccepted(page, "nb-digital-verden.docx")).toBe(HASH.docx);
+    await expect(status(page)).toHaveText("nb-digital-verden.docx · 1 982 ord · 101 avsnitt");
+    await upload(page, note("en-unit-testing.pdf"));
+    expect(await expectAccepted(page, "en-unit-testing.pdf")).toBe(HASH.pdf);
+    await expect(status(page)).toHaveText("en-unit-testing.pdf · 4 408 ord · 106 avsnitt");
+    await expect(status(page)).not.toContainText(MSG.encoding);
+  });
+
+  test("a table .docx and a PDF with headers and footers are accepted", async ({ page }) => {
+    await upload(page, note("edge-cases/nb-tabell-digitale-tjenester.docx"));
+    await expectAccepted(page, "nb-tabell-digitale-tjenester.docx");
+    await upload(page, note("edge-cases/nb-topptekst-bunntekst.pdf"));
+    await expectAccepted(page, "nb-topptekst-bunntekst.pdf");
+  });
+
+  test("an image-only PDF: err.scanned", async ({ page }) => {
+    await upload(page, note("edge-cases/nb-skannet.pdf"));
+    await expectRejected(page, MSG.scanned);
+  });
+
+  const rejected: [string, string][] = [
+    ["edge-cases/nb-odelagt.pdf", MSG.unreadable],
+    ["edge-cases/nb-passord.pdf", MSG.unreadable],
+    ["edge-cases/nb-tom.docx", MSG.noText],
+    ["edge-cases/nb-for-kort.docx", MSG.tooShort],
+  ];
+  for (const [path, text] of rejected) {
+    test(`${path.split("/").pop()}: ${text.slice(0, 30)}…`, async ({ page }) => {
+      await upload(page, note(path));
+      await expectRejected(page, text);
+    });
+  }
+
+  test("a corrupt .docx: err.unreadable, then a valid PDF still works", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await upload(page, note("edge-cases/nb-odelagt.docx"));
+    await expectRejected(page, MSG.unreadable);
+    await upload(page, note("edge-cases/nb-topptekst-bunntekst.pdf"));
+    await expectAccepted(page, "nb-topptekst-bunntekst.pdf");
+    expect(errors).toEqual([]);
+  });
+
+  test("the page stays responsive while a long PDF is parsed, then err.tooLong", async ({ page }) => {
+    await upload(page, note("edge-cases/nb-norge-too-long.pdf"));
+    // Poll while the input is busy (parsing may also finish before the first poll), bounded by the 15 s
+    // extraction timeout plus a margin; every round trip to the page must answer within 200 ms.
+    const deadline = Date.now() + 20_000;
+    while (Date.now() < deadline) {
+      const start = Date.now();
+      const busy = await page.evaluate(() => document.getElementById("note-file")?.getAttribute("aria-disabled") === "true");
+      expect(Date.now() - start).toBeLessThan(200);
+      if (!busy) break;
+    }
+    await expectRejected(page, MSG.tooLong);
+  });
+});
+
 test.describe("rejected", () => {
   for (const name of ["rapport.docx", "notat.pdf"]) {
-    test(`${name}: accepted type, err.unreadable until Story 1.5`, async ({ page }) => {
+    test(`text bytes misnamed ${name}: err.unreadable`, async ({ page }) => {
       await upload(page, file(name, utf8(VALID)));
       await expectRejected(page, MSG.unreadable);
     });

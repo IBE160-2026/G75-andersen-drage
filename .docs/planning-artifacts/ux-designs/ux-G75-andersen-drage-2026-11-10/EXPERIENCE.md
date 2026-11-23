@@ -126,7 +126,7 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | err.type | Unsupported file type *(approved)* (2026-11-23) | "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf." |
 | err.size | > 10 MB *(approved)* (2026-11-23) | "Filen er større enn 10 MB. Velg en mindre fil." |
 | err.noText | No readable text *(approved)* (2026-11-23) | "Fant ingen tekst i filen. Prøv en annen fil, eller lim inn teksten." |
-| err.scanned | Scanned PDF | "Skannede PDF-er støttes ikke. Bruk en PDF med tekst, eller lim inn teksten." |
+| err.scanned | Scanned PDF *(approved)* (2026-11-23) | "Skannede PDF-er støttes ikke. Bruk en PDF med tekst, eller lim inn teksten." |
 | err.unreadable | File could not be read *(approved)* (2026-11-23) | "Filen kunne ikke leses. Prøv å lagre den på nytt, eller lim inn teksten." |
 | err.tooShort | < 150 words *(approved)* (2026-11-23) | "Notatet er for kort. Det trengs minst 150 ord." |
 | err.tooLong | > 15 000 words *(approved)* (2026-11-23) | "Notatet er for langt. Grensen er 15 000 ord; del det opp." |
