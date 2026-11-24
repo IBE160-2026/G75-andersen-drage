@@ -16,6 +16,7 @@ const MSG = {
   tooLong: "Notatet er for langt. Grensen er 15 000 ord; del det opp.",
   encoding: "Æ, ø og å kan vises feil i dette notatet.",
   scanned: "Skannede PDF-er støttes ikke. Bruk en PDF med tekst, eller lim inn teksten.",
+  noKey: "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env.",
 };
 
 /** A file from reference-notes/ (copied into the test image), under its own name. */
@@ -92,7 +93,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(() => {
-  // No row of the matrix ever reaches the generation endpoint (Story 1.9 wires it).
+  // No row of the matrix ever reaches the generation endpoint: the keyless proxy-test answers
+  // keyConfigured: false, so the send gate (Story 1.9) holds every accepted file at Start with
+  // err.noKey. e2e/generate.spec.ts covers the request itself.
   expect(studySetRequests).toEqual([]);
 });
 
@@ -109,9 +112,10 @@ async function expectRejected(page: Page, text: string) {
   await expect(status(page)).toHaveText("");
 }
 
+/** Accepted, then held at Start by the send gate (no key): err.noKey inline; the file itself is not invalid. */
 async function expectAccepted(page: Page, name: string) {
   await expect(status(page)).toContainText(new RegExp(`^${name.replace(/\./g, "\\.")} · \\d[\\d\\s]* ord · \\d[\\d\\s]* avsnitt`));
-  await expect(alert(page)).toHaveCount(0);
+  await expect(alert(page)).toHaveText(`Feil: ${MSG.noKey}`);
   await expect(input(page)).not.toHaveAttribute("aria-invalid");
   await expect(input(page)).not.toHaveAttribute("aria-describedby");
   const hash = await status(page).getAttribute("data-note-hash");

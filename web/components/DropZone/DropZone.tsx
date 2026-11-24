@@ -8,6 +8,24 @@ import styles from "./DropZone.module.css";
 const ACCEPT = ".txt,.md,.docx,.pdf";
 
 /**
+ * A file dropped outside the drop zone would make the browser open it and leave the app. Used by
+ * the drop zone and by Genererer, which replaces it while a generation is pending (Story 1.9).
+ */
+export function useBlockWindowDrop() {
+  useEffect(() => {
+    const block = (event: globalThis.DragEvent) => {
+      if (event.dataTransfer?.types.includes("Files")) event.preventDefault();
+    };
+    window.addEventListener("dragover", block);
+    window.addEventListener("drop", block);
+    return () => {
+      window.removeEventListener("dragover", block);
+      window.removeEventListener("drop", block);
+    };
+  }, []);
+}
+
+/**
  * Drop zone (DESIGN.md › Drop zone, EXPERIENCE.md › Component Patterns): a label around a visually
  * hidden native file input, so a click or Enter/Space anywhere on it opens the picker, and the
  * same label is the drop target. Only the first file of a drop is used. While `busy` the input is
@@ -25,19 +43,7 @@ export function DropZone({
   onFile: (file: File) => void;
 }) {
   const [over, setOver] = useState(false);
-
-  // A file dropped outside the zone would make the browser open it and leave the app.
-  useEffect(() => {
-    const block = (event: globalThis.DragEvent) => {
-      if (event.dataTransfer?.types.includes("Files")) event.preventDefault();
-    };
-    window.addEventListener("dragover", block);
-    window.addEventListener("drop", block);
-    return () => {
-      window.removeEventListener("dragover", block);
-      window.removeEventListener("drop", block);
-    };
-  }, []);
+  useBlockWindowDrop();
   const text = t("start.dropzone");
   const match = text.match(/^([\s\S]*)\[([^\]]+)\]([\s\S]*)$/);
   const [before, link, after] = match ? [match[1], match[2], match[3]] : [text, "", ""];

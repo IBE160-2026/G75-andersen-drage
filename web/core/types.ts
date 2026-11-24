@@ -71,3 +71,26 @@ export type VerifiedStudySet = {
   /** `{noteHash}:{promptVersion}:{model}` (AD-9). */
   cacheKey: string;
 };
+
+// Stored Note (AD-21, Story 1.9). storage/db.ts adds `schemaVersion` and validates it on read.
+
+/** The accepted file types (`extract/types.ts` › `fileType`), repeated structurally so core/ stays pure. */
+export type SourceType = "txt" | "md" | "docx" | "pdf";
+
+/** One Note as stored in the `notes` store, keyed by `noteHash`. */
+export type Note = {
+  noteHash: string;
+  /** File name without its extension, at most 80 code points; set at creation and never changed. */
+  title: string;
+  sourceType: SourceType;
+  wordCount: number;
+  passages: Passage[];
+  normalizationVersion: number;
+  /** The `cacheKey` of the Note's current Study Set in the `studySets` store. */
+  currentCacheKey: string;
+  archived: boolean;
+  /** 1–3; 2 is the default (Should feature, AD-17: the field exists from the start). */
+  importanceLevel: number;
+  /** ISO 8601 UTC, or null before the first Round. */
+  lastPractisedAt: string | null;
+};

@@ -16,6 +16,8 @@ export const messages = {
   // Page titles (document.title = "{side} · {app.brand}")
   "title.notes": "Dine notater",
   "title.settings": "Innstillinger",
+  // Genererer: also its h1 (EXPERIENCE.md › Page structure: "Lager kort og quiz · {notat} · …").
+  "title.generating": "Lager kort og quiz",
 
   // Samtykke (Consent dialog). {leverandør} is filled from /api/status (spec 1.3, Decisions).
   "consent.title": "Før du starter",
@@ -54,8 +56,18 @@ export const messages = {
   "warn.encoding": "Æ, ø og å kan vises feil i dette notatet.",
 
   // Genererer (draft Microcopy). The 'Prøv igjen' / 'Tilbake til start' buttons are separate keys.
+  // gen.status is split into one key per step (D-11); each step is announced once via role="status".
+  "gen.status.concepts": "Finner nøkkelbegreper …",
+  "gen.status.cards": "Lager kort …",
+  "gen.status.sources": "Sjekker kildene …",
+  // Accessible name of the time-based progress bar (D-11).
+  "gen.progress": "Fremdrift",
+  "gen.back": "Tilbake til start",
   "err.generation": "Det gikk ikke å lage kort og quiz nå.",
   "err.tooFewItems": "For få kort eller spørsmål kunne knyttes til notatet ditt.",
+
+  // Notatoversikt (placeholder until Story 1.11): the Note is not stored in this browser (D-11).
+  "note.missing": "Fant ikke notatet",
 
   // Innstillinger
   "settings.h1": "Innstillinger",
@@ -78,7 +90,11 @@ export function format(key: MessageKey, vars: Record<string, string>): string {
   return t(key).replace(/\{([^{}]+)\}/g, (match, name: string) => (Object.hasOwn(vars, name) ? vars[name] : match));
 }
 
-/** EXPERIENCE.md › Page structure: "{side} · Torsas læringsassistent". */
-export function pageTitle(side: MessageKey): string {
-  return `${t(side)} · ${t("app.brand")}`;
+/**
+ * EXPERIENCE.md › Page structure: "{side} · Torsas læringsassistent", with an optional Note segment:
+ * "{side} · {notat} · …" (Genererer) or "{notat} · …" (a Note's own screens, titled by the Note).
+ * `note` is the Note's name as the student gave it, not a message key.
+ */
+export function pageTitle(side?: MessageKey, note?: string): string {
+  return [side ? t(side) : null, note || null, t("app.brand")].filter((part) => part !== null).join(" · ");
 }

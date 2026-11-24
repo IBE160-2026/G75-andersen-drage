@@ -5,9 +5,9 @@ import styles from "./ErrorMessage.module.css";
 /**
  * Inline error (DESIGN.md › Error message): crimson role, icon + "Feil:" prefix + text,
  * plus an optional next-step slot (for example 'Prøv igjen'). Never colour-only.
- * `text` must already come from messages.ts.
+ * `text` must already come from messages.ts (it may hold an inline control, as `consent.declined` does).
  */
-export function ErrorMessage({ text, actions, id }: { text: string; actions?: ReactNode; id?: string }) {
+export function ErrorMessage({ text, actions, id }: { text: ReactNode; actions?: ReactNode; id?: string }) {
   return (
     <div id={id} role="alert" tabIndex={-1} className={styles.error}>
       <div className={styles.body}>
