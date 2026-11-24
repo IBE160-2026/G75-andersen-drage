@@ -1,0 +1,291 @@
+{
+  "studySet": {
+    "concepts": [
+      {
+        "name": "Smidig utvikling",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "Hva er smidig utvikling?",
+            "back": "Å levere i korte runder, vise fram en fungerende del av produktet, få tilbakemelding og justere planen.",
+            "passageId": "p5",
+            "quote": "Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvordan leverer smidig utvikling?",
+            "options": [
+              "I faste faser etter hverandre",
+              "I korte runder med tilbakemelding",
+              "Først i et stort sluttprosjekt",
+              "Etter at hele planen er godkjent"
+            ],
+            "correctIndex": 1,
+            "passageId": "p5",
+            "quote": "Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen."
+          }
+        ]
+      },
+      {
+        "name": "Scrum",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "Hva beskriver Scrum?",
+            "back": "Roller, hendelser og artefakter, men ikke hvordan teamet programmerer og tester.",
+            "passageId": "p15",
+            "quote": "det beskriver roller, hendelser og artefakter, men ikke hvordan teamet skal programmere eller teste."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva beskriver ikke Scrum?",
+            "options": [
+              "Roller",
+              "Hendelser",
+              "Hvordan teamet skal programmere",
+              "Artefakter"
+            ],
+            "correctIndex": 2,
+            "passageId": "p15",
+            "quote": "det beskriver roller, hendelser og artefakter, men ikke hvordan teamet skal programmere eller teste."
+          }
+        ]
+      },
+      {
+        "name": "Sprint",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "Hvor lang er en sprint?",
+            "back": "En fast periode på én måned eller kortere, ofte to uker.",
+            "passageId": "p26",
+            "quote": "en fast periode på én måned eller kortere, ofte to uker"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva endres ikke under sprinten?",
+            "options": [
+              "Produktkøen",
+              "Antall utviklere",
+              "Sprintmålet",
+              "Sprintens varighet"
+            ],
+            "correctIndex": 2,
+            "passageId": "p26",
+            "quote": "Under sprinten endres ikke sprintmålet."
+          }
+        ]
+      },
+      {
+        "name": "Det smidige manifestet",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "Hvor mange verdier har det smidige manifestet?",
+            "back": "Fire verdier.",
+            "passageId": "p7",
+            "quote": "Det består av fire verdier."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Når ble det smidige manifestet skrevet?",
+            "options": [
+              "1995",
+              "2010",
+              "2015",
+              "2001"
+            ],
+            "correctIndex": 3,
+            "passageId": "p7",
+            "quote": "I 2001 skrev sytten utviklere det smidige manifestet."
+          }
+        ]
+      },
+      {
+        "name": "Produkteier",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "Hvem prioriterer produktkøen i Scrum?",
+            "back": "Produkteieren (Product Owner).",
+            "passageId": "p21",
+            "quote": "Produkteieren eier og prioriterer produktkøen og bestemmer hva som er viktigst å lage først."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor mange produkteiere er det i et Scrum-team?",
+            "options": [
+              "Én person",
+              "To personer",
+              "En komité",
+              "Hele teamet"
+            ],
+            "correctIndex": 0,
+            "passageId": "p21",
+            "quote": "Det er én person, ikke en komité."
+          }
+        ]
+      },
+      {
+        "name": "Fossefallsmodellen",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "Hva kjennetegner fossefallsmodellen?",
+            "back": "Faste faser etter hverandre, der hver fase må være ferdig før neste starter.",
+            "passageId": "p4",
+            "quote": "Hver fase skal være ferdig før neste starter."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er et problem med fossefallsmodellen?",
+            "options": [
+              "Feil i kravene oppdages sent",
+              "Den har for mange korte runder",
+              "Den bruker ingen faste faser",
+              "Kunden får aldri vite framdriften"
+            ],
+            "correctIndex": 0,
+            "passageId": "p4",
+            "quote": "Problemet er at kundens behov endrer seg underveis, og at feil i kravene først oppdages sent, når de er dyre å rette."
+          }
+        ]
+      },
+      {
+        "name": "Definisjonen av ferdig",
+        "centralityRank": 7,
+        "flashcards": [
+          {
+            "front": "Når regnes et element som en del av inkrementet?",
+            "back": "Når det oppfyller definisjonen av ferdig.",
+            "passageId": "p34",
+            "quote": "Et element regnes bare som en del av inkrementet når det oppfyller"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva må et element oppfylle for å være en del av inkrementet?",
+            "options": [
+              "Å være estimert i timer",
+              "Definisjonen av ferdig",
+              "Å være skrevet som brukerhistorie",
+              "Å være godkjent av Scrum Master"
+            ],
+            "correctIndex": 1,
+            "passageId": "p34",
+            "quote": "Et element regnes bare som en del av inkrementet når det oppfyller"
+          }
+        ]
+      },
+      {
+        "name": "Kanban",
+        "centralityRank": 8,
+        "flashcards": [
+          {
+            "front": "Hva er den viktigste regelen i Kanban?",
+            "back": "Å begrense pågående arbeid med WIP-grenser.",
+            "passageId": "p41",
+            "quote": "en kolonne kan bare ha et visst antall kort samtidig"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken rytme har Kanban?",
+            "options": [
+              "Faste sprinter",
+              "Daglige møter",
+              "To ukers sykluser",
+              "Kontinuerlig flyt"
+            ],
+            "correctIndex": 3,
+            "passageId": "p41",
+            "quote": "I stedet for sprinter har Kanban en kontinuerlig flyt av arbeid over en tavle med kolonner"
+          }
+        ]
+      },
+      {
+        "name": "Brukerhistorier",
+        "centralityRank": 9,
+        "flashcards": [
+          {
+            "front": "Hva sier INVEST-huskeregelen om en god brukerhistorie?",
+            "back": "Den bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar.",
+            "passageId": "p38",
+            "quote": "Huskeregelen INVEST sier at en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken egenskap er med i INVEST?",
+            "options": [
+              "Lang",
+              "Testbar",
+              "Detaljert i timer",
+              "Kostnadsfri"
+            ],
+            "correctIndex": 1,
+            "passageId": "p38",
+            "quote": "Huskeregelen INVEST sier at en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar."
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Smidig utvikling leverer i korte runder, viser fram en fungerende del av produktet og justerer planen etter tilbakemelding.",
+        "passageId": "p5",
+        "quote": "Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen."
+      },
+      {
+        "text": "Fossefallsmodellen har faste faser etter hverandre, og feil i kravene oppdages ofte sent.",
+        "passageId": "p4",
+        "quote": "Problemet er at kundens behov endrer seg underveis, og at feil i kravene først oppdages sent, når de er dyre å rette."
+      },
+      {
+        "text": "Det smidige manifestet har fire verdier og tolv prinsipper.",
+        "passageId": "p12",
+        "quote": "Bak verdiene ligger tolv prinsipper."
+      },
+      {
+        "text": "Manifestet sier ikke at dokumentasjon er unødvendig, men at fungerende programvare er det viktigste målet på framdrift.",
+        "passageId": "p13",
+        "quote": "Det sier bare at fungerende programvare er det viktigste målet på framdrift."
+      },
+      {
+        "text": "Scrum beskriver roller, hendelser og artefakter, men ikke hvordan teamet skal programmere eller teste.",
+        "passageId": "p15",
+        "quote": "det beskriver roller, hendelser og artefakter, men ikke hvordan teamet skal programmere eller teste."
+      },
+      {
+        "text": "En sprint har fast lengde, og sprintmålet endres ikke underveis.",
+        "passageId": "p26",
+        "quote": "Under sprinten endres ikke sprintmålet."
+      },
+      {
+        "text": "Gjennomgangen handler om produktet, og retrospektivet handler om prosessen.",
+        "passageId": "p53",
+        "quote": "Gjennomgang = produktet, retrospektiv = prosessen."
+      },
+      {
+        "text": "Kanban bruker kontinuerlig flyt og WIP-grenser i stedet for sprinter.",
+        "passageId": "p41",
+        "quote": "I stedet for sprinter har Kanban en kontinuerlig flyt av arbeid over en tavle med kolonner"
+      },
+      {
+        "text": "I IBE160 brukes KI-agenter, og små brukerhistorier med akseptansekriterier gir en avgrenset oppgave.",
+        "passageId": "p48",
+        "quote": "små brukerhistorier med tydelige akseptansekriterier gir agenten en avgrenset oppgave"
+      }
+    ],
+    "language": "nb"
+  },
+  "simpler": {},
+  "model": "anthropic/claude-haiku-5.5",
+  "promptVersion": "2"
+}

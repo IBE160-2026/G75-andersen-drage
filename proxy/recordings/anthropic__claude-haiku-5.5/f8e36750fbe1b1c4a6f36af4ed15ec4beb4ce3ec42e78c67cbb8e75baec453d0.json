@@ -1,0 +1,546 @@
+{
+  "studySet": {
+    "concepts": [
+      {
+        "name": "Moores lov",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "Hvem formulerte Moores lov, og når?",
+            "back": "Gordon Moore (medgründer av Intel) i 1965",
+            "passageId": "p3",
+            "quote": "ble formulert av Gordon Moore (medgründer av Intel) i 1965"
+          },
+          {
+            "front": "Hva sier Moores lov?",
+            "back": "Antallet transistorer på en integrert krets dobles omtrent annethvert år",
+            "passageId": "p4",
+            "quote": "antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor ofte dobles antallet transistorer ifølge Moores lov?",
+            "options": [
+              "Hvert år",
+              "Annethvert år",
+              "Hvert tiende år",
+              "Hvert femte år"
+            ],
+            "correctIndex": 1,
+            "passageId": "p4",
+            "quote": "antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år"
+          }
+        ]
+      },
+      {
+        "name": "Turingmaskin",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "Hvem utviklet Turingmaskinen, og når?",
+            "back": "Alan Turing i 1936",
+            "passageId": "p65",
+            "quote": "den britiske matematikeren og logikeren Alan Turing i 1936"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er en Turingmaskin?",
+            "options": [
+              "En teoretisk matematisk modell av en datamaskin",
+              "En fysisk prosessor",
+              "Et operativsystem",
+              "Et nettverksprotokoll"
+            ],
+            "correctIndex": 0,
+            "passageId": "p65",
+            "quote": "En Turingmaskin (Turing machine) er en teoretisk matematisk modell av en datamaskin"
+          }
+        ]
+      },
+      {
+        "name": "Bit og byte",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "Hva er en byte?",
+            "back": "En gruppe på 8 bit",
+            "passageId": "p14",
+            "quote": "samler vi dem i grupper på 8 bit, som kalles en byte"
+          },
+          {
+            "front": "Hva står ordet bit for?",
+            "back": "Binary digit (binært siffer)",
+            "passageId": "p12",
+            "quote": "Ordet bit kommer fra engelsk binary digit (binært siffer)"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor mange bit er det i en byte?",
+            "options": [
+              "4",
+              "8",
+              "16",
+              "32"
+            ],
+            "correctIndex": 1,
+            "passageId": "p14",
+            "quote": "samler vi dem i grupper på 8 bit, som kalles en byte"
+          }
+        ]
+      },
+      {
+        "name": "CPU og GPU",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "Hva er en GPU bygget for?",
+            "back": "Massiv parallellprosessering",
+            "passageId": "p82",
+            "quote": "Er bygd for massiv parallellprosessering"
+          },
+          {
+            "front": "Hva er CPU-ens rolle i datamaskinen?",
+            "back": "Å håndtere komplekse, generelle oppgaver sekvensielt",
+            "passageId": "p81",
+            "quote": "er bygd for å håndtere komplekse, generelle oppgaver sekvensielt"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor mange kjerner har en CPU som regel ifølge Noten?",
+            "options": [
+              "Tusenvis",
+              "100 til 200",
+              "1 til 3",
+              "4 til 16"
+            ],
+            "correctIndex": 3,
+            "passageId": "p81",
+            "quote": "Den har som regel et lite antall kjerner (f.eks. 4 til 16 kraftige kjerner)"
+          }
+        ]
+      },
+      {
+        "name": "Heksadesimale tall",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "Hvor mange bit tilsvarer ett heksadesimalt siffer?",
+            "back": "4 bit",
+            "passageId": "p24",
+            "quote": "at én heksadesimal siffer svarer nøyaktig til 4 bit"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er 1111 binært i heksadesimalt?",
+            "options": [
+              "A",
+              "C",
+              "F",
+              "E"
+            ],
+            "correctIndex": 2,
+            "passageId": "p27",
+            "quote": "I heksadesimalt skrives 1111 enkelt som F."
+          }
+        ]
+      },
+      {
+        "name": "A/D-omformer",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "Hva gjør en A/D-omformer?",
+            "back": "Oversetter analoge signaler til digitale verdier",
+            "passageId": "p90",
+            "quote": "oversetter analoge signaler (kontinuerlige fysiske verdier i den virkelige verden) til digitale verdier"
+          },
+          {
+            "front": "Hva er det første trinnet i en A/D-omformer?",
+            "back": "Sampling (prøvetaking)",
+            "passageId": "p95",
+            "quote": "Sampling (Prøvetaking): Den måler det analoge signalet med jevne og svært korte tidsmellomrom"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilket trinn måler signalet med jevne tidsmellomrom?",
+            "options": [
+              "Kvantisering",
+              "Sampling",
+              "Dekoding",
+              "Kompilering"
+            ],
+            "correctIndex": 1,
+            "passageId": "p95",
+            "quote": "Sampling (Prøvetaking): Den måler det analoge signalet med jevne og svært korte tidsmellomrom"
+          }
+        ]
+      },
+      {
+        "name": "Asymmetrisk kryptering",
+        "centralityRank": 7,
+        "flashcards": [
+          {
+            "front": "Hva er en fordel med asymmetrisk kryptering?",
+            "back": "Den løser problemet med nøkkelutveksling",
+            "passageId": "p43",
+            "quote": "Den løser problemet med nøkkelutveksling, ettersom man trygt kan dele sin offentlige nøkkel med hvem som helst"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken nøkkel kan deles trygt ved asymmetrisk kryptering?",
+            "options": [
+              "Den private nøkkelen",
+              "Ingen nøkkel",
+              "Den offentlige nøkkelen",
+              "Begge nøklene"
+            ],
+            "correctIndex": 2,
+            "passageId": "p43",
+            "quote": "ettersom man trygt kan dele sin offentlige nøkkel med hvem som helst"
+          }
+        ]
+      },
+      {
+        "name": "TCP",
+        "centralityRank": 8,
+        "flashcards": [
+          {
+            "front": "Hva er hovedformålet med TCP?",
+            "back": "Å sikre pålitelig, feilfri og korrekt rekkefølge på datapakker",
+            "passageId": "p40",
+            "quote": "Å sørge for en pålitelig, feilfri og korrekt rekkefølge på datapakker som sendes mellom enheter over nettet"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva sørger TCP for?",
+            "options": [
+              "Pålitelig, feilfri levering av datapakker",
+              "Ruting av pakker mellom nett",
+              "Oversettelse av domenenavn",
+              "Kryptering av e-post"
+            ],
+            "correctIndex": 0,
+            "passageId": "p40",
+            "quote": "Å sørge for en pålitelig, feilfri og korrekt rekkefølge på datapakker som sendes mellom enheter over nettet"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Moores lov ble formulert av Gordon Moore i 1965 og beskriver en empirisk observasjon om utviklingen av mikrobrikker.",
+        "passageId": "p3",
+        "quote": "ble formulert av Gordon Moore (medgründer av Intel) i 1965"
+      },
+      {
+        "text": "Antallet transistorer på en integrert krets dobles omtrent annethvert år, mens kostnaden per transistor synker.",
+        "passageId": "p4",
+        "quote": "antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år"
+      },
+      {
+        "text": "Bit er 0 eller 1, og en byte er en gruppe på 8 bit.",
+        "passageId": "p14",
+        "quote": "samler vi dem i grupper på 8 bit, som kalles en byte"
+      },
+      {
+        "text": "Ett heksadesimalt siffer svarer til 4 bit, noe som gjør oversettelse mellom binært og heksadesimalt enkelt.",
+        "passageId": "p24",
+        "quote": "at én heksadesimal siffer svarer nøyaktig til 4 bit"
+      },
+      {
+        "text": "Turingmaskinen er en teoretisk modell av en datamaskin, utviklet av Alan Turing i 1936.",
+        "passageId": "p65",
+        "quote": "En Turingmaskin (Turing machine) er en teoretisk matematisk modell av en datamaskin"
+      },
+      {
+        "text": "GPU-er er bygd for massiv parallellprosessering, mens CPU-er håndterer komplekse oppgaver sekvensielt.",
+        "passageId": "p82",
+        "quote": "Er bygd for massiv parallellprosessering"
+      }
+    ],
+    "language": "nb"
+  },
+  "simpler": {},
+  "model": "anthropic/claude-haiku-5.5",
+  "promptVersion": "2",
+  "generationMs": 32518,
+  "validated": {
+    "concepts": [
+      {
+        "name": "Moores lov",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "Hvem formulerte Moores lov, og når?",
+            "back": "Gordon Moore (medgründer av Intel) i 1965",
+            "passageId": "p3",
+            "quote": "ble formulert av Gordon Moore (medgründer av Intel) i 1965"
+          },
+          {
+            "front": "Hva sier Moores lov?",
+            "back": "Antallet transistorer på en integrert krets dobles omtrent annethvert år",
+            "passageId": "p4",
+            "quote": "antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor ofte dobles antallet transistorer ifølge Moores lov?",
+            "options": [
+              "Hvert år",
+              "Annethvert år",
+              "Hvert tiende år",
+              "Hvert femte år"
+            ],
+            "correctIndex": 1,
+            "passageId": "p4",
+            "quote": "antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år"
+          }
+        ]
+      },
+      {
+        "name": "Turingmaskin",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "Hvem utviklet Turingmaskinen, og når?",
+            "back": "Alan Turing i 1936",
+            "passageId": "p65",
+            "quote": "den britiske matematikeren og logikeren Alan Turing i 1936"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er en Turingmaskin?",
+            "options": [
+              "En teoretisk matematisk modell av en datamaskin",
+              "En fysisk prosessor",
+              "Et operativsystem",
+              "Et nettverksprotokoll"
+            ],
+            "correctIndex": 0,
+            "passageId": "p65",
+            "quote": "En Turingmaskin (Turing machine) er en teoretisk matematisk modell av en datamaskin"
+          }
+        ]
+      },
+      {
+        "name": "Bit og byte",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "Hva er en byte?",
+            "back": "En gruppe på 8 bit",
+            "passageId": "p14",
+            "quote": "samler vi dem i grupper på 8 bit, som kalles en byte"
+          },
+          {
+            "front": "Hva står ordet bit for?",
+            "back": "Binary digit (binært siffer)",
+            "passageId": "p12",
+            "quote": "Ordet bit kommer fra engelsk binary digit (binært siffer)"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor mange bit er det i en byte?",
+            "options": [
+              "4",
+              "8",
+              "16",
+              "32"
+            ],
+            "correctIndex": 1,
+            "passageId": "p14",
+            "quote": "samler vi dem i grupper på 8 bit, som kalles en byte"
+          }
+        ]
+      },
+      {
+        "name": "CPU og GPU",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "Hva er en GPU bygget for?",
+            "back": "Massiv parallellprosessering",
+            "passageId": "p82",
+            "quote": "Er bygd for massiv parallellprosessering"
+          },
+          {
+            "front": "Hva er CPU-ens rolle i datamaskinen?",
+            "back": "Å håndtere komplekse, generelle oppgaver sekvensielt",
+            "passageId": "p81",
+            "quote": "er bygd for å håndtere komplekse, generelle oppgaver sekvensielt"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor mange kjerner har en CPU som regel ifølge Noten?",
+            "options": [
+              "Tusenvis",
+              "100 til 200",
+              "1 til 3",
+              "4 til 16"
+            ],
+            "correctIndex": 3,
+            "passageId": "p81",
+            "quote": "Den har som regel et lite antall kjerner (f.eks. 4 til 16 kraftige kjerner)"
+          }
+        ]
+      },
+      {
+        "name": "Heksadesimale tall",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "Hvor mange bit tilsvarer ett heksadesimalt siffer?",
+            "back": "4 bit",
+            "passageId": "p24",
+            "quote": "at én heksadesimal siffer svarer nøyaktig til 4 bit"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er 1111 binært i heksadesimalt?",
+            "options": [
+              "A",
+              "C",
+              "F",
+              "E"
+            ],
+            "correctIndex": 2,
+            "passageId": "p27",
+            "quote": "I heksadesimalt skrives 1111 enkelt som F."
+          }
+        ]
+      },
+      {
+        "name": "A/D-omformer",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "Hva gjør en A/D-omformer?",
+            "back": "Oversetter analoge signaler til digitale verdier",
+            "passageId": "p90",
+            "quote": "oversetter analoge signaler (kontinuerlige fysiske verdier i den virkelige verden) til digitale verdier"
+          },
+          {
+            "front": "Hva er det første trinnet i en A/D-omformer?",
+            "back": "Sampling (prøvetaking)",
+            "passageId": "p95",
+            "quote": "Sampling (Prøvetaking): Den måler det analoge signalet med jevne og svært korte tidsmellomrom"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilket trinn måler signalet med jevne tidsmellomrom?",
+            "options": [
+              "Kvantisering",
+              "Sampling",
+              "Dekoding",
+              "Kompilering"
+            ],
+            "correctIndex": 1,
+            "passageId": "p95",
+            "quote": "Sampling (Prøvetaking): Den måler det analoge signalet med jevne og svært korte tidsmellomrom"
+          }
+        ]
+      },
+      {
+        "name": "Asymmetrisk kryptering",
+        "centralityRank": 7,
+        "flashcards": [
+          {
+            "front": "Hva er en fordel med asymmetrisk kryptering?",
+            "back": "Den løser problemet med nøkkelutveksling",
+            "passageId": "p43",
+            "quote": "Den løser problemet med nøkkelutveksling, ettersom man trygt kan dele sin offentlige nøkkel med hvem som helst"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken nøkkel kan deles trygt ved asymmetrisk kryptering?",
+            "options": [
+              "Den private nøkkelen",
+              "Ingen nøkkel",
+              "Den offentlige nøkkelen",
+              "Begge nøklene"
+            ],
+            "correctIndex": 2,
+            "passageId": "p43",
+            "quote": "ettersom man trygt kan dele sin offentlige nøkkel med hvem som helst"
+          }
+        ]
+      },
+      {
+        "name": "TCP",
+        "centralityRank": 8,
+        "flashcards": [
+          {
+            "front": "Hva er hovedformålet med TCP?",
+            "back": "Å sikre pålitelig, feilfri og korrekt rekkefølge på datapakker",
+            "passageId": "p40",
+            "quote": "Å sørge for en pålitelig, feilfri og korrekt rekkefølge på datapakker som sendes mellom enheter over nettet"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva sørger TCP for?",
+            "options": [
+              "Pålitelig, feilfri levering av datapakker",
+              "Ruting av pakker mellom nett",
+              "Oversettelse av domenenavn",
+              "Kryptering av e-post"
+            ],
+            "correctIndex": 0,
+            "passageId": "p40",
+            "quote": "Å sørge for en pålitelig, feilfri og korrekt rekkefølge på datapakker som sendes mellom enheter over nettet"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Moores lov ble formulert av Gordon Moore i 1965 og beskriver en empirisk observasjon om utviklingen av mikrobrikker.",
+        "passageId": "p3",
+        "quote": "ble formulert av Gordon Moore (medgründer av Intel) i 1965"
+      },
+      {
+        "text": "Antallet transistorer på en integrert krets dobles omtrent annethvert år, mens kostnaden per transistor synker.",
+        "passageId": "p4",
+        "quote": "antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år"
+      },
+      {
+        "text": "Bit er 0 eller 1, og en byte er en gruppe på 8 bit.",
+        "passageId": "p14",
+        "quote": "samler vi dem i grupper på 8 bit, som kalles en byte"
+      },
+      {
+        "text": "Ett heksadesimalt siffer svarer til 4 bit, noe som gjør oversettelse mellom binært og heksadesimalt enkelt.",
+        "passageId": "p24",
+        "quote": "at én heksadesimal siffer svarer nøyaktig til 4 bit"
+      },
+      {
+        "text": "Turingmaskinen er en teoretisk modell av en datamaskin, utviklet av Alan Turing i 1936.",
+        "passageId": "p65",
+        "quote": "En Turingmaskin (Turing machine) er en teoretisk matematisk modell av en datamaskin"
+      },
+      {
+        "text": "GPU-er er bygd for massiv parallellprosessering, mens CPU-er håndterer komplekse oppgaver sekvensielt.",
+        "passageId": "p82",
+        "quote": "Er bygd for massiv parallellprosessering"
+      }
+    ],
+    "language": "nb",
+    "model": "anthropic/claude-haiku-5.5",
+    "promptVersion": "2"
+  }
+}

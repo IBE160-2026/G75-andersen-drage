@@ -1,0 +1,540 @@
+{
+  "studySet": {
+    "concepts": [
+      {
+        "name": "Unit Testing Definition",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "What is unit testing?",
+            "back": "A form of software testing by which isolated source code is tested to validate expected behavior.",
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          },
+          {
+            "front": "What does a unit correspond to from the system requirements perspective?",
+            "back": "Entry points to externally visible system behaviours.",
+            "passageId": "p9",
+            "quote": "From the system requirements perspective only the perimeter of the system is relevant, thus only entry points to externally visible system behaviours define units."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What is another name for unit testing?",
+            "options": [
+              "Component or module testing",
+              "System integration testing",
+              "Acceptance verification testing",
+              "Functional boundary testing"
+            ],
+            "correctIndex": 0,
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          }
+        ]
+      },
+      {
+        "name": "Test Case",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "What is a test case in software engineering?",
+            "back": "A specification of the inputs, execution conditions, testing procedure, and expected results that define a single test.",
+            "passageId": "p14",
+            "quote": "In software engineering, a test case is a specification of the inputs, execution conditions, testing procedure, and expected results that define a single test to be executed to achieve a particular software testing objective, such as to exercise a particular program path or to verify compliance with a specific requirement."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What do formally defined test cases allow for?",
+            "options": [
+              "Effective and consistent regression testing",
+              "Complete elimination of integration errors",
+              "Automated hardware manufacturing",
+              "Elimination of all software bugs"
+            ],
+            "correctIndex": 0,
+            "passageId": "p14",
+            "quote": "Formally defined test cases allow the same tests to be run repeatedly against successive versions of the software, allowing for effective and consistent regression testing."
+          }
+        ]
+      },
+      {
+        "name": "Test Double",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "What is a test double?",
+            "back": "Software used in software test automation that satisfies a dependency so that the test need not depend on production code.",
+            "passageId": "p16",
+            "quote": "A test double is software used in software test automation that satisfies a dependency so that the test need not depend on production code."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "How does a test double provide functionality?",
+            "options": [
+              "Via an interface that the software under test cannot distinguish from production code",
+              "By directly modifying production database records during execution",
+              "Through manual user intervention and real-time prompt inputs",
+              "By replacing the entire operating system kernel"
+            ],
+            "correctIndex": 0,
+            "passageId": "p16",
+            "quote": "A test double provides functionality via an interface that the software under test cannot distinguish from production code."
+          }
+        ]
+      },
+      {
+        "name": "Parameterized Test",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "What is a parameterized test?",
+            "back": "A test that accepts a set of values that can be used to enable the test to run with multiple, different input values.",
+            "passageId": "p18",
+            "quote": "A parameterized test is a test that accepts a set of values that can be used to enable the test to run with multiple, different input values."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What is a primary benefit of using parameterized tests?",
+            "options": [
+              "They can reduce test code duplication.",
+              "They completely remove the need for assertions.",
+              "They execute faster than compiled machine code.",
+              "They automatically generate production code."
+            ],
+            "correctIndex": 0,
+            "passageId": "p18",
+            "quote": "Use of parametrized tests can reduce test code duplication."
+          }
+        ]
+      },
+      {
+        "name": "Test-Driven Development (TDD)",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "What happens first in test-driven development (TDD)?",
+            "back": "Unit tests are written before the related production code is written.",
+            "passageId": "p26",
+            "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What is the typical sequence in test-driven development?",
+            "options": [
+              "Start with a failing test, add production code to make it pass, then refactor",
+              "Write all production code, deploy it, and then write tests",
+              "Refactor first, write production code second, and test last",
+              "Write passing tests, delete production code, and debug"
+            ],
+            "correctIndex": 0,
+            "passageId": "p26",
+            "quote": "Starting with a failing test, then adds just enough production code to make the test pass, then refactors the code as makes sense and then repeats by adding another failing test."
+          }
+        ]
+      },
+      {
+        "name": "Code Visibility and Access",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "What can a developer use in Java to access private fields and methods for unit testing?",
+            "back": "Reflection.",
+            "passageId": "p22",
+            "quote": "In Java and other languages, a developer can use reflection to access private fields and methods."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "How can unit tests gain access to code not exposed in the external API without compromising normal design goals?",
+            "options": [
+              "By being located in the same project or module as the code being tested",
+              "By disabling the compiler entirely during testing",
+              "By making every method public permanently in production code",
+              "By running tests exclusively on external servers"
+            ],
+            "correctIndex": 0,
+            "passageId": "p21",
+            "quote": "To enable access to code not exposed in the external API, unit tests can be located in the same project or module as the code being tested."
+          }
+        ]
+      },
+      {
+        "name": "Value and Benefits of Unit Testing",
+        "centralityRank": 7,
+        "flashcards": [
+          {
+            "front": "What is one main goal of unit testing?",
+            "back": "To isolate each part of the program and show that the individual parts are correct.",
+            "passageId": "p29",
+            "quote": "One goal of unit testing is to isolate each part of the program and show that the individual parts are correct."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Why is finding a bug early in the development cycle beneficial?",
+            "options": [
+              "The cost of finding and correcting the bug earlier is considerably lower.",
+              "It eliminates the need for any documentation.",
+              "It guarantees zero execution path errors.",
+              "It replaces the need for version control."
+            ],
+            "correctIndex": 0,
+            "passageId": "p31",
+            "quote": "The cost of finding a bug before coding begins or when the code is first written is considerably lower than the cost of detecting, identifying, and correcting the bug later."
+          }
+        ]
+      },
+      {
+        "name": "Limitations and Disadvantages",
+        "centralityRank": 8,
+        "flashcards": [
+          {
+            "front": "Can unit testing catch every error in a program?",
+            "back": "No, because it cannot evaluate every execution path in any but the most trivial programs.",
+            "passageId": "p39",
+            "quote": "Testing will not catch every error in the program, because it cannot evaluate every execution path in any but the most trivial programs."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What type of errors will unit testing by definition fail to catch?",
+            "options": [
+              "Integration errors or broader system-level errors",
+              "Simple syntax typing errors within a single method",
+              "Errors inside isolated functions",
+              "Unit specification mismatch bugs"
+            ],
+            "correctIndex": 0,
+            "passageId": "p39",
+            "quote": "Additionally, unit testing by definition only tests the functionality of the units themselves. Therefore, it will not catch integration errors or broader system-level errors"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Unit testing is a software testing method where isolated source code is tested to validate expected behavior, contrasting with integration or system testing.",
+        "passageId": "p2",
+        "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+      },
+      {
+        "text": "The practice dates back to early software engineering projects like SAGE and the Mercury project, evolving through automated frameworks like Kent Beck's SUnit and JUnit.",
+        "passageId": "p7",
+        "quote": "In 1989, Kent Beck described a testing framework for Smalltalk (later called SUnit) in \"Simple Smalltalk Testing: With Patterns\". In 1997, Kent Beck and Erich Gamma developed and released JUnit, a unit test framework that became popular with Java developers."
+      },
+      {
+        "text": "A unit corresponds to a single behavior exhibited by the system under test, typically defined by entry points to externally visible system behaviors.",
+        "passageId": "p9",
+        "quote": "A unit is defined as a single behaviour exhibited by the system under test (SUT), usually corresponding to a requirement. While a unit may correspond to a single function or module (in procedural programming) or a single method or class (in object-oriented programming), functions/methods and modules/classes do not necessarily correspond to units. From the system requirements perspective only the perimeter of the system is relevant, thus only entry points to externally visible system behaviours define units."
+      },
+      {
+        "text": "Test cases specify inputs, execution conditions, procedures, and expected results to ensure methodical testing and effective regression testing.",
+        "passageId": "p14",
+        "quote": "In software engineering, a test case is a specification of the inputs, execution conditions, testing procedure, and expected results that define a single test to be executed to achieve a particular software testing objective, such as to exercise a particular program path or to verify compliance with a specific requirement."
+      },
+      {
+        "text": "Test doubles and parameterized tests help satisfy dependencies and reduce test code duplication by running tests across multiple input values.",
+        "passageId": "p18",
+        "quote": "A parameterized test is a test that accepts a set of values that can be used to enable the test to run with multiple, different input values. A testing framework that supports parametrized tests supports a way to encode parameter sets and to run the test with each set. Use of parametrized tests can reduce test code duplication."
+      },
+      {
+        "text": "Test code requires access to internal code without breaking encapsulation, which can be achieved via module placement, language reflections, or compiler directives.",
+        "passageId": "p21",
+        "quote": "Test code needs access to the code it is testing, but testing should not compromise normal design goals such as information hiding, encapsulation and the separation of concerns. To enable access to code not exposed in the external API, unit tests can be located in the same project or module as the code being tested."
+      },
+      {
+        "text": "Test-driven development (TDD) involves writing failing unit tests before the production code, adding code to pass, and refactoring regularly.",
+        "passageId": "p26",
+        "quote": "In test-driven development (TDD), unit tests are written before the related production code is written. Starting with a failing test, then adds just enough production code to make the test pass, then refactors the code as makes sense and then repeats by adding another failing test."
+      },
+      {
+        "text": "Unit testing provides early problem detection, reduces bug correction costs, enables frequent releases, and acts as system behavior documentation.",
+        "passageId": "p30",
+        "quote": "Unit testing finds problems early in the development cycle. This includes both bugs in the programmer's implementation and flaws or missing parts of the specification for the unit."
+      },
+      {
+        "text": "Limitations of unit testing include the inability to evaluate every execution path, combinatorial test growth, and challenges with embedded systems or external databases.",
+        "passageId": "p39",
+        "quote": "Testing will not catch every error in the program, because it cannot evaluate every execution path in any but the most trivial programs."
+      }
+    ],
+    "language": "en"
+  },
+  "simpler": {},
+  "model": "google/gemini-3.5-flash-lite",
+  "promptVersion": "2",
+  "generationMs": 9482,
+  "validated": {
+    "concepts": [
+      {
+        "name": "Unit Testing Definition",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "What is unit testing?",
+            "back": "A form of software testing by which isolated source code is tested to validate expected behavior.",
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          },
+          {
+            "front": "What does a unit correspond to from the system requirements perspective?",
+            "back": "Entry points to externally visible system behaviours.",
+            "passageId": "p9",
+            "quote": "From the system requirements perspective only the perimeter of the system is relevant, thus only entry points to externally visible system behaviours define units."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What is another name for unit testing?",
+            "options": [
+              "Component or module testing",
+              "System integration testing",
+              "Acceptance verification testing",
+              "Functional boundary testing"
+            ],
+            "correctIndex": 0,
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          }
+        ]
+      },
+      {
+        "name": "Test Case",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "What is a test case in software engineering?",
+            "back": "A specification of the inputs, execution conditions, testing procedure, and expected results that define a single test.",
+            "passageId": "p14",
+            "quote": "In software engineering, a test case is a specification of the inputs, execution conditions, testing procedure, and expected results that define a single test to be executed to achieve a particular software testing objective, such as to exercise a particular program path or to verify compliance with a specific requirement."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What do formally defined test cases allow for?",
+            "options": [
+              "Effective and consistent regression testing",
+              "Complete elimination of integration errors",
+              "Automated hardware manufacturing",
+              "Elimination of all software bugs"
+            ],
+            "correctIndex": 0,
+            "passageId": "p14",
+            "quote": "Formally defined test cases allow the same tests to be run repeatedly against successive versions of the software, allowing for effective and consistent regression testing."
+          }
+        ]
+      },
+      {
+        "name": "Test Double",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "What is a test double?",
+            "back": "Software used in software test automation that satisfies a dependency so that the test need not depend on production code.",
+            "passageId": "p16",
+            "quote": "A test double is software used in software test automation that satisfies a dependency so that the test need not depend on production code."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "How does a test double provide functionality?",
+            "options": [
+              "Via an interface that the software under test cannot distinguish from production code",
+              "By directly modifying production database records during execution",
+              "Through manual user intervention and real-time prompt inputs",
+              "By replacing the entire operating system kernel"
+            ],
+            "correctIndex": 0,
+            "passageId": "p16",
+            "quote": "A test double provides functionality via an interface that the software under test cannot distinguish from production code."
+          }
+        ]
+      },
+      {
+        "name": "Parameterized Test",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "What is a parameterized test?",
+            "back": "A test that accepts a set of values that can be used to enable the test to run with multiple, different input values.",
+            "passageId": "p18",
+            "quote": "A parameterized test is a test that accepts a set of values that can be used to enable the test to run with multiple, different input values."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What is a primary benefit of using parameterized tests?",
+            "options": [
+              "They can reduce test code duplication.",
+              "They completely remove the need for assertions.",
+              "They execute faster than compiled machine code.",
+              "They automatically generate production code."
+            ],
+            "correctIndex": 0,
+            "passageId": "p18",
+            "quote": "Use of parametrized tests can reduce test code duplication."
+          }
+        ]
+      },
+      {
+        "name": "Test-Driven Development (TDD)",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "What happens first in test-driven development (TDD)?",
+            "back": "Unit tests are written before the related production code is written.",
+            "passageId": "p26",
+            "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What is the typical sequence in test-driven development?",
+            "options": [
+              "Start with a failing test, add production code to make it pass, then refactor",
+              "Write all production code, deploy it, and then write tests",
+              "Refactor first, write production code second, and test last",
+              "Write passing tests, delete production code, and debug"
+            ],
+            "correctIndex": 0,
+            "passageId": "p26",
+            "quote": "Starting with a failing test, then adds just enough production code to make the test pass, then refactors the code as makes sense and then repeats by adding another failing test."
+          }
+        ]
+      },
+      {
+        "name": "Code Visibility and Access",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "What can a developer use in Java to access private fields and methods for unit testing?",
+            "back": "Reflection.",
+            "passageId": "p22",
+            "quote": "In Java and other languages, a developer can use reflection to access private fields and methods."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "How can unit tests gain access to code not exposed in the external API without compromising normal design goals?",
+            "options": [
+              "By being located in the same project or module as the code being tested",
+              "By disabling the compiler entirely during testing",
+              "By making every method public permanently in production code",
+              "By running tests exclusively on external servers"
+            ],
+            "correctIndex": 0,
+            "passageId": "p21",
+            "quote": "To enable access to code not exposed in the external API, unit tests can be located in the same project or module as the code being tested."
+          }
+        ]
+      },
+      {
+        "name": "Value and Benefits of Unit Testing",
+        "centralityRank": 7,
+        "flashcards": [
+          {
+            "front": "What is one main goal of unit testing?",
+            "back": "To isolate each part of the program and show that the individual parts are correct.",
+            "passageId": "p29",
+            "quote": "One goal of unit testing is to isolate each part of the program and show that the individual parts are correct."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Why is finding a bug early in the development cycle beneficial?",
+            "options": [
+              "The cost of finding and correcting the bug earlier is considerably lower.",
+              "It eliminates the need for any documentation.",
+              "It guarantees zero execution path errors.",
+              "It replaces the need for version control."
+            ],
+            "correctIndex": 0,
+            "passageId": "p31",
+            "quote": "The cost of finding a bug before coding begins or when the code is first written is considerably lower than the cost of detecting, identifying, and correcting the bug later."
+          }
+        ]
+      },
+      {
+        "name": "Limitations and Disadvantages",
+        "centralityRank": 8,
+        "flashcards": [
+          {
+            "front": "Can unit testing catch every error in a program?",
+            "back": "No, because it cannot evaluate every execution path in any but the most trivial programs.",
+            "passageId": "p39",
+            "quote": "Testing will not catch every error in the program, because it cannot evaluate every execution path in any but the most trivial programs."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What type of errors will unit testing by definition fail to catch?",
+            "options": [
+              "Integration errors or broader system-level errors",
+              "Simple syntax typing errors within a single method",
+              "Errors inside isolated functions",
+              "Unit specification mismatch bugs"
+            ],
+            "correctIndex": 0,
+            "passageId": "p39",
+            "quote": "Additionally, unit testing by definition only tests the functionality of the units themselves. Therefore, it will not catch integration errors or broader system-level errors"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Unit testing is a software testing method where isolated source code is tested to validate expected behavior, contrasting with integration or system testing.",
+        "passageId": "p2",
+        "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+      },
+      {
+        "text": "The practice dates back to early software engineering projects like SAGE and the Mercury project, evolving through automated frameworks like Kent Beck's SUnit and JUnit.",
+        "passageId": "p7",
+        "quote": "In 1989, Kent Beck described a testing framework for Smalltalk (later called SUnit) in \"Simple Smalltalk Testing: With Patterns\". In 1997, Kent Beck and Erich Gamma developed and released JUnit, a unit test framework that became popular with Java developers."
+      },
+      {
+        "text": "A unit corresponds to a single behavior exhibited by the system under test, typically defined by entry points to externally visible system behaviors.",
+        "passageId": "p9",
+        "quote": "A unit is defined as a single behaviour exhibited by the system under test (SUT), usually corresponding to a requirement. While a unit may correspond to a single function or module (in procedural programming) or a single method or class (in object-oriented programming), functions/methods and modules/classes do not necessarily correspond to units. From the system requirements perspective only the perimeter of the system is relevant, thus only entry points to externally visible system behaviours define units."
+      },
+      {
+        "text": "Test cases specify inputs, execution conditions, procedures, and expected results to ensure methodical testing and effective regression testing.",
+        "passageId": "p14",
+        "quote": "In software engineering, a test case is a specification of the inputs, execution conditions, testing procedure, and expected results that define a single test to be executed to achieve a particular software testing objective, such as to exercise a particular program path or to verify compliance with a specific requirement."
+      },
+      {
+        "text": "Test doubles and parameterized tests help satisfy dependencies and reduce test code duplication by running tests across multiple input values.",
+        "passageId": "p18",
+        "quote": "A parameterized test is a test that accepts a set of values that can be used to enable the test to run with multiple, different input values. A testing framework that supports parametrized tests supports a way to encode parameter sets and to run the test with each set. Use of parametrized tests can reduce test code duplication."
+      },
+      {
+        "text": "Test code requires access to internal code without breaking encapsulation, which can be achieved via module placement, language reflections, or compiler directives.",
+        "passageId": "p21",
+        "quote": "Test code needs access to the code it is testing, but testing should not compromise normal design goals such as information hiding, encapsulation and the separation of concerns. To enable access to code not exposed in the external API, unit tests can be located in the same project or module as the code being tested."
+      },
+      {
+        "text": "Test-driven development (TDD) involves writing failing unit tests before the production code, adding code to pass, and refactoring regularly.",
+        "passageId": "p26",
+        "quote": "In test-driven development (TDD), unit tests are written before the related production code is written. Starting with a failing test, then adds just enough production code to make the test pass, then refactors the code as makes sense and then repeats by adding another failing test."
+      },
+      {
+        "text": "Unit testing provides early problem detection, reduces bug correction costs, enables frequent releases, and acts as system behavior documentation.",
+        "passageId": "p30",
+        "quote": "Unit testing finds problems early in the development cycle. This includes both bugs in the programmer's implementation and flaws or missing parts of the specification for the unit."
+      },
+      {
+        "text": "Limitations of unit testing include the inability to evaluate every execution path, combinatorial test growth, and challenges with embedded systems or external databases.",
+        "passageId": "p39",
+        "quote": "Testing will not catch every error in the program, because it cannot evaluate every execution path in any but the most trivial programs."
+      }
+    ],
+    "language": "en",
+    "model": "google/gemini-3.5-flash-lite",
+    "promptVersion": "2"
+  }
+}

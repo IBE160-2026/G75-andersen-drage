@@ -10,6 +10,7 @@ export default defineConfig({
       "i18n/**/*.test.ts",
       "components/**/*.test.{ts,tsx}",
       "app/**/*.test.{ts,tsx}",
+      "scripts/**/*.test.ts",
     ],
     environment: "node",
   },
