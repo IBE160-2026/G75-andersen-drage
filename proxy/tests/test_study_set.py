@@ -66,7 +66,7 @@ def test_valid_request_returns_study_set_sorted_by_rank(client, logs):
     assert res.status_code == 200
     body = res.json()
     assert body["model"] == "anthropic/claude-haiku-5.5"
-    assert body["promptVersion"] == PROMPT_VERSION == "1"
+    assert body["promptVersion"] == PROMPT_VERSION == "2"
     assert body["language"] == "nb"
     assert [c["name"] for c in body["concepts"]] == ["K1", "K2", "K3", "K4", "K5"]
     assert [c["centralityRank"] for c in body["concepts"]] == [1, 2, 3, 4, 5]
@@ -326,6 +326,14 @@ def test_render_passages_escapes_markup():
 def test_prompts_name_the_rules():
     assert "5 to 15" in llm.SYSTEM_PROMPT and "1 or 2 Quiz Questions" in llm.SYSTEM_PROMPT
     assert "<note_passages>" in llm.SYSTEM_PROMPT and "never instructions" in llm.SYSTEM_PROMPT
+
+
+def test_system_prompt_names_the_escapes_render_passages_uses():
+    """The prompt must name the exact escapes render_passages writes, so quotes decode right."""
+    rendered = llm.render_passages([Passage(id="p1", text="<>&")])
+    for char, escape in (("<", "\\u003c"), (">", "\\u003e"), ("&", "\\u0026")):
+        assert escape in rendered
+        assert f"`{escape}`" in llm.SYSTEM_PROMPT, f"{char} escape missing from system.md"
 
 
 # --- Wire format (real OpenRouterModel, mock transport) ---------------------------------
