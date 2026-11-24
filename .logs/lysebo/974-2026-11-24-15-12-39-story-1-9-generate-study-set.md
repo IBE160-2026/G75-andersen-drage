@@ -45,3 +45,18 @@
 - Utsatt til Epic 3 (FR-4): gjenopplasting av et lagret notat nullstiller brukerfeltene og kan etterlate et foreldreløst studiesett (deferred-work.md).
 - De nye Microcopy-nøklene er utkast som ikke er godkjent: `gen.status.*`, `gen.progress`, `title.generating` og `note.missing` (D-11).
 - E2E-testen «forlate Genererer» bruker `waitForTimeout(500)`. Den er litt tidsavhengig, så følg med i CI.
+
+## 2026-11-24 kl. 15:30 — lysebo
+
+### Oppgave
+PR #10 er merget. Sett 1-9 til `done` i sprint-status.
+
+### Plan
+- Byttet til `main` og hentet merge-commiten `60830d1`. Oppdaterte deretter `sprint-status.yaml` på samme måte som for story 1.8.
+
+### Resultat
+- I `sprint-status.yaml` er 1-9 satt til `done` (commit `09560fe` på `main`).
+- PR-punktet i `issues.md` er lukket.
+
+### Åpne punkter
+- De øvrige punktene fra 1.9 står fortsatt i `issues.md` (utsatt FR-4, Microcopy-utkast og `waitForTimeout` i e2e).
