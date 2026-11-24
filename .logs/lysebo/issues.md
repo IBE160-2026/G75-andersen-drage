@@ -74,3 +74,4 @@
 - [x] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — feil: system.md:32 har mistet `<`/`>`/`&` (står «< arrive as <»); rett, bump PROMPT_VERSION, legg til test. Påvirker Quote Check i 1.8 (løst 2026-11-24: commit 6251765, PROMPT_VERSION 2)
 - [ ] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — 1.9: nettleserens tidsgrense for /api/study-set må være over 85 s (Proxy-budsjettet)
 - [ ] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — README: Proxyen må startes på nytt etter endring av OPENROUTER_API_KEY eller OPENROUTER_MODEL (agenten er cachet)
+- [ ] 2026-11-24 [story-1-7-proxy-guards-elicitation](977-2026-11-24-10-09-27-story-1-7-proxy-guards-elicitation.md) — FastAPI `/docs` og `/openapi.json` er åpne for GET uten Origin; vurder `docs_url=None`/`openapi_url=None` (utenfor 1.7)
