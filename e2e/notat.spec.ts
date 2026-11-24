@@ -578,3 +578,34 @@ test("a jump survives crossing 768 px, and activating a Passage moves none of it
   await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
   await expect(ref(page, 2)).toBeFocused();
 });
+
+test("'Prøv igjen' before /api/status answers (Epic 1 retrospective R5): Genererer waits for the status, then 1 POST", async ({ page }) => {
+  const posts: unknown[] = [];
+  page.on("request", (req) => {
+    if (req.url().includes("/api/study-set")) posts.push(req.postDataJSON());
+  });
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => (release = resolve));
+  await page.route("**/api/status", async (route) => {
+    await held;
+    // A request from a page that has since navigated away cannot be fulfilled any more.
+    await route
+      .fulfill({ json: { keyConfigured: true, model: MODEL, provider: "OpenRouter", promptVersion: PROMPT_VERSION } })
+      .catch(() => undefined);
+  });
+  await page.route("**/api/study-set", (route) => route.fulfill({ json: rawStudySetFor(PASSAGES) }));
+  await openOverview(page, studySet({ covered: () => false }));
+  await expect(h1(page)).toBeFocused();
+
+  const alert = page.locator('main [role="alert"]');
+  await alert.getByRole("button", { name: MSG.retry }).click();
+  // Status still held: Genererer shows, nothing is sent and no err.noKey replaces it.
+  await expect(page.getByRole("progressbar", { name: "Fremdrift" })).toBeVisible();
+  await expect(alert).toHaveCount(0);
+  expect(posts).toHaveLength(0);
+
+  release();
+  await expect(page.getByRole("button", { name: MSG.start })).toBeVisible();
+  await expect(h1(page)).toBeFocused();
+  expect(posts).toHaveLength(1);
+});

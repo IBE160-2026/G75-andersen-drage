@@ -537,3 +537,53 @@ test("Notatoversikt for a Note that is not stored: empty state with a way back t
   await page.getByRole("link", { name: MSG.back }).click();
   await expect(page.getByRole("heading", { level: 1, name: MSG.startH1 })).toBeFocused();
 });
+
+// Epic 1 retrospective R5: a file dropped before /api/status answers waits for it at the gate.
+async function holdStatus(page: Page, keyConfigured: boolean) {
+  const { held, release } = hold();
+  await page.route("**/api/status", async (route) => {
+    await held;
+    await route.fulfill({ json: { keyConfigured, model: MODEL, provider: "OpenRouter", promptVersion: PROMPT_VERSION } });
+  });
+  return release;
+}
+
+const noteMeta = (page: Page) => page.getByText(new RegExp(`^${FIXTURE.replace(/\./g, String.raw`\.`)} · `));
+
+test("status not answered yet, key configured: the gate waits, no err.noKey; then Genererer and exactly 1 POST", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  const release = await holdStatus(page, true);
+  await stubStudySet(page, (body, route) => route.fulfill({ json: studySetFor(body.passages) }));
+  const statusRequested = page.waitForRequest("**/api/status");
+  await page.goto("/");
+  await statusRequested;
+  await upload(page);
+
+  // Extracted (the meta shows) while the status is held: still on Start, no error, nothing sent.
+  await expect(noteMeta(page)).toBeVisible();
+  await expect(alert(page)).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1, name: MSG.generating })).toHaveCount(0);
+  expect(studySetRequests).toHaveLength(0);
+
+  release();
+  await expect(page).toHaveURL(/\/notat\/[0-9a-f]{64}$/);
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  expect(studySetRequests).toHaveLength(1);
+});
+
+test("status not answered yet, no key: the gate waits, then err.noKey inline at the drop zone; no request", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  const release = await holdStatus(page, false);
+  const statusRequested = page.waitForRequest("**/api/status");
+  await page.goto("/");
+  await statusRequested;
+  await upload(page);
+
+  await expect(noteMeta(page)).toBeVisible();
+  await expect(alert(page)).toHaveCount(0);
+
+  release();
+  await expect(alert(page)).toContainText(`Feil: ${MSG.noKey}`);
+  await expect(alert(page)).toBeFocused();
+  expect(studySetRequests).toHaveLength(0);
+});

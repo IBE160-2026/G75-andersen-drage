@@ -47,6 +47,15 @@ export function sendMode(settings: Settings): SendMode {
   return settings.demoMode === true ? "demo" : "live";
 }
 
+/**
+ * True when the gate's answer depends on /api/status: a live request with Consent accepted. Demo Mode
+ * and a missing Consent decide without it, so they never wait for the status (AD-6).
+ */
+export function gateNeedsStatus(): boolean {
+  const settings = readSettings();
+  return sendMode(settings) === "live" && settings.consent === "accepted";
+}
+
 /** AD-20 with settings read now (Consent or Demo Mode may have changed since startup). */
 export function checkSendGate(status: Status | null): GateResult {
   const settings = readSettings();
@@ -56,7 +65,10 @@ export function checkSendGate(status: Status | null): GateResult {
 type RequestOptions = {
   noteHash: string;
   passages: readonly Passage[];
-  /** `useAppSettings().status`; null (no answer yet) counts as no key. */
+  /**
+   * The settled status from `useAppSettings().waitForStatus()` (never the live `status` field, which is
+   * null while the answer is pending). null (never answered, or not needed) counts as no key.
+   */
   status: Status | null;
   signal?: AbortSignal;
   fetchImpl?: typeof fetch;

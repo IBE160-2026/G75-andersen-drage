@@ -9,8 +9,16 @@ import { MAIN_ID } from "../AppShell/ids";
 
 type AppSettingsValue = {
   settings: Settings;
-  /** null until /api/status answers (or for good, after 3 failed tries). */
+  /**
+   * null until /api/status answers (or for good, after 3 failed tries). For display only: the send gate
+   * must use `waitForStatus()`, or a submit before the answer is reported as a missing key.
+   */
   status: Status | null;
+  /**
+   * The settled status: the answer, or null after the last failed try. The send gate awaits this
+   * instead of reading `status`, so a submit before the answer waits rather than reporting no key.
+   */
+  waitForStatus(): Promise<Status | null>;
   /** "OpenRouter": {leverandør} in every string except consent.body. */
   provider: string;
   /** {leverandør} in consent.body: provider plus model once status has answered. */
@@ -52,6 +60,12 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [settings, setSettings] = useState<Settings>(() => readSettings());
   const [status, setStatus] = useState<Status | null>(null);
+  const settled = useRef<{ promise: Promise<Status | null>; resolve: (s: Status | null) => void } | null>(null);
+  if (settled.current === null) {
+    let resolve!: (s: Status | null) => void;
+    const promise = new Promise<Status | null>((r) => (resolve = r));
+    settled.current = { promise, resolve };
+  }
   // First open: the gate shows until a decision is stored (AD-10, FR-5).
   const [consentOpen, setConsentOpen] = useState(() => settings.consent === undefined);
   const trigger = useRef<HTMLElement | null>(null);
@@ -63,10 +77,14 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const controller = new AbortController();
     void fetchStatus({ signal: controller.signal }).then((s) => {
-      if (!controller.signal.aborted) setStatus(s);
+      if (controller.signal.aborted) return;
+      setStatus(s);
+      settled.current?.resolve(s);
     });
     return () => controller.abort();
   }, []);
+
+  const waitForStatus = useCallback(() => settled.current!.promise, []);
 
   useEffect(() => {
     document.documentElement.dataset.consent = settings.consent ?? "unset";
@@ -124,6 +142,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     return {
       settings,
       status,
+      waitForStatus,
       provider,
       providerWithModel,
       consentOpen,
@@ -134,7 +153,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       openConsent,
       restoreFocus,
     };
-  }, [settings, status, consentOpen, close, decide, setDemoMode, openConsent, restoreFocus]);
+  }, [settings, status, waitForStatus, consentOpen, close, decide, setDemoMode, openConsent, restoreFocus]);
 
   return <AppSettingsContext.Provider value={value}>{children}</AppSettingsContext.Provider>;
 }

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { requestStudySet } from "../../api/studySet";
+import { gateNeedsStatus, requestStudySet } from "../../api/studySet";
 import { buildNoteRecord, recordsForMode } from "../../core/noteRecord";
 import type { ExtractedNote } from "../../core/types";
 import { verifyStudySet } from "../../core/verifyStudySet";
@@ -76,15 +76,16 @@ export function Generating({
   onRejected?: (code: "err.demoOnly") => void;
 }) {
   const router = useRouter();
-  const { status } = useAppSettings();
+  const { waitForStatus } = useAppSettings();
   const [step, setStep] = useState<Step>("gen.status.concepts");
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<FailureCode | null>(null);
   const [attempt, setAttempt] = useState(0);
   // Ignores a second 'Prøv igjen' press that arrives before the progress view replaces the button.
   const retryingRef = useRef(false);
-  // Captured at mount: the Start page ran the gate with this status, and api/ runs it again.
-  const start = useRef({ note, noteHash, status, router });
+  // Captured at mount. The status is awaited per run: 'Prøv igjen' on Notatoversikt right after a reload
+  // can mount this before /api/status has answered, and api/ runs the gate with the settled status.
+  const start = useRef({ note, noteHash, waitForStatus, router });
   const onSavedRef = useRef(onSaved);
   onSavedRef.current = onSaved;
   const onRejectedRef = useRef(onRejected);
@@ -93,7 +94,7 @@ export function Generating({
 
   useEffect(() => {
     retryingRef.current = false;
-    const { note, noteHash, status, router } = start.current;
+    const { note, noteHash, waitForStatus, router } = start.current;
     const controller = new AbortController();
     const { signal } = controller;
     const startedAt = Date.now();
@@ -109,6 +110,8 @@ export function Generating({
     };
 
     void (async () => {
+      const status = gateNeedsStatus() ? await waitForStatus() : null;
+      if (signal.aborted) return;
       const result = await requestStudySet({ noteHash, passages: note.passages, status, signal });
       if (signal.aborted) return;
       if (!result.ok && result.code === "err.demoOnly" && onRejectedRef.current) {

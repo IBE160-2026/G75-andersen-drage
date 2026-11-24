@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { checkSendGate, type StudySetErrorCode } from "../api/studySet";
+import { checkSendGate, gateNeedsStatus, type StudySetErrorCode } from "../api/studySet";
 import { DEMO_PATH, useAppSettings } from "../components/AppSettings/AppSettings";
 import { ButtonLink } from "../components/Button/Button";
 import { ConsentDeclinedText, ConsentNotice } from "../components/ConsentNotice/ConsentNotice";
@@ -34,10 +34,7 @@ const number = new Intl.NumberFormat("nb-NO");
 // Story 1.14: 'Prøv demomodus' links to Demovelger. In Demo Mode an own file passes FR-3 and the gate,
 // and the Proxy's 404 comes back through Genererer's `onRejected` as `err.demoOnly`, inline at the drop zone.
 export default function StartPage() {
-  const { status, settings } = useAppSettings();
-  // onFile awaits extraction; the gate must see the status as it is then, not as it was at the drop.
-  const statusRef = useRef(status);
-  statusRef.current = status;
+  const { waitForStatus, settings } = useAppSettings();
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
   // `seq` remounts the alert for every rejection, so a repeated error is announced and focused again.
@@ -73,9 +70,9 @@ export default function StartPage() {
     busyRef.current = true;
     setBusy(true);
     const result = await extractInWorker(file);
-    busyRef.current = false;
-    setBusy(false);
     if (!result.ok) {
+      busyRef.current = false;
+      setBusy(false);
       reject(result.error);
       return;
     }
@@ -91,7 +88,13 @@ export default function StartPage() {
       note,
     };
     setExtracted(next);
-    const gate = checkSendGate(statusRef.current);
+    // The gate needs the settled /api/status (Epic 1 retrospective R5): a drop before it answers waits
+    // here with the Note meta shown and the drop zone still busy, so a second drop is ignored, instead
+    // of reporting err.noKey for a configured key.
+    const status = gateNeedsStatus() ? await waitForStatus() : null;
+    busyRef.current = false;
+    setBusy(false);
+    const gate = checkSendGate(status);
     if (!gate.ok) {
       block(gate.code);
       return;
