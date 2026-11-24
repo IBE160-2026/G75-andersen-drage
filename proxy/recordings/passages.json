@@ -1,0 +1,1068 @@
+[
+  {
+    "note": "en-unit-testing.pdf",
+    "noteHash": "f0357a9021403b542c0ec830875e43b9af01359c8db9e054773bb85af10248ed",
+    "passages": [
+      {
+        "id": "p1",
+        "text": "Unit testing"
+      },
+      {
+        "id": "p2",
+        "text": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior.[1]"
+      },
+      {
+        "id": "p3",
+        "text": "Unit testing describes tests that are run at the unit-level to contrast testing at the integration or system level.[2]"
+      },
+      {
+        "id": "p4",
+        "text": "History"
+      },
+      {
+        "id": "p5",
+        "text": "Unit testing, as a principle for testing separately smaller parts of large software systems, dates back to the early days of software engineering. In June 1956 at US Navy's Symposium on Advanced Programming Methods for Digital Computers, H.D. Benington presented the SAGE project. It featured a specificationbased approach where the coding phase was followed by \"parameter testing\" to validate component subprograms against their specification, followed then by an \"assembly testing\" for parts put together.[3][4]"
+      },
+      {
+        "id": "p6",
+        "text": "In 1964, a similar approach is described for the software of the Mercury project, where individual units developed by different programmers underwent \"unit tests\" before being integrated together.[5] In 1969, testing methodologies appear more structured, with unit tests, component tests and integration tests collectively validating individual parts written separately and their progressive assembly into larger blocks.[6] Some public standards adopted in the late 1960s, such as MIL-STD-483[7] and MIL-STD-490, contributed further to a wide acceptance of unit testing in large projects."
+      },
+      {
+        "id": "p7",
+        "text": "Unit testing was in those times interactive[4] or automated,[8] using either coded tests or capture and replay testing tools. In 1989, Kent Beck described a testing framework for Smalltalk (later called SUnit) in \"Simple Smalltalk Testing: With Patterns\". In 1997, Kent Beck and Erich Gamma developed and released JUnit, a unit test framework that became popular with Java developers.[9] Google embraced automated testing around 2005–2006.[10]"
+      },
+      {
+        "id": "p8",
+        "text": "Unit"
+      },
+      {
+        "id": "p9",
+        "text": "A unit is defined as a single behaviour exhibited by the system under test (SUT), usually corresponding to a requirement. While a unit may correspond to a single function or module (in procedural programming) or a single method or class (in object-oriented programming), functions/methods and modules/classes do not necessarily correspond to units. From the system requirements perspective only the perimeter of the system is relevant, thus only entry points to externally visible system behaviours define units.[11] Execution"
+      },
+      {
+        "id": "p10",
+        "text": "Unit tests can be performed manually or via automated test execution. Automated tests include benefits such as: running tests often, running tests without staffing cost, and consistent and repeatable testing. Testing is often performed by the programmer who writes and modifies the code under test. Unit testing may be viewed as part of the process of writing code."
+      },
+      {
+        "id": "p11",
+        "text": "Testing criteria"
+      },
+      {
+        "id": "p12",
+        "text": "During development, a programmer may code criteria, or results that are known to be good, into the test to verify the unit's correctness.[12] During test execution, frameworks log tests that fail any criterion and report them in a summary. For this, the most commonly used approach is test - function - expected value."
+      },
+      {
+        "id": "p13",
+        "text": "Test case"
+      },
+      {
+        "id": "p14",
+        "text": "In software engineering, a test case is a specification of the inputs, execution conditions, testing procedure, and expected results that define a single test to be executed to achieve a particular software testing objective, such as to exercise a particular program path or to verify compliance with a specific requirement.[13] Test cases underlie testing that is methodical rather than haphazard. A battery of test cases can be built to produce the desired coverage of the software being tested. Formally defined test cases allow the same tests to be run repeatedly against successive versions of the software, allowing for effective and consistent regression testing.[14]"
+      },
+      {
+        "id": "p15",
+        "text": "Test double"
+      },
+      {
+        "id": "p16",
+        "text": "A test double is software used in software test automation that satisfies a dependency so that the test need not depend on production code. A test double provides functionality via an interface that the software under test cannot distinguish from production code."
+      },
+      {
+        "id": "p17",
+        "text": "Parameterized test"
+      },
+      {
+        "id": "p18",
+        "text": "A parameterized test is a test that accepts a set of values that can be used to enable the test to run with multiple, different input values. A testing framework that supports parametrized tests supports a way to encode parameter sets and to run the test with each set. Use of parametrized tests can reduce test code duplication. Parameterized tests are supported by TestNG, JUnit,[15] XUnit and NUnit, as well as in various JavaScript test frameworks."
+      },
+      {
+        "id": "p19",
+        "text": "Parameters for the unit tests may be coded manually or in some cases are automatically generated by the test framework. In recent years support was added for writing more powerful (unit) tests, leveraging the concept of theories, test cases that execute the same steps, but using test data generated at runtime, unlike regular parameterized tests that use the same execution steps with input sets that are pre-defined.[16]"
+      },
+      {
+        "id": "p20",
+        "text": "Code visibility"
+      },
+      {
+        "id": "p21",
+        "text": "Test code needs access to the code it is testing, but testing should not compromise normal design goals such as information hiding, encapsulation and the separation of concerns. To enable access to code not exposed in the external API, unit tests can be located in the same project or module as the code being tested."
+      },
+      {
+        "id": "p22",
+        "text": "In object oriented design this still may not provide access to private data and methods. Therefore, extra work may be necessary for unit tests. In Java and other languages, a developer can use reflection to access private fields and methods.[17] Alternatively, an inner class can be used to hold the unit tests so they have visibility of the enclosing class's members and attributes. In the .NET Framework and some other programming languages, partial classes may be used to expose private methods and data for the tests to access."
+      },
+      {
+        "id": "p23",
+        "text": "It is important that code solely for accommodating tests does not remain in the production code. In C and other languages, compiler directives such as #if DEBUG ... #endif can be placed around such additional classes and indeed all other test-related code to prevent them being compiled into the released code. This means the released code is not exactly the same as what was unit tested. The regular running of fewer but more comprehensive, end-to-end, integration tests on the final release build can ensure (among other things) that no production code exists that subtly relies on aspects of the test harness."
+      },
+      {
+        "id": "p24",
+        "text": "There is some debate among developers, as to whether it is wise to test private methods and data anyway. Some argue that private members are a mere implementation detail that may change, and should be allowed to do so without breaking numbers of tests. Thus it should be sufficient to test any class through its public interface or through its subclass interface, which some languages call the \"protected\" interface.[18] Others say that crucial aspects of functionality may be implemented in private methods and testing them directly offers advantage of smaller and more direct unit tests.[19][20]"
+      },
+      {
+        "id": "p25",
+        "text": "Test-driven development"
+      },
+      {
+        "id": "p26",
+        "text": "In test-driven development (TDD), unit tests are written before the related production code is written. Starting with a failing test, then adds just enough production code to make the test pass, then refactors the code as makes sense and then repeats by adding another failing test."
+      },
+      {
+        "id": "p27",
+        "text": "Value"
+      },
+      {
+        "id": "p28",
+        "text": "Unit testing is intended to ensure that the units meet their design and behave as intended.[21]"
+      },
+      {
+        "id": "p29",
+        "text": "By writing tests first for the smallest testable units, then the compound behaviors between those, one can build up comprehensive tests for complex applications.[21] One goal of unit testing is to isolate each part of the program and show that the individual parts are correct.[1] A unit test provides a strict, written contract that the piece of code must satisfy."
+      },
+      {
+        "id": "p30",
+        "text": "Early detection of problems in the development cycle Unit testing finds problems early in the development cycle. This includes both bugs in the programmer's implementation and flaws or missing parts of the specification for the unit. The process of writing a thorough set of tests forces the author to think through inputs, outputs, and error conditions, and thus more crisply define the unit's desired behavior.[22]"
+      },
+      {
+        "id": "p31",
+        "text": "Reduced cost The cost of finding a bug before coding begins or when the code is first written is considerably lower than the cost of detecting, identifying, and correcting the bug later. Bugs in released code may also cause costly problems for the end-users of the software.[23][24][25] Code can be impossible or difficult to unit test if poorly written, thus unit testing can force developers to structure functions and objects in better ways."
+      },
+      {
+        "id": "p32",
+        "text": "More frequent releases Unit testing enables more frequent releases in software development. By testing individual components in isolation, developers can quickly identify and address issues, leading to faster iteration and release cycles.[26]"
+      },
+      {
+        "id": "p33",
+        "text": "Allows for code refactoring Unit testing allows the programmer to refactor code or upgrade system libraries at a later date, and make sure the module still works correctly (e.g., in regression testing). The procedure is to write test cases for all functions and methods so that whenever a change causes a fault, it can be identified quickly."
+      },
+      {
+        "id": "p34",
+        "text": "Detects changes which may break a design contract Unit tests detect changes which may break a design contract."
+      },
+      {
+        "id": "p35",
+        "text": "Reduce uncertainty Unit testing may reduce uncertainty in the units themselves and can be used in a bottom-up testing style approach. By testing the parts of a program first and then testing the sum of its parts, integration testing becomes much easier."
+      },
+      {
+        "id": "p36",
+        "text": "Documentation of system behavior Some programmers contend that unit tests provide a form of documentation of the code. Developers wanting to learn what functionality is provided by a unit, and how to use it, can review the unit tests to gain an understanding of it.[27] Test cases can embody characteristics that are critical to the success of the unit. These characteristics can indicate appropriate/inappropriate use of a unit as well as negative behaviors that are to be trapped by the unit. A test case documents these critical characteristics, although many software development environments do not rely solely upon code to document the product in development."
+      },
+      {
+        "id": "p37",
+        "text": "In some processes, the act of writing tests and the code under test, plus associated refactoring, may take the place of formal design. Each unit test can be seen as a design element specifying classes, methods, and observable behavior.[28]"
+      },
+      {
+        "id": "p38",
+        "text": "Limitations and disadvantages"
+      },
+      {
+        "id": "p39",
+        "text": "Testing will not catch every error in the program, because it cannot evaluate every execution path in any but the most trivial programs. This problem is a superset of the halting problem, which is undecidable. The same is true for unit testing. Additionally, unit testing by definition only tests the functionality of the units themselves. Therefore, it will not catch integration errors or broader system-level errors (such as functions performed across multiple units, or non-functional test areas such as performance). Unit testing should be done in conjunction with other software testing activities, as they can only show the presence or absence of particular errors; they cannot prove a complete absence of errors."
+      },
+      {
+        "id": "p40",
+        "text": "To guarantee correct behavior for every execution path and every possible input, and ensure the absence of errors, other techniques are required, namely the application of formal methods to prove that a software component has no unexpected behavior."
+      },
+      {
+        "id": "p41",
+        "text": "An elaborate hierarchy of unit tests does not equal integration testing. Integration with peripheral units should be included in integration tests, but not in unit tests. Integration testing typically still relies heavily on humans testing manually; high-level or global-scope testing can be difficult to automate, such that manual testing often appears faster and cheaper."
+      },
+      {
+        "id": "p42",
+        "text": "Software testing is a combinatorial problem. For example, every Boolean decision statement requires at least two tests: one with an outcome of \"true\" and one with an outcome of \"false\". As a result, for every line of code written, programmers often need 3 to 5 lines of test code. This obviously takes time and its investment may not be worth the effort. There are problems that cannot easily be tested at all – for example those that are nondeterministic or involve multiple threads. In addition, code for a unit test is as likely to be buggy as the code it is testing. Fred Brooks in The Mythical Man-Month quotes: \"Never go to sea with two chronometers; take one or three.\"[29] (If two chronometers contradict, one cannot know which is correct.)"
+      },
+      {
+        "id": "p43",
+        "text": "Difficulty in setting up realistic and useful tests"
+      },
+      {
+        "id": "p44",
+        "text": "Another challenge related to writing the unit tests is the difficulty of setting up realistic and useful tests. It is necessary to create relevant initial conditions so the part of the application being tested behaves like part of the complete system. If these initial conditions are not set correctly, the test will not be exercising the code in a realistic context, which diminishes the value and accuracy of unit test results.[30]"
+      },
+      {
+        "id": "p45",
+        "text": "Requires discipline throughout the development process"
+      },
+      {
+        "id": "p46",
+        "text": "To obtain the intended benefits from unit testing, rigorous discipline is needed throughout the software development process."
+      },
+      {
+        "id": "p47",
+        "text": "Requires version control"
+      },
+      {
+        "id": "p48",
+        "text": "It is essential to keep careful records not only of the tests that have been performed, but also of all changes that have been made to the source code of this or any other unit in the software. Use of a version control system is essential. If a later version of the unit fails a particular test that it had previously passed, the version-control software can provide a list of the source code changes (if any) that have been applied to the unit since that time."
+      },
+      {
+        "id": "p49",
+        "text": "Requires regular reviews"
+      },
+      {
+        "id": "p50",
+        "text": "It is also essential to implement a sustainable process for ensuring that test case failures are reviewed regularly and addressed immediately.[31] If such a process is not implemented and ingrained into the team's workflow, the application will evolve out of sync with the unit test suite, increasing false positives and reducing the effectiveness of the test suite."
+      },
+      {
+        "id": "p51",
+        "text": "Limitations for embedded system software"
+      },
+      {
+        "id": "p52",
+        "text": "Unit testing embedded system software presents challenges because the software is being developed on a different platform than the one it will eventually run on, making it difficult to run a test program in the actual deployment environment, as is possible with desktop programs.[32]"
+      },
+      {
+        "id": "p53",
+        "text": "Limitations for testing integration with external systems"
+      },
+      {
+        "id": "p54",
+        "text": "Unit tests tend to be easiest when a method has input parameters and some output. It is not as easy to create unit tests when a major function of the method is to interact with something external to the application. For example, a method that will work with a database might require a mock up of database interactions to be created, which probably won't be as comprehensive as the real database interactions.[33]"
+      },
+      {
+        "id": "p55",
+        "text": "Examples"
+      },
+      {
+        "id": "p56",
+        "text": "JUnit"
+      },
+      {
+        "id": "p57",
+        "text": "Below is an example of a JUnit test suite. It focuses on the Adder class."
+      },
+      {
+        "id": "p58",
+        "text": "class Adder { public int add(int a, int b) { return a + b; } }"
+      },
+      {
+        "id": "p59",
+        "text": "The test suite uses assert statements to verify the expected result of various input values to the sum method."
+      },
+      {
+        "id": "p60",
+        "text": "import static org.junit.Assert.assertEquals; import org.junit.Test; public class AdderUnitTest { @Test public void sumReturnsZeroForZeroInput() { Adder adder = new Adder(); assertEquals(0, adder.add(0, 0)); } @Test public void sumReturnsSumOfTwoPositiveNumbers() { Adder adder = new Adder(); assertEquals(3, adder.add(1, 2)); } @Test public void sumReturnsSumOfTwoNegativeNumbers() { Adder adder = new Adder(); assertEquals(-3, adder.add(-1, -2)); } @Test public void sumReturnsSumOfLargeNumbers() { Adder adder = new Adder(); assertEquals(2222, adder.add(1234, 988)); } }"
+      },
+      {
+        "id": "p61",
+        "text": "As executable specifications"
+      },
+      {
+        "id": "p62",
+        "text": "Using unit-tests as a design specification has one significant advantage over other design methods: The design document (the unit-tests themselves) can itself be used to verify the implementation. The tests will never pass unless the developer implements a solution according to the design."
+      },
+      {
+        "id": "p63",
+        "text": "Unit testing lacks some of the accessibility of a diagrammatic specification such as a UML diagram, but they may be generated from the unit test using automated tools. Most modern languages have free tools (usually available as extensions to IDEs). Free tools, like those based on the xUnit framework, outsource to another system the graphical rendering of a view for human consumption.[34]"
+      },
+      {
+        "id": "p64",
+        "text": "Applications"
+      },
+      {
+        "id": "p65",
+        "text": "Extreme programming"
+      },
+      {
+        "id": "p66",
+        "text": "Unit testing is the cornerstone of extreme programming, which relies on an automated unit testing framework. This automated unit testing framework can be either third party, e.g., xUnit, or created within the development group."
+      },
+      {
+        "id": "p67",
+        "text": "Extreme programming uses the creation of unit tests for test-driven development. The developer writes a unit test that exposes either a software requirement or a defect. This test will fail because either the requirement isn't implemented yet, or because it intentionally exposes a defect in the existing code. Then, the developer writes the simplest code to make the test, along with other tests, pass."
+      },
+      {
+        "id": "p68",
+        "text": "Most code in a system is unit tested, but not necessarily all paths through the code. Extreme programming mandates a \"test everything that can possibly break\" strategy, over the traditional \"test every execution path\" method. This leads developers to develop fewer tests than classical methods, but this isn't really a problem, more a restatement of fact, as classical methods have rarely ever been followed methodically enough for all execution paths to have been thoroughly tested.[35] Extreme programming simply recognizes that testing is rarely exhaustive (because it is often too expensive and time-consuming to be economically viable) and provides guidance on how to effectively focus limited resources."
+      },
+      {
+        "id": "p69",
+        "text": "Crucially, the test code is considered a first class project artifact in that it is maintained at the same quality as the implementation code, with all duplication removed. Developers release unit testing code to the code repository in conjunction with the code it tests. Extreme programming's thorough unit testing allows the benefits mentioned above, such as simpler and more confident code development and refactoring, simplified code integration, accurate documentation, and more modular designs. These unit tests are also constantly run as a form of regression test."
+      },
+      {
+        "id": "p70",
+        "text": "Unit testing is also critical to the concept of Emergent Design, which develops software design iteratively through short test-driven development cycles of writing a unit test, making it pass, and refactoring; unit tests provide the regression safety net that makes continuous refactoring safe.[36]"
+      },
+      {
+        "id": "p71",
+        "text": "Automated testing frameworks An automated testing framework provides features for automating test execution and can accelerate writing and running tests. Frameworks have been developed for a wide variety of programming languages."
+      },
+      {
+        "id": "p72",
+        "text": "Generally, frameworks are third-party, not distributed with a compiler or integrated development environment (IDE)."
+      },
+      {
+        "id": "p73",
+        "text": "Tests can be written without using a framework to exercise the code under test using assertions, exception handling, and other control flow mechanisms to verify behavior and report failure. Some note that testing without a framework is valuable since there is a barrier to entry for the adoption of a framework, and that having some tests is better than none – but once a framework is in place, adding tests can be easier.[37]"
+      },
+      {
+        "id": "p74",
+        "text": "In some frameworks advanced test features are missing and must be hand-coded."
+      },
+      {
+        "id": "p75",
+        "text": "Language-level unit testing support"
+      },
+      {
+        "id": "p76",
+        "text": "Some programming languages directly support unit testing. Their grammar allows the direct declaration of unit tests without importing a library (whether third party or standard). Additionally, the Boolean conditions of the unit tests can be expressed in the same syntax as Boolean expressions used in non-unit test code, such as what is used for if and while statements."
+      },
+      {
+        "id": "p77",
+        "text": "Languages with built-in unit testing support include:"
+      },
+      {
+        "id": "p78",
+        "text": "Cobra D[38]"
+      },
+      {
+        "id": "p79",
+        "text": "Rust[39]"
+      },
+      {
+        "id": "p80",
+        "text": "Languages with standard unit testing framework support include:"
+      },
+      {
+        "id": "p81",
+        "text": "Apex Crystal[40] Erlang Go[41] Julia[42] LabVIEW MATLAB Python[43] Racket[44][45] Ruby[46] Swift Some languages do not have built-in unit-testing support but have established unit testing libraries or frameworks. These languages include:"
+      },
+      {
+        "id": "p82",
+        "text": "ABAP C++ C# Clojure[47] Elixir Java JavaScript Objective-C"
+      },
+      {
+        "id": "p83",
+        "text": "See also"
+      },
+      {
+        "id": "p84",
+        "text": "Acceptance testing Characterization test Component-based usability testing Design predicates Design by contract Extreme programming Functional testing Integration testing"
+      },
+      {
+        "id": "p85",
+        "text": "References Perl PHP PowerShell[48] R with testthat Scala Tcl Visual Basic .NET Xojo with XojoUnit"
+      },
+      {
+        "id": "p86",
+        "text": "List of unit testing frameworks Regression testing Software archaeology Software testing System testing Test case Test-driven development xUnit – a family of unit testing frameworks."
+      },
+      {
+        "id": "p87",
+        "text": "1. Kolawa, Adam; Huizinga, Dorota (2007). Automated Defect Prevention: Best Practices in Software Management. Wiley-IEEE Computer Society Press. p. 75. ISBN 978-0-470-04212- 0. 2. Amazon Web Services (AWS). (n.d.). What is Unit Testing?. Retrieved May 2, 2025, from (ht tps://aws.amazon.com/what-is/unit-testing/)(https://aws.amazon.com/what-is/unit-testing/) 3. Benington, Herbert D. (1956). \"Production of large computer programs\". Proceedings of the Symposium on Advanced Programming Methods for Digital Computers, Washington, D.C., June 28–29, 1956. Office of Naval Research, Department of the Navy: 15–28. 4. Benington, H. D. (1 March 1987). \"Production of large computer programs (reprint of the 1956 paper with an updated foreword)\" (https://dl.acm.org/doi/10.5555/41765.41799)."
+      },
+      {
+        "id": "p88",
+        "text": "Proceedings of the 9th International Conference on Software Engineering. ICSE '87. Washington, DC, USA: IEEE Computer Society Press: 299–310. ISBN 978-0-89791-216-7. 5. Donegan, James J.; Packard, Calvin; Pashby, Paul (1 January 1964). \"Experiences with the goddard computing system during manned spaceflight missions\" (https://dl.acm.org/doi/10.1 145/800257.808889). Proceedings of the 1964 19th ACM national conference. ACM '64. New York, NY, USA: Association for Computing Machinery. pp. 12.101 – 12.108. doi:10.1145/800257.808889 (https://doi.org/10.1145%2F800257.808889). ISBN 978-1-4503- 7918-2."
+      },
+      {
+        "id": "p89",
+        "text": "6. Zimmerman, Norman A. (26 August 1969). \"System integration as a programming function\" (https://dl.acm.org/doi/10.1145/800195.805951). Proceedings of the 1969 24th national conference. ACM '69. New York, NY, USA: Association for Computing Machinery. pp. 459– 467. doi:10.1145/800195.805951 (https://doi.org/10.1145%2F800195.805951). ISBN 978-1- 4503-7493-4. 7. MIL-STD-483 Military standard: configuration management practices for systems, equipment, munitions, and computer programs. United states, Department of Defense. 31 December 1970. pp. Section 3.4.7.2. \"The contractor shall then code and test software Units, and enter the source and object code, and associated listings of each successfully tested Unit into the Developmental Configuration\" 8. Tighe, Michael F. (1 January 1978)."
+      },
+      {
+        "id": "p90",
+        "text": "\"The value of a proper software quality assurance methodology\" (https://dl.acm.org/doi/10.1145/1007775.811118). ACM SIGMETRICS Performance Evaluation Review. 7 (3–4): 165–172. doi:10.1145/1007775.811118 (https://do i.org/10.1145%2F1007775.811118). ISSN 0163-5999 (https://search.worldcat.org/issn/0163- 5999). 9. Gulati, Shekhar (2017). Java Unit Testing with JUnit 5 : Test Driven Development with JUnit 5. Rahul Sharma. Berkeley, CA: Apress. p. 8. ISBN 978-1-4842-3015-2. OCLC 1012347252 (https://search.worldcat.org/oclc/1012347252). 10. Winters, Titus (2020). Software engineering at Google : lessons learned from programming over time. Tom Manshreck, Hyrum Wright (1st ed.). Sebastopol, CA: O'Reilly. ISBN 978-1- 4920-8274-3. OCLC 1144086840 (https://search.worldcat.org/oclc/1144086840). 11."
+      },
+      {
+        "id": "p91",
+        "text": "Beck, Kent (2002). Test-Driven Development by Example. Addison-Wesley. ISBN 978- 0321146533. 12. IEEE Computer Society (2014). \"Chapter 3: Software Construction\". In Bourque, Pierre; Fairley, Richard E. (eds.). Guide to the Software Engineering Body of Knowledge (SWEBOK Guide), Version 3.0 (https://cs.fit.edu/~kgallagher/Schtick/Serious/SWEBOKv3.pdf) (PDF). IEEE. ISBN 978-0-7695-5166-1. Retrieved 27 September 2026. 13. Systems and software engineering -- Vocabulary. Iso/Iec/IEEE 24765:2010(E). 1 December 2010. pp. 1–418. doi:10.1109/IEEESTD.2010.5733835 (https://doi.org/10.1109%2FIEEEST D.2010.5733835). ISBN 978-0-7381-6205-8. 14. Kaner, Cem (May 2003). \"What Is a Good Test Case?\" (http://www.kaner.com/pdfs/GoodTes t.pdf) (PDF). STAR East: 2. 15. Gulati & Sharma 2017, pp."
+      },
+      {
+        "id": "p92",
+        "text": "133–137, Chapter §7 JUnit 5 Extension Model - Parameterized Test. 16. Kampmann, Alexander; Zeller, Andreas (May 2019). \"Carving Parameterized Unit Tests\". 2019 IEEE/ACM 41st International Conference on Software Engineering: Companion Proceedings (ICSE-Companion). pp. 248–249. doi:10.1109/icse-companion.2019.00098 (htt ps://doi.org/10.1109%2Ficse-companion.2019.00098). ISBN 978-1-7281-1764-5. 17. Burton, Ross (12 November 2003). \"Subverting Java Access Protection for Unit Testing\" (htt p://www.onjava.com/pub/a/onjava/2003/11/12/reflection.html). O'Reilly Media, Inc. Retrieved 12 August 2009. 18. van Rossum, Guido; Warsaw, Barry (5 July 2001). \"PEP 8 -- Style Guide for Python Code\" (https://www.python.org/dev/peps/pep-0008/). Python Software Foundation. Retrieved 6 May 2012. 19."
+      },
+      {
+        "id": "p93",
+        "text": "Newkirk, James (7 June 2004). \"Testing Private Methods/Member Variables - Should you or shouldn't you\" (http://blogs.msdn.com/jamesnewkirk/archive/2004/06/07/150361.aspx). Microsoft Corporation. Retrieved 12 August 2009. 20. Stall, Tim (1 March 2005). \"How to Test Private and Protected methods in .NET\" (https://we b.archive.org/web/20090903004928/http://www.codeproject.com/KB/cs/testnonpublicmemb ers.aspx). CodeProject. Archived from the original (http://www.codeproject.com/KB/cs/testno npublicmembers.aspx) on 3 September 2009. Retrieved 12 August 2009."
+      },
+      {
+        "id": "p94",
+        "text": "21. Hamill, Paul (2004). Unit Test Frameworks: Tools for High-Quality Software Development (ht tps://books.google.com/books?id=2ksvdhhnWQsC). O'Reilly Media, Inc. ISBN 9780596552817. 22. Gren, Lucas; Antinyan, Vard (August 2017). On the Relation Between Unit Testing and Code Quality (https://ieeexplore.ieee.org/document/8051327/). 43rd Euromicro Conference on Software Engineering and Advanced Applications (SEAA). pp. 52–56. doi:10.1109/seaa.2017.36 (https://doi.org/10.1109%2Fseaa.2017.36). Retrieved 16 May 2026. 23. Boehm, Barry W.; Papaccio, Philip N. (October 1988). \"Understanding and Controlling Software Costs\" (https://web.archive.org/web/20161009084506/http://faculty.ksu.edu.sa/gha zy/Cost_MSc/R6.pdf) (PDF). IEEE Transactions on Software Engineering. 14 (10): 1462– 1477."
+      },
+      {
+        "id": "p95",
+        "text": "Bibcode:1988ITSEn..14.1462B (https://scixplorer.org/abs/1988ITSEn..14.1462B). doi:10.1109/32.6191 (https://doi.org/10.1109%2F32.6191). Archived from the original (http://f aculty.ksu.edu.sa/ghazy/Cost_MSc/R6.pdf) (PDF) on 9 October 2016. Retrieved 13 May 2016. 24. \"Test Early and Often\" (https://msdn.microsoft.com/en-us/library/ee330950%28v=vs.110%2 9.aspx). Microsoft. 25. \"Prove It Works: Using the Unit Test Framework for Software Testing and Validation\" (http:// www.ni.com/white-paper/8082/en/). National Instruments. 21 August 2017. 26. Erik (10 March 2023). \"You Still Don't Know How to Do Unit Testing (and Your Secret is Safe with Me)\" (https://stackify.com/unit-testing-basics-best-practices/). Stackify. Retrieved 10 March 2023. 27."
+      },
+      {
+        "id": "p96",
+        "text": "Stocker, Karsten; Washizaki, Hironori; Fukazawa, Yoshiaki (March 2017). \"Closing the Gap between Unit Test Code and Documentation\". 2017 IEEE International Conference on Software Testing, Verification and Validation Workshops (ICSTW). pp. 304–308. doi:10.1109/icstw.2017.56 (https://doi.org/10.1109%2Ficstw.2017.56). ISBN 978-1-5090- 6676-6. 28. Nassif, M.; Hernandez, Alexa; Sridharan, Ashvitha; Robillard, M. (2022). \"Generating Unit Tests for Documentation\". IEEE Transactions on Software Engineering. 48 (9): 3268–3279. arXiv:2005.08750 (https://arxiv.org/abs/2005.08750). Bibcode:2022ITSEn..48.3268N (http s://scixplorer.org/abs/2022ITSEn..48.3268N). doi:10.1109/TSE.2021.3087087 (https://doi.or g/10.1109%2FTSE.2021.3087087). 29. Brooks, Frederick J. (1995) [1975]. The Mythical Man-Month."
+      },
+      {
+        "id": "p97",
+        "text": "Addison-Wesley. p. 64 (https:// archive.org/details/mythicalmonth00broo/page/64). ISBN 978-0-201-83595-3. 30. Tiwari, Deepika; Monperrus, Martin; Baudry, Benoit (November 2024). \"Mimicking Production Behavior With Generated Mocks\". IEEE Transactions on Software Engineering. 50 (11): 2921–2946. Bibcode:2024ITSEn..50.2921T (https://scixplorer.org/abs/2024ITSEn..5 0.2921T). doi:10.1109/tse.2024.3458448 (https://doi.org/10.1109%2Ftse.2024.3458448). ISSN 2326-3881 (https://search.worldcat.org/issn/2326-3881). 31. daVeiga, Nada (6 February 2008). \"Change Code Without Fear: Utilize a regression safety net\" (http://www.ddj.com/development-tools/206105233). Retrieved 8 February 2008. 32. Kucharski, Marek (23 November 2011)."
+      },
+      {
+        "id": "p98",
+        "text": "\"Making Unit Testing Practical for Embedded Development\" (https://www.electronicdesign.com/technologies/embedded-revolution/article/ 21794376/making-unit-testing-practical-for-embedded-development). Retrieved 20 July 2020. 33. \"Unit Tests And Databases\" (http://wiki.c2.com/?UnitTestsAndDatabases). Retrieved 29 January 2024. 34. GeeksforGeeks. (2024). Unit Testing. Retrieved May 2, 2025, from (https://www.geeksforge eks.org/unit-testing-software-testing/)(https://www.geeksforgeeks.org/unit-testing-softwaretesting/) 35. Beck, Kent (October 1999). \"Extreme Programming Explained: Embrace Change\" (https://d oi.org/10.1109/52.844236). Computer. 32 (10): 70–76. doi:10.1109/52.844236 (https://doi.or g/10.1109%2F52.844236) (inactive 15 May 2026). Retrieved 7 May 2026. 36."
+      },
+      {
+        "id": "p99",
+        "text": "Fucci, Davide; Erdogmus, Hakan; Turhan, Burak; Oivo, Markku; Juristo, Natalia (2017). \"A Dissection of the Test-Driven Development Process: Does It Really Matter to Test-First or to Test-Last?\" (https://ieeexplore.ieee.org/document/7592412/). IEEE Transactions on Software Engineering. 43 (7): 597–614. doi:10.1109/tse.2016.2616877 (https://doi.org/10.11 09%2Ftse.2016.2616877). ISSN 1939-3520 (https://search.worldcat.org/issn/1939-3520). Retrieved 25 May 2026. 37. Bullseye Testing Technology (2006–2008). \"Intermediate Coverage Goals\" (http://www.bulls eye.com/coverage.html). Retrieved 24 March 2009. 38. \"Unit Tests - D Programming Language\" (http://dlang.org/spec/unittest.html). D Programming Language. D Language Foundation. Retrieved 5 August 2017. 39."
+      },
+      {
+        "id": "p100",
+        "text": "Steve Klabnik and Carol Nichols, with contributions from the Rust Community (2015–2023). \"How to Write Tests\" (https://doc.rust-lang.org/book/ch11-01-writing-tests.html). Retrieved 21 August 2023. 40. \"Crystal Spec\" (https://crystal-lang.org/api/0.23.1/Spec.html). crystal-lang.org. Retrieved 18 September 2017. 41. \"testing - The Go Programming Language\" (https://golang.org/pkg/testing/). golang.org. Retrieved 3 December 2013. 42. \"Unit Testing · The Julia Language\" (https://docs.julialang.org/en/v1/stdlib/Test/). docs.julialang.org. Retrieved 15 June 2022. 43. Python Documentation (2016). \"unittest -- Unit testing framework\" (https://docs.python.org/3/ library/unittest.html). Retrieved 18 April 2016. 44. Welsh, Noel; Culpepper, Ryan."
+      },
+      {
+        "id": "p101",
+        "text": "\"RackUnit: Unit Testing\" (http://docs.racket-lang.org/rackunit/ index.html). PLT Design Inc. Retrieved 26 February 2019. 45. Welsh, Noel; Culpepper, Ryan. \"RackUnit Unit Testing package part of Racket main distribution\" (https://pkgs.racket-lang.org/package/rackunit). PLT Design Inc. Retrieved 26 February 2019. 46. \"Minitest (Ruby 2.0)\" (http://ruby-doc.org/stdlib-2.0.0/libdoc/minitest/rdoc/MiniTest.html). Ruby-Doc.org. 47. Sierra, Stuart. \"API for clojure.test - Clojure v1.6 (stable)\" (https://clojure.github.io/clojure/cloj ure.test-api.html). Retrieved 11 February 2015. 48. \"Pester Framework\" (https://github.com/pester/Pester). GitHub. Retrieved 28 January 2016."
+      },
+      {
+        "id": "p102",
+        "text": "Further reading"
+      },
+      {
+        "id": "p103",
+        "text": "Feathers, Michael C. (2005). Working Effectively with Legacy Code. Upper Saddle River, NJ: Prentice Hall Professional Technical Reference. ISBN 978-0131177055. Gulati, Shekhar; Sharma, Rahul (2017). Java Unit Testing with JUnit 5. Apress."
+      },
+      {
+        "id": "p104",
+        "text": "External links"
+      },
+      {
+        "id": "p105",
+        "text": "Test Driven Development (Ward Cunningham's Wiki) (http://c2.com/cgi/wiki?TestDrivenDeve lopment)"
+      },
+      {
+        "id": "p106",
+        "text": "Retrieved from \"https://en.wikipedia.org/w/index.php?title=Unit_testing&oldid=1386249299\""
+      }
+    ]
+  },
+  {
+    "note": "nb-digital-verden.docx",
+    "noteHash": "f8e36750fbe1b1c4a6f36af4ed15ec4beb4ce3ec42e78c67cbb8e75baec453d0",
+    "passages": [
+      {
+        "id": "p1",
+        "text": "IBE110 Eksamensforberedelse: Understanding the Digital World (Kernighan)"
+      },
+      {
+        "id": "p2",
+        "text": "Hva er Moore's Law?"
+      },
+      {
+        "id": "p3",
+        "text": "Moores lov (Moore's Law) er en berømt observasjon og et empirisk prinsipp som ble formulert av Gordon Moore (medgründer av Intel) i 1965."
+      },
+      {
+        "id": "p4",
+        "text": "Kort fortalt sier loven at antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år, mens produksjonskostnadene per transistor samtidig synker."
+      },
+      {
+        "id": "p5",
+        "text": "Hva betyr dette i praksis?"
+      },
+      {
+        "id": "p6",
+        "text": "Eksponentiell vekst: Fordi doblingen skjer regelmessig over tid, fører det til en eksponentiell økning i datakraft og lagringskapasitet. Det som var banebrytende superdatakraft for noen tiår siden, finnes i dag i en vanlig smarttelefon eller et armbåndsur."
+      },
+      {
+        "id": "p7",
+        "text": "Mindre og raskere: Transistorene har blitt gjort mikroskopisk små, noe som gjør at strømmen har kortere vei å gå, noe som igjen gjør prosessorene mye raskere og mer energieffektive."
+      },
+      {
+        "id": "p8",
+        "text": "I boken til Brian W. Kernighan (kapittel 3) brukes Moores lov for å forklare den utrolige den teknologiske utviklingen vi har sett de siste tiårene, og hvordan maskinvaren har blitt så billig og kraftig at den i dag omgir oss over alt."
+      },
+      {
+        "id": "p9",
+        "text": "Selv om det har blitt stadig vanskeligere å opprettholde denne fysiske doblingen på grunn av kvantefysiske begrensninger ved atomnivå, har loven vært den drivende motoren bak nesten all moderne IT-utvikling."
+      },
+      {
+        "id": "p10",
+        "text": "Bits og hexadecimaler"
+      },
+      {
+        "id": "p11",
+        "text": "Hva er en bit?"
+      },
+      {
+        "id": "p12",
+        "text": "Ordet bit kommer fra engelsk binary digit (binært siffer)."
+      },
+      {
+        "id": "p13",
+        "text": "Grunnprinsippet: En datamaskin forstår ikke bokstaver, bilder eller lyd slik vi gjør. Alt i en datamaskin lagres og behandles som elektriske signaler som enten er av eller på. Dette representeres med tallene 0 og 1. Én slik 0 eller 1 er en bit."
+      },
+      {
+        "id": "p14",
+        "text": "Byte: Fordi én enkelt bit gir altfor lite informasjon (den kan jo bare være 0 eller 1), samler vi dem i grupper på 8 bit, som kalles en byte."
+      },
+      {
+        "id": "p15",
+        "text": "En byte kan representere ulike verdier (fra 0 til 255)."
+      },
+      {
+        "id": "p16",
+        "text": "Eksempel: Tallet skrevet binært med 8 bit er 00000101."
+      },
+      {
+        "id": "p17",
+        "text": "Hva er heksadesimale tall (Hex)?"
+      },
+      {
+        "id": "p18",
+        "text": "Når tallene blir lange og unøyaktige i binærform (f.eks. 110110101011), så blir fort vanskelig å lese og skrive dem rett. Derfor kan man bruke heksadesimalsystemet (base 16) som en kompakt snarvei."
+      },
+      {
+        "id": "p19",
+        "text": "Base 10 (Titallssystemet): Det vi bruker til daglig. Bruker sifrene 0–9."
+      },
+      {
+        "id": "p20",
+        "text": "Base 2 (Binærsystemet): Bruker 2 siffer (0 og 1)."
+      },
+      {
+        "id": "p21",
+        "text": "Base 16 (Heksadesimalsystemet): Bruker 16 siffer. Fordi vi bare har vanlige tall fra 0 til 9, låner vi bokstavene A til F for å få plass til verdiene 10 til 15:"
+      },
+      {
+        "id": "p22",
+        "text": "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A (10), B (11), C (12), D (13), E (14), F (15)"
+      },
+      {
+        "id": "p23",
+        "text": "Hvorfor heksadesimaler? (Sammenhengen med binært)"
+      },
+      {
+        "id": "p24",
+        "text": "Magien med heksadesimale tall er at én heksadesimal siffer svarer nøyaktig til 4 bit ()."
+      },
+      {
+        "id": "p25",
+        "text": "Dette gjør det superenkelt å oversette mellom binært og heksadesimalt uten store utregninger."
+      },
+      {
+        "id": "p26",
+        "text": "4 binære bit kan maksimalt utgjøre tallet 15 (binært: 1111)."
+      },
+      {
+        "id": "p27",
+        "text": "I heksadesimalt skrives 1111 enkelt som F."
+      },
+      {
+        "id": "p28",
+        "text": "La oss ta et eksempel:"
+      },
+      {
+        "id": "p29",
+        "text": "Den binære strengen 1011 deles i to eller leses i grupper på 4. 1011 tilsvarer , som er B på heksadesimalt."
+      },
+      {
+        "id": "p30",
+        "text": "I binærsystemet har hver posisjon en tallverdi (en vekt) som dobles for hver plass vi flytter oss fra høyre mot venstre:"
+      },
+      {
+        "id": "p31",
+        "text": "Høyeste bit til venstre har verdi: 8"
+      },
+      {
+        "id": "p32",
+        "text": "Neste bit har verdi: 4"
+      },
+      {
+        "id": "p33",
+        "text": "Neste bit har verdi: 2"
+      },
+      {
+        "id": "p34",
+        "text": "Ytterst til høyre har verdi: 1"
+      },
+      {
+        "id": "p35",
+        "text": "Kompilator vs. Tolk"
+      },
+      {
+        "id": "p36",
+        "text": "Hva er den grunnleggende forskjellen på en kompilator (compiler) og en tolk (interpreter) når det gjelder programvareutvikling?"
+      },
+      {
+        "id": "p37",
+        "text": "En kompilator oversetter hele kildekoden til maskinkode på forhånd før programmet kjøres, mens en tolk leser og utfører koden linje for linje underveis i kjøringen."
+      },
+      {
+        "id": "p38",
+        "text": "IP-adresser og TCP/IP"
+      },
+      {
+        "id": "p39",
+        "text": "Hva er hovedformålet med TCP (Transmission Control Protocol) i nettverksarkitekturen?"
+      },
+      {
+        "id": "p40",
+        "text": "Å sørge for en pålitelig, feilfri og korrekt rekkefølge på datapakker som sendes mellom enheter over nettet."
+      },
+      {
+        "id": "p41",
+        "text": "Symmetrisk vs. Asymmetrisk kryptering"
+      },
+      {
+        "id": "p42",
+        "text": "Hva er en av de største praktiske fordelene med asymmetrisk kryptering (offentlig nøkkel-kryptografi) sammenlignet med symmetrisk kryptering?"
+      },
+      {
+        "id": "p43",
+        "text": "Den løser problemet med nøkkelutveksling, ettersom man trygt kan dele sin offentlige nøkkel med hvem som helst uten at den hemmelige private nøkkelen avsløres."
+      },
+      {
+        "id": "p44",
+        "text": "Sikker digital handel og kommunikasjon avhenger av tre hovedprinsipper: Symmetrisk kryptering (som AES for rask og sikker datakryptering), Asymmetrisk kryptering (offentlig/privat nøkkel som RSA for sikker nøkkelutveksling) og Hash-funksjoner (som lager unike digitale fingeravtrykk for integritet og passordlagring)."
+      },
+      {
+        "id": "p45",
+        "text": "Alt digitalt er bygget på bit (0 og 1)"
+      },
+      {
+        "id": "p46",
+        "text": "Uansett om det er tekst, bilder, musikk eller programmer, reduseres all informasjon internt i datamaskinen til en kombinasjon av binære verdier (0 og 1). Å forstå bit, byte, og hvordan vi representerer tall (binært/heksadesimalt) og tekst (ASCII/Unicode) er selve grunnmuren."
+      },
+      {
+        "id": "p47",
+        "text": "Von Neumann-arkitekturen og CPU-ens syklus"
+      },
+      {
+        "id": "p48",
+        "text": "Datamaskiner baserer seg på at både data og programinstruksjoner lagres i det samme minnet. Prosessoren (CPU) jobber i en fast rytme kalt Fetch-Decode-Execute (hent–dekode–utføre) for å avkode og kjøre enkle maskininstruksjoner i et enormt tempo."
+      },
+      {
+        "id": "p49",
+        "text": "Algoritmer og effektivitet (Søk og sortering)"
+      },
+      {
+        "id": "p50",
+        "text": "En algoritme er en presis oppskrift for å løse et problem. Boken viser hvor viktig skalerbarhet er – for eksempel hvordan et binærsøk halverer søkeområdet for hver runde og er dramatisk mye raskere enn et lineært søk, så lenge dataene er sortert."
+      },
+      {
+        "id": "p51",
+        "text": "Operativsystemer og filsystemers hemmelighet"
+      },
+      {
+        "id": "p52",
+        "text": "Operativsystemet (OS) fungerer som sjefen som styrer maskinvaren via systemkall og enhetsdrivere. Når du \"sletter\" en fil på datamaskinen, slettes ikke selve dataene med en gang; operativsystemet fjerner bare referansen (pekeren) og markerer plasseringen som ledig."
+      },
+      {
+        "id": "p53",
+        "text": "Pakkebasert kommunikasjon (Packet Switching)"
+      },
+      {
+        "id": "p54",
+        "text": "I stedet for å opprette faste, fysiske forbindelser (som i gammeldags telefoni), deles all data på Internett opp i små pakker. Disse sendes uavhengig gjennom nettet og settes sammen igjen hos mottakeren, noe som utnytter kapasiteten ekstremt effektivt."
+      },
+      {
+        "id": "p55",
+        "text": "Internett vs. Web (og TCP/IP-stakken)"
+      },
+      {
+        "id": "p56",
+        "text": "Det er et viktig skille mellom den fysiske infrastrukturen (Internett) og tjenestene som kjører oppå den (World Wide Web). Samtidig sørger IP for å ruter pakker fra nett til nett, TCP sikrer at alt kommer frem uten feil, og DNS fungerer som internetts telefonkatalog."
+      },
+      {
+        "id": "p57",
+        "text": "Webens treenighet (URL, HTTP og HTML)"
+      },
+      {
+        "id": "p58",
+        "text": "Selve weben baserer seg på at nettleseren (klienten) snakker med en webserver via HTTP/HTTPS ved hjelp av nettadresser (URL). Nettsidene selv bygges opp av HTML (struktur), CSS (design) og JavaScript (interaktivitet)."
+      },
+      {
+        "id": "p59",
+        "text": "Personvern og dataøkonomi (\"Hvis du ikke betaler, er du produktet\")"
+      },
+      {
+        "id": "p60",
+        "text": "Digital sporing, informasjonskapsler (cookies), nettleser-fingeravtrykk og innsamling av stordata gjør at brukeradferd kartlegges i detalj. Dette skaper et spenningsforhold mellom praktiske gratistjenester og individets personvern (underbygget av regelverk som GDPR)."
+      },
+      {
+        "id": "p61",
+        "text": "Ifzero must be followed by"
+      },
+      {
+        "id": "p62",
+        "text": "I en enkel datamaskin- eller assembly-arkitektur (slik som de som ofte brukes for å forklare maskinvare og instruksjonsett i grunnleggende datakurs), brukes betingede hoppinstruksjoner som ifzero (eller tilsvarende som JZ / Jump if Zero)."
+      },
+      {
+        "id": "p63",
+        "text": "En slik instruksjon må vanligvis følges av en minneadresse, et merkenavn (label) eller en målinstruksjon som forteller prosessoren hvor den skal hoppe i programmet dersom forrige resultat var lik null. Hvis betingelsen ikke er oppfylt (resultatet er ikke null), hopper programmet over denne adressen og fortsetter til neste instruksjon i rekkefølge."
+      },
+      {
+        "id": "p64",
+        "text": "Turing machine"
+      },
+      {
+        "id": "p65",
+        "text": "En Turingmaskin (Turing machine) er en teoretisk matematisk modell av en datamaskin, som ble utensjonert av den britiske matematikeren og logikeren Alan Turing i 1936 – lenge før de første elektroniske datamaskinene ble bygd."
+      },
+      {
+        "id": "p66",
+        "text": "Selv om den er en ren teoretisk konstruksjon, danner Turingmaskinen selve det matematiske grunnlaget for all moderne datavitenskap. Den viser hva en datamaskin faktisk er i stand til å beregne."
+      },
+      {
+        "id": "p67",
+        "text": "Hvordan fungerer en Turingmaskin?"
+      },
+      {
+        "id": "p68",
+        "text": "Modellen er egentlig veldig enkel og består av fire hovedkomponenter:"
+      },
+      {
+        "id": "p69",
+        "text": "En uendelig lang tape (tape): Tapen er delt opp i ruter (celler). Hver celle kan inneholde ett symbol (for eksempel 0, 1 eller være blank)."
+      },
+      {
+        "id": "p70",
+        "text": "Et lese-/skrivehode (head): Et hode som kan lese symbolet på den gjeldende cellen på tapen, skrive et nytt symbol over det, og flytte seg enten ett skritt til venstre eller ett til høyre."
+      },
+      {
+        "id": "p71",
+        "text": "En tilstandsmaskin (state register): Maskinen kan være i et endelig antall forskjellige \"tilstander\" (f.eks. tilstand 1, tilstand 2, osv.)."
+      },
+      {
+        "id": "p72",
+        "text": "Et regneark / instruksjonstabell: Et sett med regler som sier: \"Hvis du er i tilstand X og leser symbol Y, skal du gjøre Z (skrive nytt symbol, flytte hodet, og skifte til en ny tilstand)\"."
+      },
+      {
+        "id": "p73",
+        "text": "Hvorfor er den så viktig?"
+      },
+      {
+        "id": "p74",
+        "text": "Universell Turingmaskin (Universal Turing Machine): Turing viste at det går an å lage én spesiell Turingmaskin som kan lese beskrivelsen av hvilken som helst annen Turingmaskin fra tapen og simulere den. Dette geniale konseptet er selve urmodellen for en moderne, programmerbar datamaskin – en maskin som kan skifte oppgave bare ved å laste inn ny programvare (data), i stedet for å måtte bygges om fysisk."
+      },
+      {
+        "id": "p75",
+        "text": "Grenser for hva datamaskiner kan gjøre: Turing brukte maskinen til å bevise at det finnes matematiske problemer som datamaskiner aldri vil kunne løse (for eksempel The Halting Problem – det å skrive et program som kan avgjøre om et vilkårlig annet program vil kjøre ferdig eller henge seg i en evig løkke)."
+      },
+      {
+        "id": "p76",
+        "text": "GPU"
+      },
+      {
+        "id": "p77",
+        "text": "En GPU (Graphics Processing Unit / grafikkprosessor) er en spesialisert prosessor som opprinnelig ble designet for å håndtere og akselerere krevende grafikk, 3D-rendering og bildebehandling."
+      },
+      {
+        "id": "p78",
+        "text": "I dag er GPU-en en av de aller viktigste komponentene i moderne datamaskiner, ikke bare for dataspill, men også for en rekke andre tunge oppgaver."
+      },
+      {
+        "id": "p79",
+        "text": "Hva er forskjellen på en CPU og en GPU?"
+      },
+      {
+        "id": "p80",
+        "text": "Selv om både CPU (hovedprosessoren) og GPU er prosessorer, er de bygd for helt forskjellige ting:"
+      },
+      {
+        "id": "p81",
+        "text": "CPU (Central Processing Unit): Er \"hjernen\" i datamaskinen og er bygd for å håndtere komplekse, generelle oppgaver sekvensielt. Den har som regel et lite antall kjerner (f.eks. 4 til 16 kraftige kjerner) som kan utføre ulike oppgaver raskt etter hverandre."
+      },
+      {
+        "id": "p82",
+        "text": "GPU (Graphics Processing Unit): Er bygd for massiv parallellprosessering. Den har tusenvis av mindre, enklere kjerner som kan utføre mange enkle regnestykker (som beregning av farger, piksler og geometriske punkter i 3D) på nøyaktig samme tid."
+      },
+      {
+        "id": "p83",
+        "text": "Hvorfor er GPU-er så viktige i dag?"
+      },
+      {
+        "id": "p84",
+        "text": "Selv om de ble oppfunnet for grafikk og spill, har bruksområdene eksplodert de siste årene på grunn av deres enorme regnekraft:"
+      },
+      {
+        "id": "p85",
+        "text": "Maskinlæring og kunstig intelligens (AI): Trening av store språkmodeller, nevrale nettverk og AI-systemer krever milliarder av matematiske matriseberegninger i sekundet. Dette egner parallellarkitekturen til en GPU seg perfekt til."
+      },
+      {
+        "id": "p86",
+        "text": "Kryptovaluta (mining): Tidligere ble GPU-er brukt i stor skala for å løse komplekse kryptografiske gåter for å utvinne kryptovaluta."
+      },
+      {
+        "id": "p87",
+        "text": "Vitenskapelige simuleringer: Brukes innen meteorologi, medisinsk forskning, fysikk og finans for å simulere enorme datamengder raskt."
+      },
+      {
+        "id": "p88",
+        "text": "Kort sagt: Mens CPU-en styrer hele systemet og tar seg av flyten, tar GPU-en seg av de gigantiske regneøktene som krever at mye gjøres samtidig!"
+      },
+      {
+        "id": "p89",
+        "text": "A/D converter"
+      },
+      {
+        "id": "p90",
+        "text": "En A/D-omformer (Analog-to-Digital Converter, ofte forkortet ADC) er en elektronisk komponent eller krets som oversetter analoge signaler (kontinuerlige fysiske verdier i den virkelige verden) til digitale verdier (tallrekker bestående av 0 og 1) som datamaskinen kan lagre, behandle og forstå."
+      },
+      {
+        "id": "p91",
+        "text": "Dette er en helt avgjørende \"bro\" mellom den analoge verden vi mennesker lever i, og den digitale verden som datamaskiner opererer i."
+      },
+      {
+        "id": "p92",
+        "text": "Slik fungerer en A/D-omformer"
+      },
+      {
+        "id": "p93",
+        "text": "Verden rundt oss er analog – lydbølger i luften, temperaturer, lysstyrke, trykk og posisjoner beveger seg jevnt og trinnløst. En datamaskin forstår derimot bare diskrete (avkuttede) tall."
+      },
+      {
+        "id": "p94",
+        "text": "For å gjøre om det analoge signalet gjør ADC-en to hovedtrinn:"
+      },
+      {
+        "id": "p95",
+        "text": "Sampling (Prøvetaking): Den måler det analoge signalet med jevne og svært korte tidsmellomrom (samplingfrekvens, f.eks. 44 100 ganger i sekundet for lyd på CD-kvalitet)."
+      },
+      {
+        "id": "p96",
+        "text": "Kvantisering (Avrunding): Hver måling tildeles en fast numerisk verdi basert på hvor nøyaktig omformeren er (oppløsning i bit, f.eks. 16-bit eller 24-bit). Jo flere bit, desto mer nøyaktig blir gjenskapningen av det opprinnelige signalet."
+      },
+      {
+        "id": "p97",
+        "text": "Eksempler der A/D-omformere brukes:"
+      },
+      {
+        "id": "p98",
+        "text": "Mikrofoner: Når du snakker inn i en mikrofon, fanger den opp trykkbølger i luften (analogt signal). En innebygd ADC gjør disse om til digitale lydfiler på mobilen eller PC-en din."
+      },
+      {
+        "id": "p99",
+        "text": "Sensorer i IoT (Internet of Things): Temperaturmålere, lyssensorer og pulsmålere i smartklokker måler fysiske verdier og sender dem som digitale data til en prosessor."
+      },
+      {
+        "id": "p100",
+        "text": "Digitale kameraer: Bildesensoren (CCD/CMOS) fanger opp lysintensitet gjennom linsen og konverterer det analoge lyset til digitale pikselverdier i et bilde."
+      },
+      {
+        "id": "p101",
+        "text": "Det motsatte av en ADC er en D/A-omformer (DAC), som tar digitale data og gjør dem om til analoge signaler igjen – for eksempel når en digital lydfil spilles av som lydbølger ut gjennom et par høretelefoner."
+      }
+    ]
+  },
+  {
+    "note": "nb-smidig-scrum.md",
+    "noteHash": "2e473642b71bb22d923c1336d60124f5fe636517a5d70b5f89a49984c84f02b1",
+    "passages": [
+      {
+        "id": "p1",
+        "text": "Smidig utvikling og Scrum – mine notater"
+      },
+      {
+        "id": "p2",
+        "text": "*IBE160 Programmering med KI, høsten 2026. Egne notater til eksamen.*"
+      },
+      {
+        "id": "p3",
+        "text": "1. Hvorfor smidig?"
+      },
+      {
+        "id": "p4",
+        "text": "Tradisjonell systemutvikling fulgte ofte **fossefallsmodellen**: krav, design, implementering, testing og drift kommer etter hverandre i faste faser. Hver fase skal være ferdig før neste starter. Problemet er at kundens behov endrer seg underveis, og at feil i kravene først oppdages sent, når de er dyre å rette."
+      },
+      {
+        "id": "p5",
+        "text": "Smidig utvikling (engelsk: *agile*) svarer på dette ved å levere i korte runder. Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen. Endring blir sett på som normalt, ikke som et avvik."
+      },
+      {
+        "id": "p6",
+        "text": "2. Det smidige manifestet (2001)"
+      },
+      {
+        "id": "p7",
+        "text": "I 2001 skrev sytten utviklere det smidige manifestet. Det består av fire verdier. Teksten til høyre har verdi, men teksten til venstre verdsettes høyere:"
+      },
+      {
+        "id": "p8",
+        "text": "**Individer og samspill** framfor prosesser og verktøy"
+      },
+      {
+        "id": "p9",
+        "text": "**Programvare som virker** framfor omfattende dokumentasjon"
+      },
+      {
+        "id": "p10",
+        "text": "**Samarbeid med kunden** framfor kontraktsforhandlinger"
+      },
+      {
+        "id": "p11",
+        "text": "**Å reagere på endringer** framfor å følge en plan"
+      },
+      {
+        "id": "p12",
+        "text": "Bak verdiene ligger tolv prinsipper. De viktigste å huske: lever fungerende programvare ofte (helst med noen ukers mellomrom), ta imot endrede krav også sent i prosjektet, la forretningsfolk og utviklere jobbe sammen daglig, og la teamet reflektere jevnlig over hvordan det kan bli mer effektivt."
+      },
+      {
+        "id": "p13",
+        "text": "Merk: manifestet sier ikke at dokumentasjon er unødvendig. Det sier bare at fungerende programvare er det viktigste målet på framdrift."
+      },
+      {
+        "id": "p14",
+        "text": "3. Scrum – et rammeverk"
+      },
+      {
+        "id": "p15",
+        "text": "**Scrum** er det mest brukte smidige rammeverket. Det er bevisst lite: det beskriver roller, hendelser og artefakter, men ikke hvordan teamet skal programmere eller teste. Scrum bygger på **empirisk prosesskontroll**, altså at beslutninger tas ut fra det man faktisk observerer. Tre søyler holder dette oppe:"
+      },
+      {
+        "id": "p16",
+        "text": "1. **Åpenhet** – arbeidet og framdriften er synlig for alle som har interesse av resultatet."
+      },
+      {
+        "id": "p17",
+        "text": "2. **Inspeksjon** – teamet sjekker jevnlig artefaktene og framdriften mot målet."
+      },
+      {
+        "id": "p18",
+        "text": "3. **Tilpasning** – når noe avviker, justerer teamet prosessen eller produktet så raskt som mulig."
+      },
+      {
+        "id": "p19",
+        "text": "3.1 Roller (ansvar)"
+      },
+      {
+        "id": "p20",
+        "text": "Et Scrum-team er lite, typisk ti personer eller færre, og har tre ansvarsområder:"
+      },
+      {
+        "id": "p21",
+        "text": "**Produkteier** (Product Owner) har ansvar for å maksimere verdien av produktet. Produkteieren eier og prioriterer produktkøen og bestemmer hva som er viktigst å lage først. Det er én person, ikke en komité."
+      },
+      {
+        "id": "p22",
+        "text": "**Scrum Master** hjelper teamet å forstå og bruke Scrum, fjerner hindringer og sørger for at hendelsene blir gjennomført og holdt innenfor tidsrammen. Scrum Master er en tjenende leder, ikke en prosjektleder som fordeler oppgaver."
+      },
+      {
+        "id": "p23",
+        "text": "**Utviklere** er de som lager inkrementet. De planlegger sitt eget arbeid i sprinten og er selvorganiserende: ingen utenfra forteller dem hvordan kravene skal gjøres om til fungerende programvare."
+      },
+      {
+        "id": "p24",
+        "text": "3.2 Hendelser"
+      },
+      {
+        "id": "p25",
+        "text": "Alle hendelser i Scrum er **tidsbegrensede** (*timeboxed*), det vil si at de har en fast maksimal lengde."
+      },
+      {
+        "id": "p26",
+        "text": "**Sprint**: en fast periode på én måned eller kortere, ofte to uker. En ny sprint starter straks den forrige er ferdig. Under sprinten endres ikke sprintmålet."
+      },
+      {
+        "id": "p27",
+        "text": "**Sprintplanlegging**: starter sprinten. Teamet svarer på tre spørsmål: hvorfor er denne sprinten verdifull (sprintmålet), hva kan bli ferdig, og hvordan skal arbeidet gjøres."
+      },
+      {
+        "id": "p28",
+        "text": "**Daglig Scrum** (*daily standup*): et møte på høyst 15 minutter hver dag, der utviklerne sjekker framdriften mot sprintmålet og justerer planen for neste dag."
+      },
+      {
+        "id": "p29",
+        "text": "**Sprintgjennomgang** (*sprint review*): på slutten av sprinten viser teamet fram det som er laget til interessentene og får tilbakemelding. Produktkøen kan endres som følge av dette."
+      },
+      {
+        "id": "p30",
+        "text": "**Retrospektiv**: siste hendelse i sprinten. Teamet ser på seg selv – samarbeid, verktøy og arbeidsmåte – og velger forbedringer til neste sprint. Gjennomgangen handler om *produktet*, retrospektivet om *prosessen*."
+      },
+      {
+        "id": "p31",
+        "text": "3.3 Artefakter"
+      },
+      {
+        "id": "p32",
+        "text": "**Produktkø** (*product backlog*): en ordnet liste over alt som kan trengs i produktet. Den er aldri ferdig og endres hele tiden. Elementene høyest oppe er de best beskrevne."
+      },
+      {
+        "id": "p33",
+        "text": "**Sprintkø** (*sprint backlog*): sprintmålet, elementene som er valgt fra produktkøen, og planen for å levere dem. Den eies av utviklerne."
+      },
+      {
+        "id": "p34",
+        "text": "**Inkrement**: summen av alt som er ferdig, et brukbart steg mot produktmålet. Et element regnes bare som en del av inkrementet når det oppfyller **definisjonen av ferdig** (*Definition of Done*), for eksempel at koden er testet, gjennomgått og dokumentert."
+      },
+      {
+        "id": "p35",
+        "text": "4. Brukerhistorier og estimering"
+      },
+      {
+        "id": "p36",
+        "text": "Elementer i produktkøen skrives ofte som **brukerhistorier**:"
+      },
+      {
+        "id": "p37",
+        "text": "Som *student* vil jeg *laste opp et notat* slik at *jeg kan øve på de viktigste begrepene*."
+      },
+      {
+        "id": "p38",
+        "text": "En god brukerhistorie har **akseptansekriterier** som sier konkret når den er oppfylt. Huskeregelen INVEST sier at en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar."
+      },
+      {
+        "id": "p39",
+        "text": "Mange team estimerer med **historiepoeng** (*story points*) i stedet for timer. Poengene måler relativ størrelse og usikkerhet, ikke tid. Teknikken *planning poker* lar alle utviklerne vise sitt estimat samtidig, slik at de ikke påvirker hverandre. Over noen sprinter får teamet en **hastighet** (*velocity*): hvor mange poeng det i snitt fullfører per sprint. Hastigheten brukes til å planlegge, ikke til å sammenligne team."
+      },
+      {
+        "id": "p40",
+        "text": "5. Kanban – et alternativ"
+      },
+      {
+        "id": "p41",
+        "text": "**Kanban** kommer fra Toyotas produksjonssystem. I stedet for sprinter har Kanban en kontinuerlig flyt av arbeid over en tavle med kolonner, for eksempel *Å gjøre – Pågår – Test – Ferdig*. Den viktigste regelen er å **begrense pågående arbeid** (*WIP-grense*): en kolonne kan bare ha et visst antall kort samtidig. Det tvinger teamet til å gjøre ferdig før det starter på noe nytt, og det gjør flaskehalser synlige. Kanban måler ofte **gjennomløpstid**, altså hvor lang tid et kort bruker fra start til ferdig."
+      },
+      {
+        "id": "p42",
+        "text": "| | Scrum | Kanban |"
+      },
+      {
+        "id": "p43",
+        "text": "| Rytme | Faste sprinter | Kontinuerlig flyt |"
+      },
+      {
+        "id": "p44",
+        "text": "| Roller | Produkteier, Scrum Master, utviklere | Ingen faste roller |"
+      },
+      {
+        "id": "p45",
+        "text": "| Endring underveis | Ikke i sprintmålet | Når som helst |"
+      },
+      {
+        "id": "p46",
+        "text": "| Viktigste mål | Hastighet | Gjennomløpstid |"
+      },
+      {
+        "id": "p47",
+        "text": "6. Smidig og KI-assistert utvikling"
+      },
+      {
+        "id": "p48",
+        "text": "I IBE160 bruker vi KI-agenter til å skrive både dokumenter og kode. Smidige prinsipper passer godt her: små brukerhistorier med tydelige akseptansekriterier gir agenten en avgrenset oppgave, og automatiske tester fungerer som en definisjon av ferdig som også agenten kan sjekke. Et retrospektiv etter hver epic er et godt sted å vurdere hva KI-en gjorde bra og dårlig."
+      },
+      {
+        "id": "p49",
+        "text": "7. Huskeliste til eksamen"
+      },
+      {
+        "id": "p50",
+        "text": "Fossefall = faste faser etter hverandre; smidig = korte runder med tilbakemelding."
+      },
+      {
+        "id": "p51",
+        "text": "Manifestet: fire verdier, tolv prinsipper."
+      },
+      {
+        "id": "p52",
+        "text": "Scrum: tre søyler (åpenhet, inspeksjon, tilpasning), tre roller, fem hendelser, tre artefakter."
+      },
+      {
+        "id": "p53",
+        "text": "Gjennomgang = produktet, retrospektiv = prosessen."
+      },
+      {
+        "id": "p54",
+        "text": "Definisjonen av ferdig avgjør hva som er en del av inkrementet."
+      },
+      {
+        "id": "p55",
+        "text": "Kanban: flyt og WIP-grenser i stedet for sprinter."
+      }
+    ]
+  }
+]

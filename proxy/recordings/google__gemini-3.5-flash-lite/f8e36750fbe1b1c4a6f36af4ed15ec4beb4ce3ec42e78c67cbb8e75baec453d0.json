@@ -1,0 +1,542 @@
+{
+  "studySet": {
+    "concepts": [
+      {
+        "name": "Moores lov",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "Hvem formulerte Moores lov og når?",
+            "back": "Gordon Moore (medgründer av Intel) i 1965.",
+            "passageId": "p3",
+            "quote": "Moores lov (Moore's Law) er en berømt observasjon og et empirisk prinsipp som ble formulert av Gordon Moore (medgründer av Intel) i 1965."
+          },
+          {
+            "front": "Hva sier Moores lov om transistorer?",
+            "back": "Antallet transistorer på en integrert krets dobles omtrent annethvert år.",
+            "passageId": "p4",
+            "quote": "Kort fortalt sier loven at antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år, mens produksjonskostnadene per transistor samtidig synker."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er hovedbudskapet i Moores lov?",
+            "options": [
+              "Antallet transistorer på en mikrobrikke dobles omtrent annethvert år",
+              "Prisen på datamaskiner dobles hvert år",
+              "Transistorer blir større og krever mer energi over tid",
+              "Programvare blir tregere jo eldre den blir"
+            ],
+            "correctIndex": 0,
+            "passageId": "p4",
+            "quote": "Kort fortalt sier loven at antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år, mens produksjonskostnadene per transistor samtidig synker."
+          },
+          {
+            "question": "Hvilken konsekvens har den eksponentielle veksten fra Moores lov hatt?",
+            "options": [
+              "At superdatakraft fra før finnes i vanlige smarttelefoner og armbåndsur",
+              "At datamaskiner har blitt fysisk større og tyngre",
+              "At det har blitt umulig å koble enheter til internett",
+              "At lagringskapasitet har sunket jevnt over tid"
+            ],
+            "correctIndex": 0,
+            "passageId": "p6",
+            "quote": "Det som var banebrytende superdatakraft for noen tiår siden, finnes i dag i en vanlig smarttelefon eller et armbåndsur."
+          }
+        ]
+      },
+      {
+        "name": "Bits og heksadesimale tall",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "Hva er en bit?",
+            "back": "Et binært siffer (0 eller 1) som representerer elektriske signaler som er av eller på.",
+            "passageId": "p13",
+            "quote": "Alt i en datamaskin lagres og behandles som elektriske signaler som enten er av eller på. Dette representeres med tallene 0 og 1. Én slik 0 eller 1 er en bit."
+          },
+          {
+            "front": "Hvor mange bit utgjør en byte?",
+            "back": "8 bit.",
+            "passageId": "p14",
+            "quote": "Fordi én enkelt bit gir altfor lite informasjon (den kan jo bare være 0 eller 1), samler vi dem i grupper på 8 bit, som kalles en byte."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken tallbase bruker det heksadesimale systemet?",
+            "options": [
+              "Base 16",
+              "Base 2",
+              "Base 10",
+              "Base 8"
+            ],
+            "correctIndex": 0,
+            "passageId": "p18",
+            "quote": "Derfor kan man bruke heksadesimalsystemet (base 16) som en kompakt snarvei."
+          },
+          {
+            "question": "Hvor mange bit tilsvarer én heksadesimal siffer nøyaktig?",
+            "options": [
+              "4 bit",
+              "2 bit",
+              "8 bit",
+              "16 bit"
+            ],
+            "correctIndex": 0,
+            "passageId": "p24",
+            "quote": "Magien med heksadesimale tall er at én heksadesimal siffer svarer nøyaktig til 4 bit ()."
+          }
+        ]
+      },
+      {
+        "name": "Turingmaskin",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "Hvem utarbeidet Turingmaskinen og når?",
+            "back": "Den britiske matematikeren og logikeren Alan Turing i 1936.",
+            "passageId": "p65",
+            "quote": "En Turingmaskin (Turing machine) er en teoretisk matematisk modell av en datamaskin, som ble utensjonert av den britiske matematikeren og logikeren Alan Turing i 1936 – lenge før de første elektroniske datamaskinene ble bygd."
+          },
+          {
+            "front": "Hva er en Universal Turing Machine?",
+            "back": "Én spesiell Turingmaskin som kan lese beskrivelsen av hvilken som helst annen Turingmaskin fra tapen og simulere den.",
+            "passageId": "p74",
+            "quote": "Universell Turingmaskin (Universal Turing Machine): Turing viste at det går an å lage én spesiell Turingmaskin som kan lese beskrivelsen av hvilken som helst annen Turingmaskin fra tapen og simulere den."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er hovedkomponentene i en Turingmaskin?",
+            "options": [
+              "En uendelig lang tape, et lese-/skrivehode, en tilstandsmaskin og en instruksjonstabell",
+              "En CPU, en GPU, en harddisk og et operativsystem",
+              "En kompilator, en tolk, en byte og en bit",
+              "En A/D-omformer, en DAC, en skjerm og en mikrofon"
+            ],
+            "correctIndex": 0,
+            "passageId": "p68",
+            "quote": "Modellen er egentlig veldig enkel og består av fire hovedkomponenter:"
+          },
+          {
+            "question": "Hvilket kjent problem brukte Turing maskinen til å bevise at datamaskiner aldri vil kunne løse?",
+            "options": [
+              "The Halting Problem",
+              "Nøkkelutvekslingsproblemet",
+              "Samplingsproblemet",
+              "Pakkeruting-problemet"
+            ],
+            "correctIndex": 0,
+            "passageId": "p75",
+            "quote": "Turing brukte maskinen til å bevise at det finnes matematiske problemer som datamaskiner aldri vil kunne løse (for eksempel The Halting Problem – det å skrive et program som kan avgjøre om et vilkårlig annet program vil kjøre ferdig eller henge seg i en evig løkke)."
+          }
+        ]
+      },
+      {
+        "name": "CPU og GPU",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "Hva er hovedoppgaven til en CPU?",
+            "back": "Å fungere som hjernen i datamaskinen og håndtere komplekse, generelle oppgaver sekvensielt med et lite antall kraftige kjerner.",
+            "passageId": "p81",
+            "quote": "CPU (Central Processing Unit): Er \"hjernen\" i datamaskinen og er bygd for å håndtere komplekse, generelle oppgaver sekvensielt."
+          },
+          {
+            "front": "Hva er en GPU spesielt bygd for?",
+            "back": "Massiv parallellprosessering med tusenvis av enklere kjerner.",
+            "passageId": "p82",
+            "quote": "GPU (Graphics Processing Unit): Er bygd for massiv parallellprosessering. Den har tusenvis av mindre, enklere kjerner som kan utføre mange enkle regnestykker på nøyaktig samme tid."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva kjennetegner arkitekturen til en GPU sammenlignet med en CPU?",
+            "options": [
+              "Den har tusenvis av mindre, enklere kjerner for parallellprosessering",
+              "Den har bare 2 til 4 ekstremt kraftige kjerner",
+              "Den er utelukkende laget for å lagre filer permanent",
+              "Den kan ikke utføre matematiske beregninger"
+            ],
+            "correctIndex": 0,
+            "passageId": "p82",
+            "quote": "GPU (Graphics Processing Unit): Er bygd for massiv parallellprosessering. Den har tusenvis av mindre, enklere kjerner som kan utføre mange enkle regnestykker (som beregning av farger, piksler og geometriske punkter i 3D) på nøyaktig samme tid."
+          },
+          {
+            "question": "Hvorfor har bruksområdene for GPU-er eksplodert de siste årene?",
+            "options": [
+              "På grunn av deres enorme regnekraft til maskinlæring, AI og vitenskapelige simuleringer",
+              "Fordi de har erstattet behovet for internettilkobling",
+              "Fordi de bruker mer strøm enn en vanlig CPU",
+              "Fordi de gjør tekstredigering raskere"
+            ],
+            "correctIndex": 0,
+            "passageId": "p84",
+            "quote": "Selv om de ble oppfunnet for grafikk og spill, har bruksområdene eksplodert de siste årene på grunn av deres enorme regnekraft:"
+          }
+        ]
+      },
+      {
+        "name": "A/D-omformer",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "Hva gjør en A/D-omformer (ADC)?",
+            "back": "Oversetter analoge signaler til digitale verdier bestående av 0 og 1.",
+            "passageId": "p90",
+            "quote": "En A/D-omformer (Analog-to-Digital Converter, ofte forkortet ADC) er en elektronisk komponent eller krets som oversetter analoge signaler (kontinuerlige fysiske verdier i den virkelige verden) til digitale verdier (tallrekker bestående av 0 og 1) som datamaskinen kan lagre, behandle og forstå."
+          },
+          {
+            "front": "Hvilke to hovedtrinn utfører ADC-en for å gjøre om et analogt signal?",
+            "back": "Sampling (prøvetaking) og kvantisering (avrunding).",
+            "passageId": "p94",
+            "quote": "For å gjøre om det analoge signalet gjør ADC-en to hovedtrinn:"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva skjer under 'sampling' i en A/D-omformer?",
+            "options": [
+              "Det analoge signalet måles med jevne og svært korte tidsmellomrom",
+              "Signalet slettes fra minnet",
+              "Tallet rundes av til nærmeste heltall",
+              "Digital data gjøres om til lydbølger"
+            ],
+            "correctIndex": 0,
+            "passageId": "p95",
+            "quote": "Sampling (Prøvetaking): Den måler det analoge signalet med jevne og svært korte tidsmellomrom (samplingfrekvens, f.eks. 44 100 ganger i sekundet for lyd på CD-kvalitet)."
+          },
+          {
+            "question": "Hva er det motsatte av en A/D-omformer?",
+            "options": [
+              "En D/A-omformer (DAC)",
+              "En kompilator",
+              "En tilstandsmaskin",
+              "En router"
+            ],
+            "correctIndex": 0,
+            "passageId": "p101",
+            "quote": "Det motsatte av en ADC er en D/A-omformer (DAC), som tar digitale data og gjør dem om til analoge signaler igjen"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Moores lov er et empirisk prinsipp som slår fast at antallet transistorer på en mikrobrikke dobles omtrent annethvert år, noe som har drevet den eksponentielle veksten i IT-utviklingen.",
+        "passageId": "p4",
+        "quote": "Kort fortalt sier loven at antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år, mens produksjonskostnadene per transistor samtidig synker."
+      },
+      {
+        "text": "Alt i en datamaskin lagres og behandles internt som binære verdier (0 og 1) kalt bit, som samles i grupper på 8 for å danne en byte.",
+        "passageId": "p13",
+        "quote": "Alt i en datamaskin lagres og behandles som elektriske signaler som enten er av eller på. Dette representeres med tallene 0 og 1. Én slik 0 eller 1 er en bit."
+      },
+      {
+        "text": "Heksadesimalsystemet (base 16) brukes som en kompakt snarvei for binære tall, hvor én heksadesimal siffer tilsvarer nøyaktig 4 bit.",
+        "passageId": "p24",
+        "quote": "Magien med heksadesimale tall er at én heksadesimal siffer svarer nøyaktig til 4 bit ()."
+      },
+      {
+        "text": "En kompilator oversetter hele kildekoden til maskinkode på forhånd, mens en tolk leser og utfører koden linje for linje underveis.",
+        "passageId": "p37",
+        "quote": "En kompilator oversetter hele kildekoden til maskinkode på forhånd før programmet kjøres, mens en tolk leser og utfører koden linje for linje underveis i kjøringen."
+      },
+      {
+        "text": "Von Neumann-arkitekturen lagrer både data og programinstruksjoner i samme minne, og CPU-en utfører dem gjennom Fetch-Decode-Execute-syklusen.",
+        "passageId": "p48",
+        "quote": "Datamaskiner baserer seg på at både data og programinstruksjoner lagres i det samme minnet. Prosessoren (CPU) jobber i en fast rytme kalt Fetch-Decode-Execute (hent–dekode–utføre) for å avkode og kjøre enkle maskininstruksjoner i et enormt tempo."
+      },
+      {
+        "text": "Alan Turings teoretiske Turingmaskin danner det matematiske grunnlaget for moderne datamaskiner og viser hva en maskin kan beregne.",
+        "passageId": "p66",
+        "quote": "Selv om det er en ren teoretisk konstruksjon, danner Turingmaskinen selve det matematiske grunnlaget for all moderne datavitenskap. Den viser hva en datamaskin faktisk er i stand til å beregne."
+      },
+      {
+        "text": "Mens CPU-en håndterer generelle og sekvensielle oppgaver, er GPU-en bygd for massiv parallellprosessering med tusenvis av mindre kjerner.",
+        "passageId": "p82",
+        "quote": "GPU (Graphics Processing Unit): Er bygd for massiv parallellprosessering. Den har tusenvis av mindre, enklere kjerner som kan utføre mange enkle regnestykker (som beregning av farger, piksler og geometriske punkter i 3D) på nøyaktig samme tid."
+      },
+      {
+        "text": "En A/D-omformer bygger bro mellom den virkelige analoge verden og den digitale datamaskinen ved hjelp av sampling og kvantisering.",
+        "passageId": "p90",
+        "quote": "En A/D-omformer (Analog-to-Digital Converter, ofte forkortet ADC) er en elektronisk komponent eller krets som oversetter analoge signaler (kontinuerlige fysiske verdier i den virkelige verden) til digitale verdier (tallrekker bestående av 0 og 1) som datamaskinen kan lagre, behandle og forstå."
+      }
+    ],
+    "language": "nb"
+  },
+  "simpler": {},
+  "model": "google/gemini-3.5-flash-lite",
+  "promptVersion": "2",
+  "generationMs": 17032,
+  "validated": {
+    "concepts": [
+      {
+        "name": "Moores lov",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "Hvem formulerte Moores lov og når?",
+            "back": "Gordon Moore (medgründer av Intel) i 1965.",
+            "passageId": "p3",
+            "quote": "Moores lov (Moore's Law) er en berømt observasjon og et empirisk prinsipp som ble formulert av Gordon Moore (medgründer av Intel) i 1965."
+          },
+          {
+            "front": "Hva sier Moores lov om transistorer?",
+            "back": "Antallet transistorer på en integrert krets dobles omtrent annethvert år.",
+            "passageId": "p4",
+            "quote": "Kort fortalt sier loven at antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år, mens produksjonskostnadene per transistor samtidig synker."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er hovedbudskapet i Moores lov?",
+            "options": [
+              "Antallet transistorer på en mikrobrikke dobles omtrent annethvert år",
+              "Prisen på datamaskiner dobles hvert år",
+              "Transistorer blir større og krever mer energi over tid",
+              "Programvare blir tregere jo eldre den blir"
+            ],
+            "correctIndex": 0,
+            "passageId": "p4",
+            "quote": "Kort fortalt sier loven at antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år, mens produksjonskostnadene per transistor samtidig synker."
+          },
+          {
+            "question": "Hvilken konsekvens har den eksponentielle veksten fra Moores lov hatt?",
+            "options": [
+              "At superdatakraft fra før finnes i vanlige smarttelefoner og armbåndsur",
+              "At datamaskiner har blitt fysisk større og tyngre",
+              "At det har blitt umulig å koble enheter til internett",
+              "At lagringskapasitet har sunket jevnt over tid"
+            ],
+            "correctIndex": 0,
+            "passageId": "p6",
+            "quote": "Det som var banebrytende superdatakraft for noen tiår siden, finnes i dag i en vanlig smarttelefon eller et armbåndsur."
+          }
+        ]
+      },
+      {
+        "name": "Bits og heksadesimale tall",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "Hva er en bit?",
+            "back": "Et binært siffer (0 eller 1) som representerer elektriske signaler som er av eller på.",
+            "passageId": "p13",
+            "quote": "Alt i en datamaskin lagres og behandles som elektriske signaler som enten er av eller på. Dette representeres med tallene 0 og 1. Én slik 0 eller 1 er en bit."
+          },
+          {
+            "front": "Hvor mange bit utgjør en byte?",
+            "back": "8 bit.",
+            "passageId": "p14",
+            "quote": "Fordi én enkelt bit gir altfor lite informasjon (den kan jo bare være 0 eller 1), samler vi dem i grupper på 8 bit, som kalles en byte."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken tallbase bruker det heksadesimale systemet?",
+            "options": [
+              "Base 16",
+              "Base 2",
+              "Base 10",
+              "Base 8"
+            ],
+            "correctIndex": 0,
+            "passageId": "p18",
+            "quote": "Derfor kan man bruke heksadesimalsystemet (base 16) som en kompakt snarvei."
+          },
+          {
+            "question": "Hvor mange bit tilsvarer én heksadesimal siffer nøyaktig?",
+            "options": [
+              "4 bit",
+              "2 bit",
+              "8 bit",
+              "16 bit"
+            ],
+            "correctIndex": 0,
+            "passageId": "p24",
+            "quote": "Magien med heksadesimale tall er at én heksadesimal siffer svarer nøyaktig til 4 bit ()."
+          }
+        ]
+      },
+      {
+        "name": "Turingmaskin",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "Hvem utarbeidet Turingmaskinen og når?",
+            "back": "Den britiske matematikeren og logikeren Alan Turing i 1936.",
+            "passageId": "p65",
+            "quote": "En Turingmaskin (Turing machine) er en teoretisk matematisk modell av en datamaskin, som ble utensjonert av den britiske matematikeren og logikeren Alan Turing i 1936 – lenge før de første elektroniske datamaskinene ble bygd."
+          },
+          {
+            "front": "Hva er en Universal Turing Machine?",
+            "back": "Én spesiell Turingmaskin som kan lese beskrivelsen av hvilken som helst annen Turingmaskin fra tapen og simulere den.",
+            "passageId": "p74",
+            "quote": "Universell Turingmaskin (Universal Turing Machine): Turing viste at det går an å lage én spesiell Turingmaskin som kan lese beskrivelsen av hvilken som helst annen Turingmaskin fra tapen og simulere den."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er hovedkomponentene i en Turingmaskin?",
+            "options": [
+              "En uendelig lang tape, et lese-/skrivehode, en tilstandsmaskin og en instruksjonstabell",
+              "En CPU, en GPU, en harddisk og et operativsystem",
+              "En kompilator, en tolk, en byte og en bit",
+              "En A/D-omformer, en DAC, en skjerm og en mikrofon"
+            ],
+            "correctIndex": 0,
+            "passageId": "p68",
+            "quote": "Modellen er egentlig veldig enkel og består av fire hovedkomponenter:"
+          },
+          {
+            "question": "Hvilket kjent problem brukte Turing maskinen til å bevise at datamaskiner aldri vil kunne løse?",
+            "options": [
+              "The Halting Problem",
+              "Nøkkelutvekslingsproblemet",
+              "Samplingsproblemet",
+              "Pakkeruting-problemet"
+            ],
+            "correctIndex": 0,
+            "passageId": "p75",
+            "quote": "Turing brukte maskinen til å bevise at det finnes matematiske problemer som datamaskiner aldri vil kunne løse (for eksempel The Halting Problem – det å skrive et program som kan avgjøre om et vilkårlig annet program vil kjøre ferdig eller henge seg i en evig løkke)."
+          }
+        ]
+      },
+      {
+        "name": "CPU og GPU",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "Hva er hovedoppgaven til en CPU?",
+            "back": "Å fungere som hjernen i datamaskinen og håndtere komplekse, generelle oppgaver sekvensielt med et lite antall kraftige kjerner.",
+            "passageId": "p81",
+            "quote": "CPU (Central Processing Unit): Er \"hjernen\" i datamaskinen og er bygd for å håndtere komplekse, generelle oppgaver sekvensielt."
+          },
+          {
+            "front": "Hva er en GPU spesielt bygd for?",
+            "back": "Massiv parallellprosessering med tusenvis av enklere kjerner.",
+            "passageId": "p82",
+            "quote": "GPU (Graphics Processing Unit): Er bygd for massiv parallellprosessering. Den har tusenvis av mindre, enklere kjerner som kan utføre mange enkle regnestykker på nøyaktig samme tid."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva kjennetegner arkitekturen til en GPU sammenlignet med en CPU?",
+            "options": [
+              "Den har tusenvis av mindre, enklere kjerner for parallellprosessering",
+              "Den har bare 2 til 4 ekstremt kraftige kjerner",
+              "Den er utelukkende laget for å lagre filer permanent",
+              "Den kan ikke utføre matematiske beregninger"
+            ],
+            "correctIndex": 0,
+            "passageId": "p82",
+            "quote": "GPU (Graphics Processing Unit): Er bygd for massiv parallellprosessering. Den har tusenvis av mindre, enklere kjerner som kan utføre mange enkle regnestykker (som beregning av farger, piksler og geometriske punkter i 3D) på nøyaktig samme tid."
+          },
+          {
+            "question": "Hvorfor har bruksområdene for GPU-er eksplodert de siste årene?",
+            "options": [
+              "På grunn av deres enorme regnekraft til maskinlæring, AI og vitenskapelige simuleringer",
+              "Fordi de har erstattet behovet for internettilkobling",
+              "Fordi de bruker mer strøm enn en vanlig CPU",
+              "Fordi de gjør tekstredigering raskere"
+            ],
+            "correctIndex": 0,
+            "passageId": "p84",
+            "quote": "Selv om de ble oppfunnet for grafikk og spill, har bruksområdene eksplodert de siste årene på grunn av deres enorme regnekraft:"
+          }
+        ]
+      },
+      {
+        "name": "A/D-omformer",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "Hva gjør en A/D-omformer (ADC)?",
+            "back": "Oversetter analoge signaler til digitale verdier bestående av 0 og 1.",
+            "passageId": "p90",
+            "quote": "En A/D-omformer (Analog-to-Digital Converter, ofte forkortet ADC) er en elektronisk komponent eller krets som oversetter analoge signaler (kontinuerlige fysiske verdier i den virkelige verden) til digitale verdier (tallrekker bestående av 0 og 1) som datamaskinen kan lagre, behandle og forstå."
+          },
+          {
+            "front": "Hvilke to hovedtrinn utfører ADC-en for å gjøre om et analogt signal?",
+            "back": "Sampling (prøvetaking) og kvantisering (avrunding).",
+            "passageId": "p94",
+            "quote": "For å gjøre om det analoge signalet gjør ADC-en to hovedtrinn:"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva skjer under 'sampling' i en A/D-omformer?",
+            "options": [
+              "Det analoge signalet måles med jevne og svært korte tidsmellomrom",
+              "Signalet slettes fra minnet",
+              "Tallet rundes av til nærmeste heltall",
+              "Digital data gjøres om til lydbølger"
+            ],
+            "correctIndex": 0,
+            "passageId": "p95",
+            "quote": "Sampling (Prøvetaking): Den måler det analoge signalet med jevne og svært korte tidsmellomrom (samplingfrekvens, f.eks. 44 100 ganger i sekundet for lyd på CD-kvalitet)."
+          },
+          {
+            "question": "Hva er det motsatte av en A/D-omformer?",
+            "options": [
+              "En D/A-omformer (DAC)",
+              "En kompilator",
+              "En tilstandsmaskin",
+              "En router"
+            ],
+            "correctIndex": 0,
+            "passageId": "p101",
+            "quote": "Det motsatte av en ADC er en D/A-omformer (DAC), som tar digitale data og gjør dem om til analoge signaler igjen"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Moores lov er et empirisk prinsipp som slår fast at antallet transistorer på en mikrobrikke dobles omtrent annethvert år, noe som har drevet den eksponentielle veksten i IT-utviklingen.",
+        "passageId": "p4",
+        "quote": "Kort fortalt sier loven at antallet transistorer som kan plasseres på en integrert krets (mikrobrikke), dobles omtrent annethvert år, mens produksjonskostnadene per transistor samtidig synker."
+      },
+      {
+        "text": "Alt i en datamaskin lagres og behandles internt som binære verdier (0 og 1) kalt bit, som samles i grupper på 8 for å danne en byte.",
+        "passageId": "p13",
+        "quote": "Alt i en datamaskin lagres og behandles som elektriske signaler som enten er av eller på. Dette representeres med tallene 0 og 1. Én slik 0 eller 1 er en bit."
+      },
+      {
+        "text": "Heksadesimalsystemet (base 16) brukes som en kompakt snarvei for binære tall, hvor én heksadesimal siffer tilsvarer nøyaktig 4 bit.",
+        "passageId": "p24",
+        "quote": "Magien med heksadesimale tall er at én heksadesimal siffer svarer nøyaktig til 4 bit ()."
+      },
+      {
+        "text": "En kompilator oversetter hele kildekoden til maskinkode på forhånd, mens en tolk leser og utfører koden linje for linje underveis.",
+        "passageId": "p37",
+        "quote": "En kompilator oversetter hele kildekoden til maskinkode på forhånd før programmet kjøres, mens en tolk leser og utfører koden linje for linje underveis i kjøringen."
+      },
+      {
+        "text": "Von Neumann-arkitekturen lagrer både data og programinstruksjoner i samme minne, og CPU-en utfører dem gjennom Fetch-Decode-Execute-syklusen.",
+        "passageId": "p48",
+        "quote": "Datamaskiner baserer seg på at både data og programinstruksjoner lagres i det samme minnet. Prosessoren (CPU) jobber i en fast rytme kalt Fetch-Decode-Execute (hent–dekode–utføre) for å avkode og kjøre enkle maskininstruksjoner i et enormt tempo."
+      },
+      {
+        "text": "Alan Turings teoretiske Turingmaskin danner det matematiske grunnlaget for moderne datamaskiner og viser hva en maskin kan beregne.",
+        "passageId": "p66",
+        "quote": "Selv om det er en ren teoretisk konstruksjon, danner Turingmaskinen selve det matematiske grunnlaget for all moderne datavitenskap. Den viser hva en datamaskin faktisk er i stand til å beregne."
+      },
+      {
+        "text": "Mens CPU-en håndterer generelle og sekvensielle oppgaver, er GPU-en bygd for massiv parallellprosessering med tusenvis av mindre kjerner.",
+        "passageId": "p82",
+        "quote": "GPU (Graphics Processing Unit): Er bygd for massiv parallellprosessering. Den har tusenvis av mindre, enklere kjerner som kan utføre mange enkle regnestykker (som beregning av farger, piksler og geometriske punkter i 3D) på nøyaktig samme tid."
+      },
+      {
+        "text": "En A/D-omformer bygger bro mellom den virkelige analoge verden og den digitale datamaskinen ved hjelp av sampling og kvantisering.",
+        "passageId": "p90",
+        "quote": "En A/D-omformer (Analog-to-Digital Converter, ofte forkortet ADC) er en elektronisk komponent eller krets som oversetter analoge signaler (kontinuerlige fysiske verdier i den virkelige verden) til digitale verdier (tallrekker bestående av 0 og 1) som datamaskinen kan lagre, behandle og forstå."
+      }
+    ],
+    "language": "nb",
+    "model": "google/gemini-3.5-flash-lite",
+    "promptVersion": "2"
+  }
+}

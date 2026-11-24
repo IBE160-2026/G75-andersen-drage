@@ -1,0 +1,592 @@
+{
+  "studySet": {
+    "concepts": [
+      {
+        "name": "Fossefallsmodellen",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "Hva er kjennetegnet ved fossefallsmodellen?",
+            "back": "Krav, design, implementering, testing og drift kommer etter hverandre i faste faser.",
+            "passageId": "p4",
+            "quote": "Tradisjonell systemutvikling fulgte ofte fossefallsmodellen: krav, design, implementering, testing og drift kommer etter hverandre i faste faser."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvorfor kan fossefallsmodellen være problematisk i systemutvikling?",
+            "options": [
+              "Fordi feil i kravene ofte oppdages sent når de er dyre å rette",
+              "Fordi den bruker for mange KI-agenter",
+              "Fordi den ikke tillater noen form for dokumentasjon",
+              "Fordi den krever at alle er Scrum Masters"
+            ],
+            "correctIndex": 0,
+            "passageId": "p4",
+            "quote": "Problemet er at kundens behov endrer seg underveis, og at feil i kravene først oppdages sent, når de er dyre å rette."
+          }
+        ]
+      },
+      {
+        "name": "Smidig utvikling",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "Hvordan svarer smidig utvikling på at kunders behov endrer seg?",
+            "back": "Ved å levere i korte runder, vise fram produktet, få tilbakemelding og justere planen.",
+            "passageId": "p5",
+            "quote": "Smidig utvikling (engelsk: agile) svarer på dette ved å levere i korte runder. Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvordan ser smidig utvikling på endringer underveis?",
+            "options": [
+              "Som et uakseptabelt avvik fra planen",
+              "Som noe som kun kan gjøres i slutten av året",
+              "Som noe normalt, ikke som et avvik",
+              "Som en feil i koden"
+            ],
+            "correctIndex": 2,
+            "passageId": "p5",
+            "quote": "Endring blir sett på som normalt, ikke som et avvik."
+          }
+        ]
+      },
+      {
+        "name": "Det smidige manifestet",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "Når ble det smidige manifestet skrevet?",
+            "back": "I 2001 av sytten utviklere.",
+            "passageId": "p6",
+            "quote": "I 2001 skrev sytten utviklere det smidige manifestet."
+          },
+          {
+            "front": "Hva verdsettes høyest av 'omfattende dokumentasjon' og 'programvare som virker' i manifestet?",
+            "back": "Programvare som virker.",
+            "passageId": "p9",
+            "quote": "Programvare som virker framfor omfattende dokumentasjon"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilket av følgende par verdsettes høyest i det smidige manifestet?",
+            "options": [
+              "Kontraktsforhandlinger framfor samarbeid med kunden",
+              "Individer og samspill framfor prosesser og verktøy",
+              "Prosesser og verktøy framfor individer",
+              "Omfattende dokumentasjon framfor programvare som virker"
+            ],
+            "correctIndex": 1,
+            "passageId": "p8",
+            "quote": "Individer og samspill framfor prosesser og verktøy"
+          }
+        ]
+      },
+      {
+        "name": "Scrum-rammeverket",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "Hva er de tre søylene som holder oppe empirisk prosesskontroll i Scrum?",
+            "back": "Åpenhet, inspeksjon og tilpasning.",
+            "passageId": "p15",
+            "quote": "Tre søyler holder dette oppe: 1. Åpenhet 2. Inspeksjon 3. Tilpasning"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva betyr det at alle hendelser i Scrum er tidsbegrensede (timeboxed)?",
+            "options": [
+              "At de skjer helt tilfeldig",
+              "At de har en fast maksimal lengde",
+              "At de bare kan holdes om natten",
+              "At de ikke har noen tidsgrenser"
+            ],
+            "correctIndex": 1,
+            "passageId": "p25",
+            "quote": "Alle hendelser i Scrum er tidsbegrensede (timeboxed), det vil si at de har en fast maksimal lengde."
+          }
+        ]
+      },
+      {
+        "name": "Scrum-roller",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "Hva er ansvaret til en Produkteier (Product Owner)?",
+            "back": "Å maksimere verdien av produktet, eie og prioritere produktkøen.",
+            "passageId": "p21",
+            "quote": "Produkteier (Product Owner) har ansvar for å maksimere verdien av produktet. Produkteieren eier og prioriterer produktkøen og bestemmer hva som er viktigst å lage først."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken rolle beskrives som en tjenende leder som fjerner hindringer i Scrum?",
+            "options": [
+              "Prosjektleder",
+              "Utvikler",
+              "Scrum Master",
+              "Produkteier"
+            ],
+            "correctIndex": 2,
+            "passageId": "p22",
+            "quote": "Scrum Master hjelper teamet å forstå og bruke Scrum, fjerner hindringer og sørger for at hendelsene blir gjennomført og holdt innenfor tidsrammen. Scrum Master er en tjenende leder, ikke en prosjektleder som fordeler oppgaver."
+          }
+        ]
+      },
+      {
+        "name": "Scrum-hendelser",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "Hva er forskjellen på en sprintgjennomgang og et retrospektiv?",
+            "back": "Gjennomgangen handler om produktet, mens retrospektivet handler om prosessen.",
+            "passageId": "p30",
+            "quote": "Gjennomgangen handler om produktet, retrospektivet om prosessen."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor lang varighet har vanligvis en Daglig Scrum (daily standup)?",
+            "options": [
+              "Høyst 15 minutter",
+              "Nøyaktig 2 timer",
+              "En hel arbeidsdag",
+              "Minst 45 minutter"
+            ],
+            "correctIndex": 0,
+            "passageId": "p28",
+            "quote": "Daglig Scrum (daily standup): et møte på høyst 15 minutter hver dag, der utviklerne sjekker framdriften mot sprintmålet og justerer planen for neste dag."
+          }
+        ]
+      },
+      {
+        "name": "Scrum-artefakter og ferdighet",
+        "centralityRank": 7,
+        "flashcards": [
+          {
+            "front": "Når regnes et element som en del av inkrementet i Scrum?",
+            "back": "Når det oppfyller definisjonen av ferdig (Definition of Done).",
+            "passageId": "p34",
+            "quote": "Et element regnes bare som en del av inkrementet når det oppfyller definisjonen av ferdig (Definition of Done), for eksempel at koden er testet, gjennomgått og dokumentert."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er en produktkø (product backlog)?",
+            "options": [
+              "En fastlåst liste som aldri kan endres",
+              "En ordnet liste over alt som kan trengs i produktet",
+              "En liste over koden som allerede er slettet",
+              "En liste over hvem som er Scrum Master"
+            ],
+            "correctIndex": 1,
+            "passageId": "p32",
+            "quote": "Produktkø (product backlog): en ordnet liste over alt som kan trengs i produktet."
+          }
+        ]
+      },
+      {
+        "name": "Brukerhistorier og estimering",
+        "centralityRank": 8,
+        "flashcards": [
+          {
+            "front": "Hva står akronymet INVEST for når det gjelder brukerhistorier?",
+            "back": "At en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar.",
+            "passageId": "p38",
+            "quote": "Huskeregelen INVEST sier at en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva måler historiepoeng (story points) i stedet for tid?",
+            "options": [
+              "Relativ størrelse og usikkerhet",
+              "Hvor mange ansatte som deltar",
+              "Hvor mange penger prosjektet koster",
+              "Antall linjer dokumentasjon"
+            ],
+            "correctIndex": 0,
+            "passageId": "p39",
+            "quote": "Poengene måler relativ størrelse og usikkerhet, ikke tid."
+          }
+        ]
+      },
+      {
+        "name": "Kanban",
+        "centralityRank": 9,
+        "flashcards": [
+          {
+            "front": "Hva er den viktigste regelen i Kanban?",
+            "back": "Å begrense pågående arbeid (WIP-grense).",
+            "passageId": "p41",
+            "quote": "Den viktigste regelen er å begrense pågående arbeid (WIP-grense): en kolonne kan bare ha et visst antall kort samtidig."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva måler Kanban ofte i stedet for hastighet?",
+            "options": [
+              "Antall roller",
+              "Gjennomløpstid",
+              "Spenning i teamet",
+              "Antall sjefer"
+            ],
+            "correctIndex": 1,
+            "passageId": "p41",
+            "quote": "Kanban måler ofte gjennomløpstid, altså hvor lang tid et kort bruker fra start til ferdig."
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Tradisjonell systemutvikling brukte fossefallsmodellen med faste faser etter hverandre, noe som gjorde det dyrt å oppdage feil sent i prosessen.",
+        "passageId": "p4",
+        "quote": "Tradisjonell systemutvikling fulgte ofte fossefallsmodellen: krav, design, implementering, testing og drift kommer etter hverandre i faste faser."
+      },
+      {
+        "text": "Smidig utvikling leverer i korte runder med tilbakemeldinger og ser på endringer som noe normalt.",
+        "passageId": "p5",
+        "quote": "Smidig utvikling (engelsk: agile) svarer på dette ved å levere i korte runder. Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen."
+      },
+      {
+        "text": "Det smidige manifestet fra 2001 vektlegger fire verdier, der blant annet individer og samspill og fungerende programvare settes høyest.",
+        "passageId": "p7",
+        "quote": "I 2001 skrev sytten utviklere det smidige manifestet. Det består av fire verdier. Teksten til høyre har verdi, men teksten til venstre verdsettes høyere"
+      },
+      {
+        "text": "Scrum er et populært smidig rammeverk basert på empiri, åpenhet, inspeksjon og tilpasning.",
+        "passageId": "p15",
+        "quote": "Scrum er det mest brukte smidige rammeverket. Det er bevisst lite: det beskriver roller, hendelser og artefakter, men ikke hvordan teamet skal programmere eller teste. Scrum bygger på empirisk prosesskontroll"
+      },
+      {
+        "text": "Et Scrum-team består av produkteier, Scrum Master og utviklere med ulike, definerte ansvarsområder.",
+        "passageId": "p20",
+        "quote": "Et Scrum-team er lite, typisk ti personer eller færre, og har tre ansvarsområder"
+      },
+      {
+        "text": "Scrum bruker tidsbegrensede hendelser som sprint, sprintplanlegging, daglig Scrum, sprintgjennomgang og retrospektiv.",
+        "passageId": "p25",
+        "quote": "Alle hendelser i Scrum er tidsbegrensede (timeboxed), det vil si at de har en fast maksimal lengde."
+      },
+      {
+        "text": "Artefaktene i Scrum inkluderer produktkø, sprintkø og et inkrement som oppfyller definisjonen av ferdig.",
+        "passageId": "p34",
+        "quote": "Et element regnes bare som en del av inkrementet når det oppfyller definisjonen av ferdig (Definition of Done), for eksempel at koden er testet, gjennomgått og dokumentert."
+      },
+      {
+        "text": "Brukerhistorier med akseptansekriterier og INVEST-kriterier brukes ofte i produktkøen, og estimeres gjenom historiepoeng.",
+        "passageId": "p38",
+        "quote": "En god brukerhistorie har akseptansekriterier som sier konkret når den er oppfylt. Huskeregelen INVEST sier at en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar."
+      },
+      {
+        "text": "Kanban er et alternativ til Scrum som fokuserer på kontinuerlig flyt, visuell tavle og strenge WIP-grenser.",
+        "passageId": "p41",
+        "quote": "I stedet for sprinter har Kanban en kontinuerlig flyt av arbeid over en tavle med kolonner, for eksempel Å gjøre – Pågår – Test – Ferdig."
+      }
+    ],
+    "language": "no"
+  },
+  "simpler": {},
+  "model": "google/gemini-3.5-flash-lite",
+  "promptVersion": "2",
+  "generationMs": 10026,
+  "validated": {
+    "concepts": [
+      {
+        "name": "Fossefallsmodellen",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "Hva er kjennetegnet ved fossefallsmodellen?",
+            "back": "Krav, design, implementering, testing og drift kommer etter hverandre i faste faser.",
+            "passageId": "p4",
+            "quote": "Tradisjonell systemutvikling fulgte ofte fossefallsmodellen: krav, design, implementering, testing og drift kommer etter hverandre i faste faser."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvorfor kan fossefallsmodellen være problematisk i systemutvikling?",
+            "options": [
+              "Fordi feil i kravene ofte oppdages sent når de er dyre å rette",
+              "Fordi den bruker for mange KI-agenter",
+              "Fordi den ikke tillater noen form for dokumentasjon",
+              "Fordi den krever at alle er Scrum Masters"
+            ],
+            "correctIndex": 0,
+            "passageId": "p4",
+            "quote": "Problemet er at kundens behov endrer seg underveis, og at feil i kravene først oppdages sent, når de er dyre å rette."
+          }
+        ]
+      },
+      {
+        "name": "Smidig utvikling",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "Hvordan svarer smidig utvikling på at kunders behov endrer seg?",
+            "back": "Ved å levere i korte runder, vise fram produktet, få tilbakemelding og justere planen.",
+            "passageId": "p5",
+            "quote": "Smidig utvikling (engelsk: agile) svarer på dette ved å levere i korte runder. Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvordan ser smidig utvikling på endringer underveis?",
+            "options": [
+              "Som et uakseptabelt avvik fra planen",
+              "Som noe som kun kan gjøres i slutten av året",
+              "Som noe normalt, ikke som et avvik",
+              "Som en feil i koden"
+            ],
+            "correctIndex": 2,
+            "passageId": "p5",
+            "quote": "Endring blir sett på som normalt, ikke som et avvik."
+          }
+        ]
+      },
+      {
+        "name": "Det smidige manifestet",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "Når ble det smidige manifestet skrevet?",
+            "back": "I 2001 av sytten utviklere.",
+            "passageId": "p6",
+            "quote": "I 2001 skrev sytten utviklere det smidige manifestet."
+          },
+          {
+            "front": "Hva verdsettes høyest av 'omfattende dokumentasjon' og 'programvare som virker' i manifestet?",
+            "back": "Programvare som virker.",
+            "passageId": "p9",
+            "quote": "Programvare som virker framfor omfattende dokumentasjon"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilket av følgende par verdsettes høyest i det smidige manifestet?",
+            "options": [
+              "Kontraktsforhandlinger framfor samarbeid med kunden",
+              "Individer og samspill framfor prosesser og verktøy",
+              "Prosesser og verktøy framfor individer",
+              "Omfattende dokumentasjon framfor programvare som virker"
+            ],
+            "correctIndex": 1,
+            "passageId": "p8",
+            "quote": "Individer og samspill framfor prosesser og verktøy"
+          }
+        ]
+      },
+      {
+        "name": "Scrum-rammeverket",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "Hva er de tre søylene som holder oppe empirisk prosesskontroll i Scrum?",
+            "back": "Åpenhet, inspeksjon og tilpasning.",
+            "passageId": "p15",
+            "quote": "Tre søyler holder dette oppe: 1. Åpenhet 2. Inspeksjon 3. Tilpasning"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva betyr det at alle hendelser i Scrum er tidsbegrensede (timeboxed)?",
+            "options": [
+              "At de skjer helt tilfeldig",
+              "At de har en fast maksimal lengde",
+              "At de bare kan holdes om natten",
+              "At de ikke har noen tidsgrenser"
+            ],
+            "correctIndex": 1,
+            "passageId": "p25",
+            "quote": "Alle hendelser i Scrum er tidsbegrensede (timeboxed), det vil si at de har en fast maksimal lengde."
+          }
+        ]
+      },
+      {
+        "name": "Scrum-roller",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "Hva er ansvaret til en Produkteier (Product Owner)?",
+            "back": "Å maksimere verdien av produktet, eie og prioritere produktkøen.",
+            "passageId": "p21",
+            "quote": "Produkteier (Product Owner) har ansvar for å maksimere verdien av produktet. Produkteieren eier og prioriterer produktkøen og bestemmer hva som er viktigst å lage først."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvilken rolle beskrives som en tjenende leder som fjerner hindringer i Scrum?",
+            "options": [
+              "Prosjektleder",
+              "Utvikler",
+              "Scrum Master",
+              "Produkteier"
+            ],
+            "correctIndex": 2,
+            "passageId": "p22",
+            "quote": "Scrum Master hjelper teamet å forstå og bruke Scrum, fjerner hindringer og sørger for at hendelsene blir gjennomført og holdt innenfor tidsrammen. Scrum Master er en tjenende leder, ikke en prosjektleder som fordeler oppgaver."
+          }
+        ]
+      },
+      {
+        "name": "Scrum-hendelser",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "Hva er forskjellen på en sprintgjennomgang og et retrospektiv?",
+            "back": "Gjennomgangen handler om produktet, mens retrospektivet handler om prosessen.",
+            "passageId": "p30",
+            "quote": "Gjennomgangen handler om produktet, retrospektivet om prosessen."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hvor lang varighet har vanligvis en Daglig Scrum (daily standup)?",
+            "options": [
+              "Høyst 15 minutter",
+              "Nøyaktig 2 timer",
+              "En hel arbeidsdag",
+              "Minst 45 minutter"
+            ],
+            "correctIndex": 0,
+            "passageId": "p28",
+            "quote": "Daglig Scrum (daily standup): et møte på høyst 15 minutter hver dag, der utviklerne sjekker framdriften mot sprintmålet og justerer planen for neste dag."
+          }
+        ]
+      },
+      {
+        "name": "Scrum-artefakter og ferdighet",
+        "centralityRank": 7,
+        "flashcards": [
+          {
+            "front": "Når regnes et element som en del av inkrementet i Scrum?",
+            "back": "Når det oppfyller definisjonen av ferdig (Definition of Done).",
+            "passageId": "p34",
+            "quote": "Et element regnes bare som en del av inkrementet når det oppfyller definisjonen av ferdig (Definition of Done), for eksempel at koden er testet, gjennomgått og dokumentert."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva er en produktkø (product backlog)?",
+            "options": [
+              "En fastlåst liste som aldri kan endres",
+              "En ordnet liste over alt som kan trengs i produktet",
+              "En liste over koden som allerede er slettet",
+              "En liste over hvem som er Scrum Master"
+            ],
+            "correctIndex": 1,
+            "passageId": "p32",
+            "quote": "Produktkø (product backlog): en ordnet liste over alt som kan trengs i produktet."
+          }
+        ]
+      },
+      {
+        "name": "Brukerhistorier og estimering",
+        "centralityRank": 8,
+        "flashcards": [
+          {
+            "front": "Hva står akronymet INVEST for når det gjelder brukerhistorier?",
+            "back": "At en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar.",
+            "passageId": "p38",
+            "quote": "Huskeregelen INVEST sier at en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva måler historiepoeng (story points) i stedet for tid?",
+            "options": [
+              "Relativ størrelse og usikkerhet",
+              "Hvor mange ansatte som deltar",
+              "Hvor mange penger prosjektet koster",
+              "Antall linjer dokumentasjon"
+            ],
+            "correctIndex": 0,
+            "passageId": "p39",
+            "quote": "Poengene måler relativ størrelse og usikkerhet, ikke tid."
+          }
+        ]
+      },
+      {
+        "name": "Kanban",
+        "centralityRank": 9,
+        "flashcards": [
+          {
+            "front": "Hva er den viktigste regelen i Kanban?",
+            "back": "Å begrense pågående arbeid (WIP-grense).",
+            "passageId": "p41",
+            "quote": "Den viktigste regelen er å begrense pågående arbeid (WIP-grense): en kolonne kan bare ha et visst antall kort samtidig."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Hva måler Kanban ofte i stedet for hastighet?",
+            "options": [
+              "Antall roller",
+              "Gjennomløpstid",
+              "Spenning i teamet",
+              "Antall sjefer"
+            ],
+            "correctIndex": 1,
+            "passageId": "p41",
+            "quote": "Kanban måler ofte gjennomløpstid, altså hvor lang tid et kort bruker fra start til ferdig."
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Tradisjonell systemutvikling brukte fossefallsmodellen med faste faser etter hverandre, noe som gjorde det dyrt å oppdage feil sent i prosessen.",
+        "passageId": "p4",
+        "quote": "Tradisjonell systemutvikling fulgte ofte fossefallsmodellen: krav, design, implementering, testing og drift kommer etter hverandre i faste faser."
+      },
+      {
+        "text": "Smidig utvikling leverer i korte runder med tilbakemeldinger og ser på endringer som noe normalt.",
+        "passageId": "p5",
+        "quote": "Smidig utvikling (engelsk: agile) svarer på dette ved å levere i korte runder. Teamet lager en liten, fungerende del av produktet, viser den fram, får tilbakemelding og justerer planen."
+      },
+      {
+        "text": "Det smidige manifestet fra 2001 vektlegger fire verdier, der blant annet individer og samspill og fungerende programvare settes høyest.",
+        "passageId": "p7",
+        "quote": "I 2001 skrev sytten utviklere det smidige manifestet. Det består av fire verdier. Teksten til høyre har verdi, men teksten til venstre verdsettes høyere"
+      },
+      {
+        "text": "Scrum er et populært smidig rammeverk basert på empiri, åpenhet, inspeksjon og tilpasning.",
+        "passageId": "p15",
+        "quote": "Scrum er det mest brukte smidige rammeverket. Det er bevisst lite: det beskriver roller, hendelser og artefakter, men ikke hvordan teamet skal programmere eller teste. Scrum bygger på empirisk prosesskontroll"
+      },
+      {
+        "text": "Et Scrum-team består av produkteier, Scrum Master og utviklere med ulike, definerte ansvarsområder.",
+        "passageId": "p20",
+        "quote": "Et Scrum-team er lite, typisk ti personer eller færre, og har tre ansvarsområder"
+      },
+      {
+        "text": "Scrum bruker tidsbegrensede hendelser som sprint, sprintplanlegging, daglig Scrum, sprintgjennomgang og retrospektiv.",
+        "passageId": "p25",
+        "quote": "Alle hendelser i Scrum er tidsbegrensede (timeboxed), det vil si at de har en fast maksimal lengde."
+      },
+      {
+        "text": "Artefaktene i Scrum inkluderer produktkø, sprintkø og et inkrement som oppfyller definisjonen av ferdig.",
+        "passageId": "p34",
+        "quote": "Et element regnes bare som en del av inkrementet når det oppfyller definisjonen av ferdig (Definition of Done), for eksempel at koden er testet, gjennomgått og dokumentert."
+      },
+      {
+        "text": "Brukerhistorier med akseptansekriterier og INVEST-kriterier brukes ofte i produktkøen, og estimeres gjenom historiepoeng.",
+        "passageId": "p38",
+        "quote": "En god brukerhistorie har akseptansekriterier som sier konkret når den er oppfylt. Huskeregelen INVEST sier at en historie bør være uavhengig, forhandlingsbar, verdifull, estimerbar, liten og testbar."
+      },
+      {
+        "text": "Kanban er et alternativ til Scrum som fokuserer på kontinuerlig flyt, visuell tavle og strenge WIP-grenser.",
+        "passageId": "p41",
+        "quote": "I stedet for sprinter har Kanban en kontinuerlig flyt av arbeid over en tavle med kolonner, for eksempel Å gjøre – Pågår – Test – Ferdig."
+      }
+    ],
+    "language": "no",
+    "model": "google/gemini-3.5-flash-lite",
+    "promptVersion": "2"
+  }
+}

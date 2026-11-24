@@ -50,7 +50,7 @@ Opprett nøkkelen med en kredittgrense i OpenRouter.
 compose.yaml        web, proxy; profilene dev og test
 .env.example        alle Proxy-variabler uten verdier
 web/                Next.js-appen (app/, components/, core/, extract/, storage/, api/, i18n/, styles/)
-proxy/              FastAPI-Proxy (app/, fixtures/, scripts/, tests/)
+proxy/              FastAPI-Proxy (app/, fixtures/, recordings/, scripts/, tests/)
 e2e/                Playwright-tester og test-imaget
 scripts/test.sh     kjører alle testsuitene i test-tjenesten
 reference-notes/    referansenotater (DR-3)
@@ -72,7 +72,7 @@ reference-notes/    referansenotater (DR-3)
 - **`GET /api/status`** svarer `keyConfigured`, `model`, `provider` og `promptVersion`. Proxy-en starter uten nøkkel; OpenRouter-klienten bygges først når en generering trenger den.
 - **`POST /api/study-set`** tar `{mode, noteHash, passages}` (`mode` `"live"` eller `"demo"`, `noteHash` 64 små heks-tegn, 1–15 000 avsnitt `{id: "p<n>", text}` med unike `id`, til sammen høyst 1 000 000 tegn) og svarer med et studiesett: 5–15 nøkkelbegreper etter sentralitet, hvert med 1–2 kort og 1–2 quizspørsmål (nøyaktig 4 valg), 5–10 sammendragspunkter på høyst 40 ord, `language`, `model` og `promptVersion`. Modellen kalles via OpenRouter med `zdr: true`, `data_collection: "deny"` og `require_parameters: true`, JSON-skjema-svar og uten `temperature`/`top_p`. Notatteksten sendes bare som JSON-data mellom `<note_passages>` og `</note_passages>` i brukermeldingen, aldri i systemprompten (`proxy/app/prompts/`). Svaret sjekkes mot skjemaet og tellereglene (`proxy/app/rules.py`); ugyldige quizspørsmål og for lange sammendragspunkter fjernes, og overskytende elementer kuttes. Sitatkontroll og ID-er gjøres i nettleseren (Story 1.8).
 - **Tidsfrister og nytt forsøk:** hvert modellkall har `GENERATION_TIMEOUT_S` (40 s), hele forespørselen 85 s (fast). Ugyldig svar, avvisning, avkuttet svar, 429/5xx, nettverksfeil eller tidsavbrudd gir ett nytt forsøk, men bare hvis minst 40 s gjenstår. Høyst 2 modellkall per forespørsel.
-- **Feil** er alltid `{code}`: `400 err.generation` (ugyldig forespørsel), `404 err.demoOnly` (`mode: "demo"`; demodata kommer i Story 1.13/1.14), `503 err.noKey` (ingen nøkkel), `502 err.generation` (ugyldig svar eller leverandørfeil), `504 err.generation` (tidsavbrudd), `500 err.generation` (uventet feil i Proxy-en), og fra vernet `403`, `413` og `429`, alle `err.generation`. En `OPENROUTER_MODEL` uten støtte for JSON-skjema-svar gir `502 err.generation` på hver forespørsel, uten nytt forsøk.
+- **Feil** er alltid `{code}`: `400 err.generation` (ugyldig forespørsel), `404 err.demoOnly` (`mode: "demo"`; Proxy-en serverer ikke demodata før Story 1.14, selv om Fixtures finnes i `proxy/fixtures/`), `503 err.noKey` (ingen nøkkel), `502 err.generation` (ugyldig svar eller leverandørfeil), `504 err.generation` (tidsavbrudd), `500 err.generation` (uventet feil i Proxy-en), og fra vernet `403`, `413` og `429`, alle `err.generation`. En `OPENROUTER_MODEL` uten støtte for JSON-skjema-svar gir `502 err.generation` på hver forespørsel, uten nytt forsøk.
 - **Vern** (sjekkes i denne rekkefølgen før ruten kjører):
   1. **Opphav:** en forespørsel med `Origin` utenfor `ALLOWED_ORIGINS` gir `403 err.generation`, uansett metode. Uten `Origin` slipper bare `GET`, `HEAD` og `OPTIONS` gjennom (som healthcheckens `GET /api/status`); en `POST` uten `Origin` gir 403. Det finnes ingen CORS: appen og Proxy-en deler opphav via Next.js.
   2. **Størrelse:** en body over 8 MiB, oppgitt eller strømmet, gir `413 err.generation`.
@@ -95,6 +95,25 @@ docker compose run --rm --no-deps -v "$PWD/web/api:/repo/web/api" test bash -c \
 ```
 
 CI genererer filen på nytt og feiler hvis den avviker fra det som er committet.
+
+## Fixtures og modellvalg
+
+`proxy/fixtures/{noteHash}.json` er innspilte svar for de tre referansenotatene (Demo Mode i Story 1.14 og testene uten nøkkel). Hver fil har nøyaktig `{studySet, simpler, model, promptVersion}`, der `studySet` er modellens rå utkast og `simpler` er `{}` til Story 3.6 (se D-15). Kandidatopptakene for hver modell ligger i `proxy/recordings/<modell med / byttet til __>/`; bare vinneren kopieres til `proxy/fixtures/`, så Proxy-imaget får bare den.
+
+Innspillingen går i fire steg og trenger Node og uv lokalt (test-imaget har ingen vei ut). Steg 2 kjøres én gang per kandidatmodell og er det eneste steget som trenger nøkkel; den leses bare fra miljøvariabelen `OPENROUTER_API_KEY`. Skriptene skriver bare ut antall og tider.
+
+```sh
+cd web && npm run export-passages            # 1. avsnitt fra den ekte uttrekkingen -> proxy/recordings/passages.json
+cd ../proxy && uv run --frozen python scripts/record_fixtures.py --model anthropic/claude-haiku-5.5   # 2. ett forsøk per notat; gjenta med --model for hver kandidatmodell
+cd ../web && npm run evaluate                # 3. sammenligning, uten nøkkel og uten nettverk
+cd ../proxy && uv run --frozen python scripts/record_fixtures.py --promote anthropic__claude-haiku-5.5   # 4. vinneren til proxy/fixtures/
+```
+
+`npm run evaluate` viser per modell og notat andelen sitater som består sitatkontrollen (målt på studiesettet etter Proxy-ens trimming, `validated` i opptaket), hvor mange kort, quizspørsmål og sammendragspunkter som overlever `verifyStudySet`, resultatkoden og genereringstiden, og et snitt per modell. Valgregelen er, i rekkefølge: høyest gjennomsnittlig andel beståtte sitater, blant modellene der ingen notater havner under minstekravet (`err.tooFewItems`); deretter flest overlevende elementer; deretter raskest generering. `--promote` nekter hvis et opptak mangler, feilet, ble avvist av tellereglene eller har en annen `promptVersion` enn den gjeldende, og erstatter da ingenting. Vinneren blir standardmodell i `proxy/app/config.py`, `compose.yaml` og tabellen over.
+
+**Resultat 2026-11-24** (`PROMPT_VERSION` 2): `anthropic/claude-haiku-5.5` er valgt. Den fikk 100 % beståtte sitater og 71 overlevende elementer, og alle tre notatene besto (18–33 s per notat). `google/gemini-3.5-flash-lite` var raskere, men fikk 65 % i snitt, og `nb-smidig-scrum.md` feilet. `openai/gpt-6-luna` fikk tidsavbrudd (40 s) på alle tre. Detaljene står i D-15.
+
+**Spill inn på nytt** (alle tre stegene, så `--promote`) når `PROMPT_VERSION` økes, når standardmodellen byttes, eller når uttrekkingen endrer avsnittene til et referansenotat. `web/extract/fixtures.test.ts` feiler, med notat og hasher, når Fixtures eller `passages.json` ikke lenger stemmer med referansenotatene, og `proxy/tests/test_fixtures.py` feiler når en Fixture har feil form, feil `promptVersion` eller en annen modell enn standardmodellen.
 
 ## CI
 

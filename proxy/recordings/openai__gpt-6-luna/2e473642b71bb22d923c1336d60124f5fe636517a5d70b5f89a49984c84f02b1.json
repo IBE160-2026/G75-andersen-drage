@@ -1,0 +1,9 @@
+{
+  "studySet": null,
+  "simpler": {},
+  "model": "openai/gpt-6-luna",
+  "promptVersion": "2",
+  "generationMs": 40007,
+  "validated": null,
+  "error": "RunTimedOut"
+}

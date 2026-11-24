@@ -1,0 +1,394 @@
+{
+  "studySet": {
+    "concepts": [
+      {
+        "name": "Unit testing",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "What is unit testing?",
+            "back": "A form of software testing by which isolated source code is tested to validate expected behavior.",
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What does unit testing validate?",
+            "options": [
+              "Expected behavior of isolated source code",
+              "Database backup speed",
+              "User interface colors",
+              "Network latency"
+            ],
+            "correctIndex": 0,
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          }
+        ]
+      },
+      {
+        "name": "Test case",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "What does a test case specify?",
+            "back": "The inputs, execution conditions, testing procedure, and expected results for a single test.",
+            "passageId": "p14",
+            "quote": "a test case is a specification of the inputs, execution conditions, testing procedure, and expected results"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What does a test case specify?",
+            "options": [
+              "Only the programmer's name",
+              "The color of the test report",
+              "Inputs, execution conditions, procedure, and expected results",
+              "The deployment server address"
+            ],
+            "correctIndex": 2,
+            "passageId": "p14",
+            "quote": "a test case is a specification of the inputs, execution conditions, testing procedure, and expected results"
+          }
+        ]
+      },
+      {
+        "name": "Test-driven development",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "When are unit tests written in test-driven development?",
+            "back": "Before the related production code is written.",
+            "passageId": "p26",
+            "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "In TDD, when are unit tests written?",
+            "options": [
+              "After all production code",
+              "Before the related production code",
+              "Only during release",
+              "Never"
+            ],
+            "correctIndex": 1,
+            "passageId": "p26",
+            "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+          }
+        ]
+      },
+      {
+        "name": "Test double",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "What is a test double?",
+            "back": "Software that satisfies a dependency so the test need not depend on production code.",
+            "passageId": "p16",
+            "quote": "A test double is software used in software test automation that satisfies a dependency so that the test need not depend on production code."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Why use a test double?",
+            "options": [
+              "To store test logs",
+              "To replace the programmer",
+              "To speed up compilation of the release",
+              "So the test need not depend on production code"
+            ],
+            "correctIndex": 3,
+            "passageId": "p16",
+            "quote": "A test double is software used in software test automation that satisfies a dependency so that the test need not depend on production code."
+          }
+        ]
+      },
+      {
+        "name": "Parameterized test",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "What is a parameterized test?",
+            "back": "A test that accepts a set of values so it can run with multiple, different input values.",
+            "passageId": "p18",
+            "quote": "A parameterized test is a test that accepts a set of values that can be used to enable the test to run with multiple, different input values."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What can parameterized tests reduce?",
+            "options": [
+              "Number of developers",
+              "Test code duplication",
+              "Memory of the compiler",
+              "Size of the README"
+            ],
+            "correctIndex": 1,
+            "passageId": "p18",
+            "quote": "Use of parametrized tests can reduce test code duplication."
+          }
+        ]
+      },
+      {
+        "name": "Limitations of unit testing",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "Why can testing not catch every error in a program?",
+            "back": "It cannot evaluate every execution path in any but the most trivial programs.",
+            "passageId": "p39",
+            "quote": "Testing will not catch every error in the program, because it cannot evaluate every execution path in any but the most trivial programs."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Will unit testing by definition catch integration errors?",
+            "options": [
+              "Yes, always",
+              "Only in embedded software",
+              "No, it will not catch them",
+              "Only on Fridays"
+            ],
+            "correctIndex": 2,
+            "passageId": "p39",
+            "quote": "Therefore, it will not catch integration errors or broader system-level errors"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Unit testing is a form of software testing that checks isolated source code to validate expected behavior.",
+        "passageId": "p2",
+        "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+      },
+      {
+        "text": "Unit tests run at the unit level, in contrast to testing at the integration or system level.",
+        "passageId": "p3",
+        "quote": "Unit testing describes tests that are run at the unit-level to contrast testing at the integration or system level."
+      },
+      {
+        "text": "A test case specifies the inputs, execution conditions, procedure, and expected results for one test.",
+        "passageId": "p14",
+        "quote": "a test case is a specification of the inputs, execution conditions, testing procedure, and expected results"
+      },
+      {
+        "text": "In test-driven development, unit tests are written before the related production code.",
+        "passageId": "p26",
+        "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+      },
+      {
+        "text": "A parameterized test runs with multiple input values and can reduce test code duplication.",
+        "passageId": "p18",
+        "quote": "Use of parametrized tests can reduce test code duplication."
+      },
+      {
+        "text": "Testing cannot catch every error, and unit testing will not catch integration or system-level errors.",
+        "passageId": "p39",
+        "quote": "Therefore, it will not catch integration errors or broader system-level errors"
+      }
+    ],
+    "language": "en"
+  },
+  "simpler": {},
+  "model": "anthropic/claude-haiku-5.5",
+  "promptVersion": "2",
+  "generationMs": 18319,
+  "validated": {
+    "concepts": [
+      {
+        "name": "Unit testing",
+        "centralityRank": 1,
+        "flashcards": [
+          {
+            "front": "What is unit testing?",
+            "back": "A form of software testing by which isolated source code is tested to validate expected behavior.",
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What does unit testing validate?",
+            "options": [
+              "Expected behavior of isolated source code",
+              "Database backup speed",
+              "User interface colors",
+              "Network latency"
+            ],
+            "correctIndex": 0,
+            "passageId": "p2",
+            "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+          }
+        ]
+      },
+      {
+        "name": "Test case",
+        "centralityRank": 2,
+        "flashcards": [
+          {
+            "front": "What does a test case specify?",
+            "back": "The inputs, execution conditions, testing procedure, and expected results for a single test.",
+            "passageId": "p14",
+            "quote": "a test case is a specification of the inputs, execution conditions, testing procedure, and expected results"
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What does a test case specify?",
+            "options": [
+              "Only the programmer's name",
+              "The color of the test report",
+              "Inputs, execution conditions, procedure, and expected results",
+              "The deployment server address"
+            ],
+            "correctIndex": 2,
+            "passageId": "p14",
+            "quote": "a test case is a specification of the inputs, execution conditions, testing procedure, and expected results"
+          }
+        ]
+      },
+      {
+        "name": "Test-driven development",
+        "centralityRank": 3,
+        "flashcards": [
+          {
+            "front": "When are unit tests written in test-driven development?",
+            "back": "Before the related production code is written.",
+            "passageId": "p26",
+            "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "In TDD, when are unit tests written?",
+            "options": [
+              "After all production code",
+              "Before the related production code",
+              "Only during release",
+              "Never"
+            ],
+            "correctIndex": 1,
+            "passageId": "p26",
+            "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+          }
+        ]
+      },
+      {
+        "name": "Test double",
+        "centralityRank": 4,
+        "flashcards": [
+          {
+            "front": "What is a test double?",
+            "back": "Software that satisfies a dependency so the test need not depend on production code.",
+            "passageId": "p16",
+            "quote": "A test double is software used in software test automation that satisfies a dependency so that the test need not depend on production code."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Why use a test double?",
+            "options": [
+              "To store test logs",
+              "To replace the programmer",
+              "To speed up compilation of the release",
+              "So the test need not depend on production code"
+            ],
+            "correctIndex": 3,
+            "passageId": "p16",
+            "quote": "A test double is software used in software test automation that satisfies a dependency so that the test need not depend on production code."
+          }
+        ]
+      },
+      {
+        "name": "Parameterized test",
+        "centralityRank": 5,
+        "flashcards": [
+          {
+            "front": "What is a parameterized test?",
+            "back": "A test that accepts a set of values so it can run with multiple, different input values.",
+            "passageId": "p18",
+            "quote": "A parameterized test is a test that accepts a set of values that can be used to enable the test to run with multiple, different input values."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "What can parameterized tests reduce?",
+            "options": [
+              "Number of developers",
+              "Test code duplication",
+              "Memory of the compiler",
+              "Size of the README"
+            ],
+            "correctIndex": 1,
+            "passageId": "p18",
+            "quote": "Use of parametrized tests can reduce test code duplication."
+          }
+        ]
+      },
+      {
+        "name": "Limitations of unit testing",
+        "centralityRank": 6,
+        "flashcards": [
+          {
+            "front": "Why can testing not catch every error in a program?",
+            "back": "It cannot evaluate every execution path in any but the most trivial programs.",
+            "passageId": "p39",
+            "quote": "Testing will not catch every error in the program, because it cannot evaluate every execution path in any but the most trivial programs."
+          }
+        ],
+        "quizQuestions": [
+          {
+            "question": "Will unit testing by definition catch integration errors?",
+            "options": [
+              "Yes, always",
+              "Only in embedded software",
+              "No, it will not catch them",
+              "Only on Fridays"
+            ],
+            "correctIndex": 2,
+            "passageId": "p39",
+            "quote": "Therefore, it will not catch integration errors or broader system-level errors"
+          }
+        ]
+      }
+    ],
+    "summaryPoints": [
+      {
+        "text": "Unit testing is a form of software testing that checks isolated source code to validate expected behavior.",
+        "passageId": "p2",
+        "quote": "Unit testing, also known as component or module testing, is a form of software testing by which isolated source code is tested to validate expected behavior."
+      },
+      {
+        "text": "Unit tests run at the unit level, in contrast to testing at the integration or system level.",
+        "passageId": "p3",
+        "quote": "Unit testing describes tests that are run at the unit-level to contrast testing at the integration or system level."
+      },
+      {
+        "text": "A test case specifies the inputs, execution conditions, procedure, and expected results for one test.",
+        "passageId": "p14",
+        "quote": "a test case is a specification of the inputs, execution conditions, testing procedure, and expected results"
+      },
+      {
+        "text": "In test-driven development, unit tests are written before the related production code.",
+        "passageId": "p26",
+        "quote": "In test-driven development (TDD), unit tests are written before the related production code is written."
+      },
+      {
+        "text": "A parameterized test runs with multiple input values and can reduce test code duplication.",
+        "passageId": "p18",
+        "quote": "Use of parametrized tests can reduce test code duplication."
+      },
+      {
+        "text": "Testing cannot catch every error, and unit testing will not catch integration or system-level errors.",
+        "passageId": "p39",
+        "quote": "Therefore, it will not catch integration errors or broader system-level errors"
+      }
+    ],
+    "language": "en",
+    "model": "anthropic/claude-haiku-5.5",
+    "promptVersion": "2"
+  }
+}

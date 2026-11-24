@@ -9,7 +9,9 @@
     "start": "next start --hostname 0.0.0.0",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "gen:api": "openapi-typescript ../proxy/openapi.json -o api/schema.d.ts"
+    "gen:api": "openapi-typescript ../proxy/openapi.json -o api/schema.d.ts",
+    "export-passages": "tsx scripts/export-passages.ts",
+    "evaluate": "tsx scripts/evaluate.ts"
   },
   "dependencies": {
     "htmlparser2": "12.0.0",
@@ -28,6 +30,7 @@
     "@types/react-dom": "19.3.0",
     "fake-indexeddb": "6.2.8",
     "openapi-typescript": "7.13.0",
+    "tsx": "4.23.15",
     "typescript": "6.0.3",
     "vitest": "5.1.1"
   },
