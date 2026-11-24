@@ -95,6 +95,6 @@ docker compose run --rm --no-deps -v "$PWD/web/api:/repo/web/api" test bash -c \
 
 CI genererer filen på nytt og feiler hvis den avviker fra det som er committet.
 
-## CI og branch-beskyttelse
+## CI
 
-GitHub Actions (`.github/workflows/ci.yml`) kjører testkommandoen og kontraktsjekken på hver PR og hver push til `main`. For at en rød CI skal blokkere merge, må branch-beskyttelse settes manuelt i GitHub: *Settings › Branches › main* → krev at statussjekken `test` er grønn før merge.
+GitHub Actions (`.github/workflows/ci.yml`) kjører testkommandoen og kontraktsjekken på hver PR og hver push til `main`. `main` har ingen branch-beskyttelse (avklart med faglærer, se D-10 i `.docs/deviations.md`). En PR merges derfor bare når CI er grønn, og det er en arbeidsregel. GitHub håndhever den ikke.
