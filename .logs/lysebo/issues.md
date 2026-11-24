@@ -97,7 +97,7 @@
 - [x] 2026-11-24 [story-1-12-kildehopp](971-2026-11-24-18-36-34-story-1-12-kildehopp.md) — merge PR #13 når CI er grønn, sett deretter 1.12 til done i sprint-status (løst 2026-11-24: merget 4f8e930)
 - [x] 2026-11-24 [story-1-12-kildehopp](971-2026-11-24-18-36-34-story-1-12-kildehopp.md) — neste story: 1.13 (opptak av Fixtures og sammenligning av modeller) (løst 2026-11-24: 57fa87a)
 - [x] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — PR for story 1.13 er ikke opprettet; når den er merget, sett 1-13 til done i sprint-status (løst 2026-11-24: PR #14)
-- [ ] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — merge PR #14 (https://github.com/IBE160-2026/G75-andersen-drage/pull/14) når CI er grønn, sett deretter 1-13 til done i sprint-status
+- [x] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — merge PR #14 (https://github.com/IBE160-2026/G75-andersen-drage/pull/14) når CI er grønn, sett deretter 1-13 til done i sprint-status (løst 2026-11-24: merget a708899, 1-13 done)
 - [ ] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — Simpler-oppføringer i Fixtures (`simpler: {}`) må tas opp på nytt i Story 3.6 (D-15)
 - [ ] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — `MinApiKey.env.example` i mappa over prosjektroten kan inneholde en ekte nøkkel; vurder å slette den
 - [ ] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — neste story: 1.14 (Demo Mode med de medfølgende eksempelnotatene)

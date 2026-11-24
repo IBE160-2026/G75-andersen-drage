@@ -38,11 +38,10 @@
   - 11 er avvist med begrunnelse i triageloggen.
 - Testene i Docker uten nøkkel: Vitest 394, pytest 160 og Playwright 108 besto, `tsc` er ren, og kjøringen endte med exit 0.
 - Nøkkelen havnet først i den sporede fila `.env.example`. Den er flyttet til `.env`, som er git-ignorert, og `.env.example` er satt tilbake. Nøkkelen er ikke committet.
-- Sprint-status for 1-13 er satt til `review`.
+- CI (`test`) er grønn. PR #14 er merget i `a708899`, og sprint-status for 1-13 er satt til `done` i `ca62075` på `main`.
 - Issue lukket: «neste story: 1.13».
 
 ### Åpne punkter
-- Merge PR #14 når CI er grønn. Sett deretter 1-13 til `done` i sprint-status.
 - Simpler-oppføringene i Fixtures (`simpler: {}`) må tas opp på nytt i Story 3.6 (D-15).
 - `MinApiKey.env.example` ligger i mappa over prosjektroten (utenfor repoet) og kan inneholde en ekte nøkkel. Vurder å slette den.
 - Neste story: 1.14 (Demo Mode med de medfølgende eksempelnotatene).
