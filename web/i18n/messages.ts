@@ -53,6 +53,10 @@ export const messages = {
   "err.tooLong": "Notatet er for langt. Grensen er 15 000 ord; del det opp.",
   "warn.encoding": "Æ, ø og å kan vises feil i dette notatet.",
 
+  // Genererer (draft Microcopy). The 'Prøv igjen' / 'Tilbake til start' buttons are separate keys.
+  "err.generation": "Det gikk ikke å lage kort og quiz nå.",
+  "err.tooFewItems": "For få kort eller spørsmål kunne knyttes til notatet ditt.",
+
   // Innstillinger
   "settings.h1": "Innstillinger",
   "settings.consent.h2": "Samtykke",
