@@ -38,7 +38,7 @@
   - 11 er avvist med begrunnelse i triageloggen.
 - Testene i Docker uten nøkkel: Vitest 394, pytest 160 og Playwright 108 besto, `tsc` er ren, og kjøringen endte med exit 0.
 - Nøkkelen havnet først i den sporede fila `.env.example`. Den er flyttet til `.env`, som er git-ignorert, og `.env.example` er satt tilbake. Nøkkelen er ikke committet.
-- CI (`test`) er grønn. PR #14 er merget i `a708899`, og sprint-status for 1-13 er satt til `done` i `ca62075` på `main`.
+- CI (`test`) er grønn. PR #14 er merget i `a708899`, og sprint-status for 1-13 er satt til `done` i `ca62075` på `main`. `main` er pushet til origin (`4f3d5c2`).
 - Issue lukket: «neste story: 1.13».
 
 ### Åpne punkter
