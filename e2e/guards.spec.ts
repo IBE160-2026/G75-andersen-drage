@@ -22,7 +22,7 @@ test("a browser POST keeps its Origin through the rewrite and reaches the route"
     });
     return { status: r.status, body: await r.json() };
   }, demoBody);
-  // Demo Mode arrives in 1.13/1.14; until then the route answers err.demoOnly, past the guard.
+  // A Note Hash with no Fixture: the demo branch answers err.demoOnly, past the guard (Story 1.14).
   expect(res).toEqual({ status: 404, body: { code: "err.demoOnly" } });
 });
 

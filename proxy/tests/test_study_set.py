@@ -145,6 +145,7 @@ def test_non_json_body_is_400(client):
 
 @pytest.mark.parametrize("with_key", [True, False])
 def test_demo_mode_is_404_demo_only(client, monkeypatch, with_key):
+    # NOTE_HASH has no Fixture, so the demo branch rejects it (Story 1.14; Fixtures: test_demo.py).
     if not with_key:
         monkeypatch.delenv("OPENROUTER_API_KEY")
     res = post(client, None, request_body(mode="demo"))

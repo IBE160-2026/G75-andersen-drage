@@ -8,6 +8,7 @@ import { Generating } from "../../../components/Generating/Generating";
 import { NoteOverview } from "../../../components/NoteOverview/NoteOverview";
 import { useNoteSession } from "../../../components/NoteSession/NoteSession";
 import { Screen } from "../../../components/Screen/Screen";
+import { bareNoteHash } from "../../../core/ids";
 import { extractedFromNote } from "../../../core/overview";
 import { format, t } from "../../../i18n/messages";
 import { readNote, readStudySet, type NoteRecord, type StudySetRecord } from "../../../storage/db";
@@ -109,14 +110,18 @@ export default function NoteOverviewPage() {
     return (
       <Generating
         note={extracted}
-        noteHash={state.note.noteHash}
+        noteHash={bareNoteHash(state.note.noteHash)}
         meta={format("note.meta", {
           filnavn: extracted.fileName,
           ord: number.format(extracted.wordCount),
           avsnitt: number.format(extracted.passages.length),
         })}
         onBack={() => router.push("/")}
-        onSaved={() => setReload((n) => n + 1)}
+        onSaved={(saved) => {
+          // Demo Mode may have changed since this Note was stored: the answer then lives under the other key.
+          if (saved === noteHash) setReload((n) => n + 1);
+          else router.push(`/notat/${saved}`);
+        }}
       />
     );
   }

@@ -12,6 +12,8 @@ export const messages = {
   "nav.label": "Hovedmeny",
   "err.prefix": "Feil:",
   "err.noKey": "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env.",
+  // Top bar pill while Demo Mode is on; a link to Innstillinger (approved, Story 1.14).
+  "demo.indicator": "Demomodus",
   // Proxy 404 for mode "demo" with a Note that has no Fixture (EXPERIENCE.md › Microcopy, draft).
   "err.demoOnly": "Demomodus støtter bare eksempelnotatene.",
 
@@ -20,6 +22,8 @@ export const messages = {
   "title.settings": "Innstillinger",
   // Genererer: also its h1 (EXPERIENCE.md › Page structure: "Lager kort og quiz · {notat} · …").
   "title.generating": "Lager kort og quiz",
+  // Demovelger (Story 1.14, D-16): title and h1 from EXPERIENCE.md › Page structure.
+  "title.demo": "Velg et eksempelnotat",
 
   // Samtykke (Consent dialog). {leverandør} is filled from /api/status (spec 1.3, Decisions).
   "consent.title": "Før du starter",
@@ -46,6 +50,13 @@ export const messages = {
   "start.dropzone.types": ".txt .md .docx .pdf · maks 10 MB",
   // Note meta after a successful extraction (role="status"); Story 1.9 reuses it.
   "note.meta": "{filnavn} · {ord} ord · {avsnitt} avsnitt",
+  // Link to Demovelger (EXPERIENCE.md › Screen inventory, Story 1.14, D-16).
+  "start.demo": "Prøv demomodus",
+
+  // Demovelger (Story 1.14, D-16). demo.lang.* is each sample note's language, shown under its title.
+  "demo.h1": "Velg et eksempelnotat",
+  "demo.lang.nb": "Norsk",
+  "demo.lang.en": "Engelsk",
 
   // Input rejected (FR-3), inline at the drop zone
   "err.type": "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf.",
@@ -105,6 +116,12 @@ export const messages = {
   "settings.consent.off": "Notatene dine sendes ikke til {leverandør}. Du kan bruke eksempelnotatene.",
   "settings.consent.off.action": "Godta at notater sendes",
   "settings.consent.withdrawn": "Samtykket er trukket tilbake.",
+  // Innstillinger › Studier (Story 1.14, D-16; EXPERIENCE.md › Microcopy settings.demo, toggle.state).
+  "settings.studies.h2": "Studier",
+  "settings.demo": "Demomodus",
+  "settings.demo.desc": "Bruk bare eksempelnotatene, uten kall til {leverandør}.",
+  "toggle.on": "På",
+  "toggle.off": "Av",
 } as const;
 
 export type MessageKey = keyof typeof messages;

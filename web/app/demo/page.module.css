@@ -1,0 +1,23 @@
+/* Demovelger (Story 1.14): no mockup exists; a plain list of the sample notes as buttons. */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.sample {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-1);
+  width: 100%;
+  text-align: left;
+}
+
+.language {
+  color: var(--colors-ink-muted);
+  font-weight: var(--typography-body-font-weight);
+}

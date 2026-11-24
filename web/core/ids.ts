@@ -27,3 +27,18 @@ export function summaryPointId(n: number): string {
 export function cacheKey(noteHash: string, promptVersion: string, model: string): string {
   return `${noteHash}:${promptVersion}:${model}`;
 }
+
+const DEMO_PREFIX = "demo:";
+
+/**
+ * AD-9, Story 1.14: Demo records are separate from live ones for the same Note. Applied to the Note
+ * Hash (Note key and route `/notat/demo:{noteHash}`) and to the cache key (`demo:{noteHash}:{pv}:{model}`).
+ */
+export function demoKey(key: string): string {
+  return `${DEMO_PREFIX}${key}`;
+}
+
+/** The bare Note Hash of a Note key (live or `demo:`), as sent in a POST. */
+export function bareNoteHash(noteKey: string): string {
+  return noteKey.startsWith(DEMO_PREFIX) ? noteKey.slice(DEMO_PREFIX.length) : noteKey;
+}

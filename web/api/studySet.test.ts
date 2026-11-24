@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Settings } from "../storage/settings";
 import type { Status } from "./status";
-import { requestStudySet, STUDY_SET_TIMEOUT_MS, type StudySet } from "./studySet";
+import { checkSendGate, requestStudySet, STUDY_SET_TIMEOUT_MS, type StudySet } from "./studySet";
 
 let settings: Settings = { schemaVersion: 1, consent: "accepted" };
 vi.mock("../storage/settings", () => ({ readSettings: () => settings }));
@@ -95,6 +95,7 @@ describe("request and response", () => {
     expect(await requestStudySet({ noteHash, passages: PASSAGES, status: STATUS, fetchImpl })).toEqual({
       ok: true,
       studySet: STUDY_SET,
+      mode: "live",
     });
     expect(fetchImpl).toHaveBeenCalledOnce();
     const [url, init] = fetchImpl.mock.calls[0];
@@ -114,6 +115,9 @@ describe("request and response", () => {
     [500, { code: "err.noKey" }],
     [504, { code: "err.generation" }],
     [400, { code: "err.somethingNew" }],
+    [404, { code: "err.generation" }],
+    [404, {}],
+    [500, { code: "err.demoOnly" }],
   ])("HTTP %i %j: err.generation", async (status, body) => {
     const fetchImpl = vi.fn<typeof fetch>(async () => json(body, status));
     expect(await requestStudySet({ noteHash: hash(), passages: PASSAGES, status: STATUS, fetchImpl })).toEqual({
@@ -247,5 +251,66 @@ describe("single-flight per Note Hash (AD-11)", () => {
       code: "consent.declined",
     });
     controller.abort();
+  });
+});
+
+describe("Demo Mode (Story 1.14, FR-23, AD-20)", () => {
+  it("demoMode on with a key configured: the POST is mode demo and the result says so", async () => {
+    settings = { schemaVersion: 1, consent: "accepted", demoMode: true };
+    const noteHash = hash();
+    const fetchImpl = vi.fn<typeof fetch>(async () => json(STUDY_SET));
+    expect(await requestStudySet({ noteHash, passages: PASSAGES, status: STATUS, fetchImpl })).toEqual({
+      ok: true,
+      studySet: STUDY_SET,
+      mode: "demo",
+    });
+    expect(JSON.parse(String(fetchImpl.mock.calls[0][1]?.body))).toEqual({ mode: "demo", noteHash, passages: PASSAGES });
+  });
+
+  it("demo passes the gate with no Consent decision, declined Consent and no key", async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => json(STUDY_SET));
+    for (const consent of [undefined, "declined"] as const) {
+      settings = { schemaVersion: 1, consent, demoMode: true };
+      for (const status of [null, { ...STATUS, keyConfigured: false }]) {
+        expect(checkSendGate(status)).toEqual({ ok: true });
+        const result = await requestStudySet({ noteHash: hash(), passages: PASSAGES, status, fetchImpl });
+        expect(result.ok && result.mode).toBe("demo");
+      }
+    }
+    expect(fetchImpl).toHaveBeenCalledTimes(4);
+  });
+
+  it("demoMode false or absent stays live (Demo off: unchanged gate)", () => {
+    settings = { schemaVersion: 1, consent: "declined", demoMode: false };
+    expect(checkSendGate(STATUS)).toEqual({ ok: false, code: "consent.declined" });
+    settings = { schemaVersion: 1, consent: "accepted" };
+    expect(checkSendGate(null)).toEqual({ ok: false, code: "err.noKey" });
+  });
+
+  it("HTTP 404 err.demoOnly (a Note without a Fixture): err.demoOnly", async () => {
+    settings = { schemaVersion: 1, demoMode: true };
+    const fetchImpl = vi.fn<typeof fetch>(async () => json({ code: "err.demoOnly" }, 404));
+    expect(await requestStudySet({ noteHash: hash(), passages: PASSAGES, status: null, fetchImpl })).toEqual({
+      ok: false,
+      code: "err.demoOnly",
+    });
+  });
+
+  it("single-flight is per mode: a demo call does not get a pending live promise for the same Note", async () => {
+    const noteHash = hash();
+    let answer!: (res: Response) => void;
+    const fetchImpl = vi.fn<typeof fetch>(() => new Promise<Response>((resolve) => (answer = resolve)));
+    const live = requestStudySet({ noteHash, passages: PASSAGES, status: STATUS, fetchImpl });
+    const liveAnswer = answer;
+    settings = { schemaVersion: 1, consent: "accepted", demoMode: true };
+    const demo = requestStudySet({ noteHash, passages: PASSAGES, status: STATUS, fetchImpl });
+    expect(demo).not.toBe(live);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    liveAnswer(json(STUDY_SET));
+    answer(json(STUDY_SET));
+    expect((await live).ok).toBe(true);
+    const [l, d] = [await live, await demo];
+    expect(l.ok && l.mode).toBe("live");
+    expect(d.ok && d.mode).toBe("demo");
   });
 });

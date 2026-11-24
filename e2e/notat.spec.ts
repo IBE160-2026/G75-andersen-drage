@@ -303,6 +303,40 @@ test("none covered: err.noConcepts with 'Prøv igjen' instead of 'Start runde'; 
   expect(posts[0]).toMatchObject({ mode: "live", noteHash: NOTE_HASH, passages: PASSAGES });
 });
 
+test("demo Note, none covered: 'Prøv igjen' sends the bare Note Hash as mode demo and reloads /notat/demo:{hash}", async ({ page }) => {
+  const DEMO_NOTE = `demo:${NOTE_HASH}`;
+  const DEMO_CACHE_KEY = `demo:${CACHE_KEY}`;
+  const posts: unknown[] = [];
+  page.on("request", (req) => {
+    if (req.url().includes("/api/study-set")) posts.push(req.postDataJSON());
+  });
+  await page.route("**/api/study-set", (route) => route.fulfill({ json: rawStudySetFor(PASSAGES) }));
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("e2e-seeded")) return;
+    sessionStorage.setItem("e2e-seeded", "1");
+    localStorage.setItem("torsa.settings", JSON.stringify({ schemaVersion: 1, consent: "declined", demoMode: true }));
+  });
+  await page.goto("/innstillinger");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await seedNoteRecords(
+    page,
+    { ...NOTE, noteHash: DEMO_NOTE, currentCacheKey: DEMO_CACHE_KEY },
+    { ...studySet({ covered: () => false }), cacheKey: DEMO_CACHE_KEY },
+  );
+  await page.goto(`/notat/${DEMO_NOTE}`);
+  const alert = page.locator('main [role="alert"]');
+  await expect(alert).toContainText(`Feil: ${MSG.noConcepts}`);
+
+  await alert.getByRole("button", { name: MSG.retry }).click();
+  await expect(page.getByRole("button", { name: MSG.start })).toBeVisible();
+  await expect(h1(page)).toBeFocused();
+  await expect(page).toHaveURL(new RegExp(`/notat/demo(:|%3A)${NOTE_HASH}$`));
+  await expect(alert).toHaveCount(0);
+  expect(posts).toHaveLength(1);
+  expect(posts[0]).toMatchObject({ mode: "demo", noteHash: NOTE_HASH, passages: PASSAGES });
+  expect(NOTE_HASH).toMatch(/^[0-9a-f]{64}$/);
+});
+
 test("Study Set missing: Note stored without its Study Set shows note.missing", async ({ page }) => {
   await openOverview(page, null);
   await expect(page.getByRole("heading", { level: 1, name: MSG.missing })).toBeFocused();

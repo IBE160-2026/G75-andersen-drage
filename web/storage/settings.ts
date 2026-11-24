@@ -10,6 +10,8 @@ export const SETTINGS_SCHEMA_VERSION = 1;
 const SettingsSchema = z.looseObject({
   schemaVersion: z.literal(SETTINGS_SCHEMA_VERSION),
   consent: z.enum(["accepted", "declined"]).optional(),
+  /** Demo Mode (FR-23, Story 1.14): on → every POST is `mode: "demo"`. Absent means off. */
+  demoMode: z.boolean().optional(),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

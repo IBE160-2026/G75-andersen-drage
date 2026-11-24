@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "samples": "tsx scripts/copy-samples.ts",
+    "predev": "npm run samples",
     "dev": "next dev --hostname 0.0.0.0",
+    "prebuild": "npm run samples",
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "test": "vitest run",

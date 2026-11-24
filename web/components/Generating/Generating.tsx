@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { requestStudySet } from "../../api/studySet";
-import { buildNoteRecord } from "../../core/noteRecord";
+import { buildNoteRecord, recordsForMode } from "../../core/noteRecord";
 import type { ExtractedNote } from "../../core/types";
 import { verifyStudySet } from "../../core/verifyStudySet";
 import { fileType } from "../../extract/types";
@@ -26,8 +26,11 @@ const PROGRESS_TICK_MS = 500;
 const CARDS_STEP_MS = 15_000;
 
 type Step = "gen.status.concepts" | "gen.status.cards" | "gen.status.sources";
-/** What the failure view shows. `consent.declined` only if Consent was withdrawn (another tab) after Start. */
-export type FailureCode = "err.generation" | "err.tooFewItems" | "err.noKey" | "consent.declined";
+/**
+ * What the failure view shows. `consent.declined` only if Consent was withdrawn (another tab) after Start;
+ * `err.demoOnly` only without `onRejected` (a sample note whose Fixture is missing).
+ */
+export type FailureCode = "err.generation" | "err.tooFewItems" | "err.noKey" | "consent.declined" | "err.demoOnly";
 
 /** 'Prøv igjen' only where a fresh request can help; no key or no Consent needs the student to act first. */
 export function canRetry(code: FailureCode): boolean {
@@ -40,8 +43,8 @@ export function progressAt(elapsedMs: number): number {
 
 /**
  * Genererer (FR-11, UX-DR26). Rendered on `/` in place of the Start content, so the URL does not change.
- * On mount: one live POST (api/), then verifyStudySet, then the Note and its Study Set in one
- * transaction, then Notatoversikt. Unmounting aborts the request; an answer arriving after unmount is
+ * On mount: one POST (api/; live or demo by the settings), then verifyStudySet, then the Note and its Study
+ * Set in one transaction (a demo answer under `demo:` keys, Story 1.14), then Notatoversikt. Unmounting aborts the request; an answer arriving after unmount is
  * discarded before storage. A save already under way completes, and only the navigation is skipped.
  * Any failure stores nothing and shows its message, focused, with 'Prøv igjen' (where it can help) and
  * 'Tilbake til start' (Story 1.10). 'Prøv igjen' bumps `attempt`, which restarts the run in this same
@@ -53,6 +56,7 @@ export function Generating({
   meta,
   onBack,
   onSaved,
+  onRejected,
 }: {
   note: ExtractedNote;
   noteHash: string;
@@ -62,8 +66,14 @@ export function Generating({
   /**
    * Replaces the navigation to Notatoversikt once the records are saved. Notatoversikt passes it for
    * 'Prøv igjen' after `err.noConcepts`: a push to the same route would not remount the page.
+   * Gets the saved Note key (`demo:{noteHash}` for a demo answer).
    */
-  onSaved?: () => void;
+  onSaved?: (noteKey: string) => void;
+  /**
+   * Story 1.14: an own file in Demo Mode (Proxy 404 `err.demoOnly`). Start passes it to show the error
+   * inline at the drop zone instead of on Genererer.
+   */
+  onRejected?: (code: "err.demoOnly") => void;
 }) {
   const router = useRouter();
   const { status } = useAppSettings();
@@ -77,6 +87,8 @@ export function Generating({
   const start = useRef({ note, noteHash, status, router });
   const onSavedRef = useRef(onSaved);
   onSavedRef.current = onSaved;
+  const onRejectedRef = useRef(onRejected);
+  onRejectedRef.current = onRejected;
   useBlockWindowDrop();
 
   useEffect(() => {
@@ -99,6 +111,10 @@ export function Generating({
     void (async () => {
       const result = await requestStudySet({ noteHash, passages: note.passages, status, signal });
       if (signal.aborted) return;
+      if (!result.ok && result.code === "err.demoOnly" && onRejectedRef.current) {
+        stop();
+        return onRejectedRef.current(result.code);
+      }
       if (!result.ok) return fail(result.code);
       clearTimeout(cards);
       setStep("gen.status.sources");
@@ -106,14 +122,18 @@ export function Generating({
       const sourceType = fileType(note.fileName);
       if (!verified.ok) return fail(verified.code);
       if (!sourceType) return fail("err.generation");
-      const record = buildNoteRecord({ ...note, sourceType }, noteHash, verified.set);
-      const saved = await saveGeneratedNote(record, verified.set);
+      const records = recordsForMode(
+        result.mode,
+        buildNoteRecord({ ...note, sourceType }, noteHash, verified.set),
+        verified.set,
+      );
+      const saved = await saveGeneratedNote(records.note, records.set);
       if (signal.aborted) return;
       if (!saved.ok) return fail("err.generation");
       stop();
       setProgress(100);
-      if (onSavedRef.current) onSavedRef.current();
-      else router.push(`/notat/${noteHash}`);
+      if (onSavedRef.current) onSavedRef.current(records.note.noteHash);
+      else router.push(`/notat/${records.note.noteHash}`);
     })();
 
     return () => {

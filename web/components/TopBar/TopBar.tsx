@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { DropdownMenu } from "radix-ui";
 import { t } from "../../i18n/messages";
+import { useAppSettings } from "../AppSettings/AppSettings";
 import { ButtonLink, buttonClass } from "../Button/Button";
 import { useNoteSession } from "../NoteSession/NoteSession";
 import styles from "./TopBar.module.css";
@@ -13,7 +14,8 @@ const SETTINGS_PATH = "/innstillinger";
 
 /**
  * Top bar (DESIGN.md › Top bar, EXPERIENCE.md › Component Patterns › Top bar).
- * Brand, then the open Note's name (Story 1.11, from NoteSession) in `ink-muted`, then 'Innstillinger'.
+ * Brand, then the Demo indicator while Demo Mode is on (Story 1.14: a link to Innstillinger, where the
+ * 'Demomodus' switch turns it off), then the open Note's name (Story 1.11, from NoteSession) in `ink-muted`, then 'Innstillinger'.
  * The Note name sits outside the two nav variants, so it shows at every width.
  * Below 768 px the bar condenses to brand + 'Mer' (Radix DropdownMenu, AD-15).
  * Both variants sit in one nav landmark; CSS hides one, which also hides it from assistive tech.
@@ -21,6 +23,7 @@ const SETTINGS_PATH = "/innstillinger";
 export function TopBar() {
   const pathname = usePathname();
   const { session } = useNoteSession();
+  const { settings } = useAppSettings();
   // A menu item that navigates hands focus to the new screen's h1, not back to 'Mer'.
   const navigated = useRef(false);
 
@@ -29,6 +32,11 @@ export function TopBar() {
       <Link href="/" className={styles.brand}>
         {t("app.brand")}
       </Link>
+      {settings.demoMode ? (
+        <Link href={SETTINGS_PATH} className={styles.demoIndicator}>
+          <span>{t("demo.indicator")}</span>
+        </Link>
+      ) : null}
       {session ? <span className={styles.noteName}>{session.note.title}</span> : null}
 
       <nav className={styles.nav} aria-label={t("nav.label")}>

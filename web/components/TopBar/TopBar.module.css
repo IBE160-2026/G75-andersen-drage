@@ -27,6 +27,31 @@
   text-decoration: underline;
 }
 
+/* Story 1.14: Demo indicator next to the brand (DESIGN.md › Demo indicator, components.demo-indicator).
+   The text carries the state, never color alone. The pill stays compact; the link's hit area is 44 px tall. */
+.demoIndicator {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--colors-accent-strong);
+  font-family: var(--typography-chip-font-family);
+  font-size: var(--typography-chip-font-size);
+  font-weight: var(--typography-chip-font-weight);
+  text-decoration: none;
+}
+
+.demoIndicator > span {
+  padding: var(--spacing-1) var(--spacing-3);
+  background: var(--colors-surface);
+  border: 1px solid var(--colors-line-strong);
+  border-radius: var(--rounded-full);
+  text-decoration: underline;
+}
+
+.demoIndicator:hover > span {
+  background: var(--colors-surface-hover);
+}
+
 /* Story 1.11: the open Note's name after the brand (DESIGN.md › Top bar). */
 .noteName {
   min-width: 0;

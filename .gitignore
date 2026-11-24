@@ -62,3 +62,7 @@ Thumbs.db
 
 # Generated OpenAPI dump (input for web gen:api; schema.d.ts is the committed artifact)
 proxy/openapi.json
+
+# Sample notes copied from reference-notes/ at build time (web: npm run samples, Story 1.14)
+web/public/samples/*
+!web/public/samples/.gitkeep

@@ -20,11 +20,16 @@ type AppSettingsValue = {
   decline(): void;
   /** Innstillinger › 'Trekk tilbake samtykke': same state as declining, no dialog. */
   withdraw(): void;
+  /** Demo Mode on/off (Story 1.14): persisted at once; api/ reads it before every POST. */
+  setDemoMode(on: boolean): void;
   /** Opens the Consent dialog; focus returns to `trigger` on close when it is still in the page. */
   openConsent(trigger?: HTMLElement | null): void;
   /** Where focus goes when the dialog closes (called by ConsentDialog's onCloseAutoFocus). */
   restoreFocus(): void;
 };
+
+/** Demovelger's route (Story 1.14). */
+export const DEMO_PATH = "/demo";
 
 const AppSettingsContext = createContext<AppSettingsValue | null>(null);
 
@@ -50,8 +55,10 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   // First open: the gate shows until a decision is stored (AD-10, FR-5).
   const [consentOpen, setConsentOpen] = useState(() => settings.consent === undefined);
   const trigger = useRef<HTMLElement | null>(null);
-  // True when the gate was shown without a trigger: the decision lands on Start.
+  // True when the gate was shown without a trigger (first open): accept lands on Start, decline on
+  // Demovelger (Story 1.14). A dialog reopened from a trigger returns focus there instead.
   const gate = useRef(consentOpen);
+  const decision = useRef<ConsentDecision | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -65,15 +72,20 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     document.documentElement.dataset.consent = settings.consent ?? "unset";
   }, [settings.consent]);
 
-  const decide = useCallback((consent: ConsentDecision) => {
-    const next = { ...readSettings(), consent };
+  /** Fresh read, patch, write: never drops a field another tab or screen wrote. */
+  const update = useCallback((patch: Partial<Settings>) => {
+    const next = { ...readSettings(), ...patch };
     writeSettings(next);
     setSettings(next);
   }, []);
 
+  const decide = useCallback((consent: ConsentDecision) => update({ consent }), [update]);
+  const setDemoMode = useCallback((demoMode: boolean) => update({ demoMode }), [update]);
+
   const close = useCallback(
     (consent: ConsentDecision) => {
       decide(consent);
+      decision.current = consent;
       setConsentOpen(false);
     },
     [decide],
@@ -82,11 +94,14 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   const restoreFocus = useCallback(() => {
     const target = trigger.current;
     trigger.current = null;
+    const decided = decision.current;
+    decision.current = null;
     if (gate.current) {
       gate.current = false;
-      // Decline and accept both land on Start (DR-4 interim until Story 1.14).
-      if (pathname !== "/") {
-        router.push("/");
+      // First open (Story 1.14, decided by Tor 2026-11-24): 'Nei takk, vis demo' → Demovelger, accept → Start.
+      const landing = decided === "declined" ? DEMO_PATH : "/";
+      if (pathname !== landing) {
+        router.push(landing);
         return;
       }
     }
@@ -115,10 +130,11 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       accept: () => close("accepted"),
       decline: () => close("declined"),
       withdraw: () => decide("declined"),
+      setDemoMode,
       openConsent,
       restoreFocus,
     };
-  }, [settings, status, consentOpen, close, decide, openConsent, restoreFocus]);
+  }, [settings, status, consentOpen, close, decide, setDemoMode, openConsent, restoreFocus]);
 
   return <AppSettingsContext.Provider value={value}>{children}</AppSettingsContext.Provider>;
 }

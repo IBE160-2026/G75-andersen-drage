@@ -1,10 +1,13 @@
+# Build context is the repository root (compose.yaml): `npm run build` copies the sample notes
+# from ../reference-notes (here /reference-notes) into public/samples (Story 1.14).
 FROM node:26-slim AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY web/package.json web/package-lock.json ./
 RUN npm ci
 
 FROM deps AS build
-COPY . .
+COPY web/ .
+COPY reference-notes /reference-notes
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
