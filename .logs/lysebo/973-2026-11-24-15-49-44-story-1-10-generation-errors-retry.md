@@ -51,3 +51,18 @@ Push branchen og lag PR for story 1.10.
 
 ### Åpne punkter
 - PR #11: vent på grønn CI og merge, og sett deretter 1-10 til `done` i `sprint-status.yaml`.
+
+## 2026-11-24 kl. 15:59 — lysebo
+
+### Oppgave
+PR #11 er merget. Sett 1-10 til `done` i sprint-status.
+
+### Plan
+- Byttet til `main` og hentet merge-commiten `47763a1`. Oppdaterte deretter `sprint-status.yaml`.
+
+### Resultat
+- I `sprint-status.yaml` er 1-10 satt til `done` (commit `40b5c32` på `main`).
+- PR-punktet i `issues.md` er lukket.
+
+### Åpne punkter
+- De øvrige punktene fra 1.10 står fortsatt i `issues.md` (FR-4 cache-bypass og Microcopy-utkast).
