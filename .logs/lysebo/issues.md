@@ -101,7 +101,8 @@
 - [ ] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — Simpler-oppføringer i Fixtures (`simpler: {}`) må tas opp på nytt i Story 3.6 (D-15)
 - [ ] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — `MinApiKey.env.example` i mappa over prosjektroten kan inneholde en ekte nøkkel; vurder å slette den
 - [x] 2026-11-24 [story-1-13-fixtures-modellvalg](970-2026-11-24-20-13-29-story-1-13-fixtures-modellvalg.md) — neste story: 1.14 (Demo Mode med de medfølgende eksempelnotatene) (løst 2026-11-24: cca8951)
-- [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — PR for story 1.14 er ikke opprettet; når den er merget, sett 1-14 til done i sprint-status
+- [x] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — PR for story 1.14 er ikke opprettet; når den er merget, sett 1-14 til done i sprint-status (løst 2026-11-24: PR #15)
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — nye Microcopy-nøkler er ikke godkjent (draft): title.demo, demo.h1, demo.lang.*, start.demo, settings.studies.h2, settings.demo, settings.demo.desc, toggle.on/off (D-16)
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — web-dev-profilen med ny reference-notes-montering er ikke startet manuelt
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — AC «Demo på + nøkkel konfigurert» er bare dekket av Vitest, ikke e2e (testoppsettet har aldri nøkkel)
+- [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — merge PR #15 (https://github.com/IBE160-2026/G75-andersen-drage/pull/15) når CI er grønn, sett deretter 1-14 til done i sprint-status
