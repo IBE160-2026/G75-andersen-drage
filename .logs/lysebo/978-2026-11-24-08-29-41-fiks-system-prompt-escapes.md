@@ -18,7 +18,8 @@ Rette feilen i `proxy/app/prompts/system.md` linje 32 (fra issues.md, 2026-11-24
 - 108 proxy-tester består i Docker-test-containeren.
 - Årsak funnet: verktøylaget mellom agenten og skallet gjør backslash-u-escapes om til tegnet før kommandoen kjører. Det var trolig slik den opprinnelige feilen oppstod. Løsning: bygg strengen med `chr(92)` og kontroller råbytes med `od -c`.
 - Lukket issues-punktet om system.md:32.
-- Den kjørende proxy-containeren (startet for 18 t siden) har fortsatt prompt v1 til den startes på nytt.
+- CI grønn, og PR #7 er merget til main (merge-commit `c8b2ecf`). Lokal main er pullet.
+- Proxyen er bygget på nytt med `docker compose up -d --build proxy`, er healthy og bruker `PROMPT_VERSION` 2. `docker compose restart proxy` var ikke nok, fordi koden ligger i imaget. Kodeendringer i proxyen krever `--build`.
 
 ### Åpne punkter
 Ingen.
