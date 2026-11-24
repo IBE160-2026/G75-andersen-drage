@@ -25,7 +25,7 @@ Prosjektet gjennomføres solo. Lasse S. Drage trakk seg fra emnet før prosjektb
 | Stopp | `docker compose down` |
 | Generer kontrakttyper | Se «Kontrakt» under |
 
-`docker compose run --rm test` kjører Vitest (`web/`), pytest (`proxy/`) og Playwright (`e2e/`) mot `web` og `proxy` på Compose-nettverket, og avslutter med feilkode hvis en suite feiler.
+`docker compose run --rm test` kjører Vitest (`web/`), pytest (`proxy/`) og Playwright (`e2e/`) mot egne testtjenester, `web-test` og `proxy-test`, og avslutter med feilkode hvis en suite feiler. Testtjenestene står på et internt nettverk uten vei ut, `proxy-test` får aldri nøkkel (`.env` leses ikke), og grensen er hevet til 1000 per minutt så e2e aldri treffer den. Bygg på nytt etter kodeendringer: `docker compose --profile test build` eller `docker compose run --rm --build test`.
 
 ## Konfigurasjon
 
@@ -40,7 +40,7 @@ Kopier `.env.example` til `.env` (filen er git-ignorert) og fyll inn det du tren
 | `ALLOWED_ORIGINS` | `http://localhost:3000,http://127.0.0.1:3000` |
 | `RATE_LIMIT_PER_MIN` | `10` |
 
-`ALLOWED_ORIGINS` og `RATE_LIMIT_PER_MIN` leses allerede, men håndheves først fra Story 1.7.
+`ALLOWED_ORIGINS` og `RATE_LIMIT_PER_MIN` leses ved hver forespørsel (se «Vern» under Proxy-en). Oppføringene i `ALLOWED_ORIGINS` normaliseres (små bokstaver, uten `/` til slutt); `Origin`-headeren i forespørselen må deretter være helt lik en av dem. En ugyldig `RATE_LIMIT_PER_MIN` (ikke et heltall, eller under 1) gir `10`.
 
 Opprett nøkkelen med en kredittgrense i OpenRouter.
 
@@ -71,9 +71,15 @@ reference-notes/    referansenotater (DR-3)
 - **`GET /api/status`** svarer `keyConfigured`, `model`, `provider` og `promptVersion`. Proxy-en starter uten nøkkel; OpenRouter-klienten bygges først når en generering trenger den.
 - **`POST /api/study-set`** tar `{mode, noteHash, passages}` (`mode` `"live"` eller `"demo"`, `noteHash` 64 små heks-tegn, 1–15 000 avsnitt `{id: "p<n>", text}` med unike `id`, til sammen høyst 1 000 000 tegn) og svarer med et studiesett: 5–15 nøkkelbegreper etter sentralitet, hvert med 1–2 kort og 1–2 quizspørsmål (nøyaktig 4 valg), 5–10 sammendragspunkter på høyst 40 ord, `language`, `model` og `promptVersion`. Modellen kalles via OpenRouter med `zdr: true`, `data_collection: "deny"` og `require_parameters: true`, JSON-skjema-svar og uten `temperature`/`top_p`. Notatteksten sendes bare som JSON-data mellom `<note_passages>` og `</note_passages>` i brukermeldingen, aldri i systemprompten (`proxy/app/prompts/`). Svaret sjekkes mot skjemaet og tellereglene (`proxy/app/rules.py`); ugyldige quizspørsmål og for lange sammendragspunkter fjernes, og overskytende elementer kuttes. Sitatkontroll og ID-er gjøres i nettleseren (Story 1.8).
 - **Tidsfrister og nytt forsøk:** hvert modellkall har `GENERATION_TIMEOUT_S` (40 s), hele forespørselen 85 s (fast). Ugyldig svar, avvisning, avkuttet svar, 429/5xx, nettverksfeil eller tidsavbrudd gir ett nytt forsøk, men bare hvis minst 40 s gjenstår. Høyst 2 modellkall per forespørsel.
-- **Feil** er alltid `{code}`: `400 err.generation` (ugyldig forespørsel), `404 err.demoOnly` (`mode: "demo"`; demodata kommer i Story 1.13/1.14), `503 err.noKey` (ingen nøkkel), `502 err.generation` (ugyldig svar eller leverandørfeil), `504 err.generation` (tidsavbrudd), `500 err.generation` (uventet feil i Proxy-en). En `OPENROUTER_MODEL` uten støtte for JSON-skjema-svar gir `502 err.generation` på hver forespørsel, uten nytt forsøk.
-- **Logg:** én linje per forespørsel med metode, sti, status, varighet og eventuell feilkode. Aldri notattekst, modellsvar eller feiltekst.
-- **`PROMPT_VERSION`** (`proxy/app/config.py`, nå `1`) økes ved hver endring i promptene.
+- **Feil** er alltid `{code}`: `400 err.generation` (ugyldig forespørsel), `404 err.demoOnly` (`mode: "demo"`; demodata kommer i Story 1.13/1.14), `503 err.noKey` (ingen nøkkel), `502 err.generation` (ugyldig svar eller leverandørfeil), `504 err.generation` (tidsavbrudd), `500 err.generation` (uventet feil i Proxy-en), og fra vernet `403`, `413` og `429`, alle `err.generation`. En `OPENROUTER_MODEL` uten støtte for JSON-skjema-svar gir `502 err.generation` på hver forespørsel, uten nytt forsøk.
+- **Vern** (sjekkes i denne rekkefølgen før ruten kjører):
+  1. **Opphav:** en forespørsel med `Origin` utenfor `ALLOWED_ORIGINS` gir `403 err.generation`, uansett metode. Uten `Origin` slipper bare `GET`, `HEAD` og `OPTIONS` gjennom (som healthcheckens `GET /api/status`); en `POST` uten `Origin` gir 403. Det finnes ingen CORS: appen og Proxy-en deler opphav via Next.js.
+  2. **Størrelse:** en body over 8 MiB, oppgitt eller strømmet, gir `413 err.generation`.
+  3. **Takt:** høyst `RATE_LIMIT_PER_MIN` (10) live-`POST`-er per opphav i et glidende vindu på 60 s; den neste gir `429 err.generation` uten modellkall. Demo-forespørsler (`mode: "demo"`) og `GET` telles ikke. Ugyldige live-forespørsler telles. Telleren ligger bare i minnet og nullstilles ved omstart.
+  
+  `Origin` er ingen autentisering, siden `curl` kan sette den. Vernet stopper andre nettsider i nettleseren (også DNS rebinding) fra å bruke nøkkelen; portene er bare bundet til `127.0.0.1`.
+- **Logg:** én linje per forespørsel med metode, sti, status, varighet og eventuell feilkode. Aldri notattekst, modellsvar eller feiltekst. Proxy-en skriver ingen filer og har ingen telemetri (ingen Logfire- eller OpenTelemetry-SDK, ingen instrumentering; se D-7). `proxy/tests/test_retention.py` sjekker dette.
+- **`PROMPT_VERSION`** (`proxy/app/config.py`, nå `2`) økes ved hver endring i promptene.
 
 Nettleseren kaller bare relative `/api/*`-stier. Next.js videresender dem til Proxy-en (`http://proxy:8000`) på Compose-nettverket. Bare `web` er publisert, på `127.0.0.1:3000`.
 

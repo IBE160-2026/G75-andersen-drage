@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: 11-23-2026 14:39
+last_updated: 11-24-2026 10:37
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -42,7 +42,7 @@ development_status:
   1-4-upload-a-text-or-markdown-note-and-reject-unusable-input: done
   1-5-upload-docx-and-text-based-pdf-notes: done
   1-6-proxy-generates-and-validates-a-study-set: done
-  1-7-proxy-guards-origin-rate-limit-and-no-data-retention: ready-for-dev
+  1-7-proxy-guards-origin-rate-limit-and-no-data-retention: review
   1-8-verify-the-study-set-in-the-browser-quote-check-and-minimums: backlog
   1-9-generate-a-study-set-from-an-uploaded-note: backlog
   1-10-generation-errors-retry-and-interrupted-generation: backlog

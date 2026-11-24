@@ -8,8 +8,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from . import llm
-from .config import PROMPT_VERSION, PROVIDER_NAME, load_settings
+from .config import MAX_BODY_BYTES, PROMPT_VERSION, PROVIDER_NAME, load_settings
 from .generation import GENERATION_ERROR, GenerationError, generate
+from .guards import RateLimiter, is_counted, origin_allowed
 from .schemas import ErrorBody, Status, StudySet, StudySetRequest
 
 for _name in ("httpx", "httpx2", "httpcore", "httpcore2", "openai", "pydantic_ai", "uvicorn.access"):
@@ -24,6 +25,49 @@ logger.setLevel(logging.INFO)
 logger.propagate = False
 
 app = FastAPI(title="Torsa Proxy", version="0.1.0")
+app.state.rate_limiter = RateLimiter()
+
+
+class _BodyTooLarge(Exception):
+    pass
+
+
+async def _read_capped_body(request: Request) -> bytes:
+    """Read the body with the cap, declared or streamed, and cache it for the route.
+
+    Setting `request._body` makes Starlette's `BaseHTTPMiddleware` replay it downstream;
+    a body read only via `stream()` would reach the route empty.
+    """
+    declared = request.headers.get("content-length")
+    if declared is not None and declared.isdigit() and int(declared) > MAX_BODY_BYTES:
+        raise _BodyTooLarge
+    chunks: list[bytes] = []
+    size = 0
+    async for chunk in request.stream():
+        size += len(chunk)
+        if size > MAX_BODY_BYTES:
+            raise _BodyTooLarge
+        chunks.append(chunk)
+    body = b"".join(chunks)
+    request._body = body
+    return body
+
+
+async def _guard(request: Request) -> JSONResponse | None:
+    """Origin -> body cap -> rate limit (Story 1.7). Returns the rejection, or None to pass."""
+    settings = load_settings()
+    origin = request.headers.get("origin")
+    if not origin_allowed(request.method, origin, settings.allowed_origins):
+        return _error(request, 403, GENERATION_ERROR)
+    try:
+        body = await _read_capped_body(request)
+    except _BodyTooLarge:
+        return _error(request, 413, GENERATION_ERROR)
+    if request.method == "POST" and is_counted(body):
+        limiter: RateLimiter = request.app.state.rate_limiter
+        if not limiter.hit(origin, settings.rate_limit_per_min):
+            return _error(request, 429, GENERATION_ERROR)
+    return None
 
 
 @app.middleware("http")
@@ -34,11 +78,12 @@ async def log_request(request: Request, call_next):
     with in `request.state.error_code`.
 
     Unhandled exceptions are caught here so they still get a log line and never
-    reach uvicorn's traceback logger (which could print exception text).
+    reach uvicorn's traceback logger (which could print exception text). The Story 1.7
+    guards run first; a rejection gets the same log line with its code.
     """
     started = time.perf_counter()
     try:
-        response = await call_next(request)
+        response = await _guard(request) or await call_next(request)
     except Exception:
         response = _error(request, 500, GENERATION_ERROR)
     duration_ms = (time.perf_counter() - started) * 1000

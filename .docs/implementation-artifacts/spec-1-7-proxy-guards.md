@@ -2,7 +2,8 @@
 title: 'Story 1.7: Proxy guards: origin, rate limit and no data retention'
 type: 'feature'
 created: '2026-11-24'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '78c0f37a0c3345056580272e89e9b64955e85f53'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -57,14 +58,14 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `proxy/app/guards.py` -- `origin_allowed(method, origin, allowed)`, `RateLimiter(clock)` with `hit(origin, limit) -> bool` and `reset()`, `is_counted(body: bytes)`.
-- [ ] `proxy/app/main.py` -- guard in `log_request`; limiter on `app.state`; capped body read, replayed to the route.
-- [ ] `proxy/tests/test_guards.py` -- every matrix row, fake clock; `is_counted` counts a JSON list, string, non-UTF-8 and non-string `mode`.
-- [ ] `proxy/tests/test_retention.py` -- marker in a valid, a malformed and a provider-error request: absent from `caplog`, `capfd` and bodies; no file opened for writing (record `builtins.open`/`os.open` write modes); `logfire`, `opentelemetry.sdk`, `opentelemetry.exporter*` not importable, pydantic-ai instrumentation off; `--no-access-log` in `proxy/Dockerfile` and `proxy-dev`.
-- [ ] `proxy/tests/*` -- `Origin: http://localhost:3000` on existing POST clients.
-- [ ] `compose.yaml` -- `test` network with `proxy-test` (same build, `*proxy-healthcheck`, `read_only`, `RATE_LIMIT_PER_MIN: 1000`, origins + `http://web-test:3000`, alias `proxy`) and `web-test` (`./web`); `test` depends on `web-test`, `BASE_URL=http://web-test:3000`.
-- [ ] `e2e/guards.spec.ts` -- browser `fetch` demo POST → 404 `err.demoOnly` (Origin survives the rewrite); `request.post` without `Origin` → 403.
-- [ ] `README.md`, `.docs/deviations.md` -- guards, 403/413/429, test services; D-7.
+- [x] `proxy/app/guards.py` -- `origin_allowed(method, origin, allowed)`, `RateLimiter(clock)` with `hit(origin, limit) -> bool` and `reset()`, `is_counted(body: bytes)`.
+- [x] `proxy/app/main.py` -- guard in `log_request`; limiter on `app.state`; capped body read, replayed to the route.
+- [x] `proxy/tests/test_guards.py` -- every matrix row, fake clock; `is_counted` counts a JSON list, string, non-UTF-8 and non-string `mode`.
+- [x] `proxy/tests/test_retention.py` -- marker in a valid, a malformed and a provider-error request: absent from `caplog`, `capfd` and bodies; no file opened for writing (record `builtins.open`/`os.open` write modes); `logfire`, `opentelemetry.sdk`, `opentelemetry.exporter*` not importable, pydantic-ai instrumentation off; `--no-access-log` in `proxy/Dockerfile` and `proxy-dev`.
+- [x] `proxy/tests/*` -- `Origin: http://localhost:3000` on existing POST clients.
+- [x] `compose.yaml` -- `test` network with `proxy-test` (same build, `*proxy-healthcheck`, `read_only`, `RATE_LIMIT_PER_MIN: 1000`, origins + `http://web-test:3000`, alias `proxy`) and `web-test` (`./web`); `test` depends on `web-test`, `BASE_URL=http://web-test:3000`.
+- [x] `e2e/guards.spec.ts` -- browser `fetch` demo POST → 404 `err.demoOnly` (Origin survives the rewrite); `request.post` without `Origin` → 403.
+- [x] `README.md`, `.docs/deviations.md` -- guards, 403/413/429, test services; D-7.
 
 **Acceptance Criteria:**
 - Given `docker compose run --rm --build test` without a key, when run, then all three suites pass and nothing reaches the network.
@@ -75,7 +76,30 @@ context:
 
 Threat model: ports bind to `127.0.0.1`, so the threat is other pages in the user's browser. `Origin` is not authentication (`curl` can set it); it blocks cross-site and DNS-rebinding POSTs. Accepted risk: a rebinding page's same-origin `GET /api/status` sends no `Origin` and reads model and `keyConfigured`. Origin before limiter keeps limiter keys bounded; one uvicorn worker is assumed.
 
-Starlette 1.10 replays a body read in `BaseHTTPMiddleware`; read via `request.stream()` so the cap holds for chunked bodies.
+Starlette 1.10 replays a body read in `BaseHTTPMiddleware` only if it was cached in `request._body` (a body read via `stream()` alone reaches the route empty); `_read_capped_body` streams with the cap, then sets `request._body`. The test network is `internal: true`, so no test can reach the provider; `proxy-test` has an empty key and reads no `.env`. `e2e/Dockerfile` copies `compose.yaml` for the access-log check.
+
+## Review Triage Log
+
+Iteration 0 (Blind Hunter, Edge Case Hunter, Verification Gap). Verification Gap: no gaps.
+
+| # | Source | Finding | Verdict | Route / evidence |
+|---|--------|---------|---------|------------------|
+| 1 | EC | Deeply nested JSON raises `RecursionError` in `is_counted` → 500, uncounted | medium | patch: caught, counts; `test_deeply_nested_json_counts` |
+| 2 | EC, BH | PUT/PATCH/DELETE without `Origin` pass the origin check | low | patch: only `GET`/`HEAD`/`OPTIONS` may omit `Origin`; unit test + README |
+| 3 | BH | 8 MiB body cap not recorded as a deviation (D-6 says no caps are named) | low | patch: D-8 in `.docs/deviations.md` |
+| 4 | BH | README implies the incoming `Origin` header is normalised | low | patch: README says entries are normalised, header compared exactly |
+| 5 | BH | e2e does not prove a foreign `Origin` is rejected through the rewrite | low | patch: third test in `e2e/guards.spec.ts` |
+| 6 | EC | Client disconnect mid-body logged as 500 | low | rejected: rare, same as before 1.7 (route read also gave 500), fix adds a branch |
+| 7 | EC | `proxy-test` inherits `GENERATION_TIMEOUT_S` etc. from `.env` interpolation | low | rejected: a broken value breaks `proxy` the same way; key, origins and limit are pinned |
+| 8 | EC | Shell `ALLOWED_ORIGINS`/`RATE_LIMIT_PER_MIN` can break existing POST tests | low | rejected: the test container sets neither; fix guards undemonstrated state |
+| 9 | EC, BH | Access-log check misses multi-line compose commands | low | rejected: all commands are inline today; a YAML parse needs a new dependency |
+| 10 | BH | 429 has no `Retry-After` | low | rejected: every rejection is `{code}` only (Always); new public surface |
+| 11 | BH | 413/429 not proven end to end | low | rejected: 429 is unreachable by design in the test profile (limit 1000); pytest covers both |
+| 12 | BH | `request._body` and `Agent._instrument_default` are private internals | false | versions are locked in `uv.lock`; `test_streamed_body_under_cap_reaches_the_route` and the telemetry test fail loudly if either changes |
+| 13 | BH | Write recording misses pre-opened handles, `os.replace`, C extensions | low | rejected: the test covers what the spec asks (`open`/`os.open`); wider hooks add complexity for no shown path |
+| 14 | BH | Body parsed twice (guard + route) | low | rejected: local-only, ≤ 8 MiB, origin-gated; avoiding it needs a shared parse |
+| 15 | BH | Keyless 503s use up the rate limit | false | intended: Decisions say keyless live POSTs count |
+| 16 | BH | Non-numeric `Content-Length` silently ignored | false | the streamed count still enforces the cap; h11 rejects malformed `Content-Length` before the app |
 
 ## Verification
 
