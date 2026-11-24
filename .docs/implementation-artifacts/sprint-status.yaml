@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: '2026-11-24'
+last_updated: '11-25-2026 00:07'
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -113,7 +113,7 @@ action_items:
     action: "Fix err.noKey shown before /api/status answers: wait for status or clear
       the error when status reports a key (Start and overview retry)"
     owner: "Tor (bmad-build)"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
   - id: "epic-1-retro-item-5-keep-user-fields-and-delete-the-previous"
     epic: 1
