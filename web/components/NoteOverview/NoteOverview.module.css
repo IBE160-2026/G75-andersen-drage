@@ -66,14 +66,6 @@
   content: "»";
 }
 
-/* "Kilde: Pn" is plain text until Story 1.12, so it is not styled as a link. */
-.ref {
-  font-family: var(--typography-reference-font-family);
-  font-size: var(--typography-reference-font-size);
-  font-weight: var(--typography-reference-font-weight);
-  color: var(--colors-ink-muted);
-}
-
 .concepts {
   display: flex;
   flex-wrap: wrap;
@@ -173,6 +165,11 @@
   display: flex;
   gap: var(--spacing-2);
   border-radius: var(--rounded-sm);
+  /* The same box as the active Passage (ReferenceJump.module.css), with the rule's width as padding,
+     so a jump changes only the rule and nothing moves. */
+  margin-inline: calc(-1 * var(--spacing-2));
+  padding: var(--spacing-2);
+  padding-left: calc(var(--spacing-2) + var(--spacing-quote-rule));
 }
 
 .passageId {

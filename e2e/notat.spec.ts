@@ -1,5 +1,5 @@
 // Story 1.11: Notatoversikt with summary, Key Concepts and source panel (spec I/O & Edge-Case Matrix;
-// FR-6, FR-10–12, NFR-6, NFR-7). Records are seeded straight into IndexedDB; the only POST ('Prøv igjen'
+// FR-6, FR-10–12, NFR-6, NFR-7). Story 1.12's reference jump (FR-12, UX-DR10, UX-DR11) is at the end. Records are seeded straight into IndexedDB; the only POST ('Prøv igjen'
 // after err.noConcepts) is stubbed, so nothing reaches the provider.
 import { createHash } from "node:crypto";
 import AxeBuilder from "@axe-core/playwright";
@@ -167,7 +167,7 @@ test("desktop: title, study panel and source panel side by side, source on the l
   expect(mainBox.width / asideBox.width).toBeGreaterThan(1.1);
   expect(mainBox.width / asideBox.width).toBeLessThan(1.2);
 
-  // Study panel: summary with Quote blocks and plain-text references, then concepts by Centrality Rank.
+  // Study panel: summary with Quote blocks and source references, then concepts by Centrality Rank.
   const main = page.locator("main");
   await expect(main.getByRole("heading", { level: 2 })).toHaveText([MSG.summary, MSG.concepts]);
   await expect(main.locator("figure")).toHaveCount(5);
@@ -208,6 +208,11 @@ test("desktop Tab order: from the h1 the study panel comes first, then the sourc
   // The first Tab on a screen goes to the skip link (Screen); start again from the h1.
   await page.keyboard.press("Tab");
   await h1(page).focus();
+  // Story 1.12: each Summary Point's "Kilde: Pn" is a button, in reading order.
+  for (let i = 1; i <= 5; i++) {
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: `Kilde: P${i}` })).toBeFocused();
+  }
   await page.keyboard.press("Tab");
   await expect(page.getByRole("button", { name: MSG.start })).toBeFocused();
   await page.keyboard.press("Tab");
@@ -363,4 +368,176 @@ test("resizing: 1280 px shows the aside, 390 px switches to tabs, back to 1280 p
   await expect(aside).toBeVisible();
   await expect(region(page)).toBeVisible();
   await expect(page.getByRole("tablist")).toHaveCount(0);
+});
+
+// ---- Story 1.12: reference jump ----
+
+const RETURN_ACTION = "Tilbake til sammendraget";
+const RETURN_HINT = "Trykk Esc for å gå tilbake.";
+const ref = (page: Page, n: number) => page.getByRole("button", { name: `Kilde: P${n}` });
+const passage = (page: Page, n: number) => page.locator(`#passage-p${n}`);
+const returnAction = (page: Page) => page.getByRole("button", { name: RETURN_ACTION });
+
+/** The jump's result for Passage n: one mark (the Quote), active rule, focus, hint and the return control. */
+async function expectJumpedTo(page: Page, n: number) {
+  const target = passage(page, n);
+  const q = quote(PASSAGES[n - 1]);
+  await expect(page.locator("mark")).toHaveCount(1);
+  await expect(target.locator("mark")).toHaveText(q);
+  await expect(target).toBeFocused();
+  await expect(target).toHaveAttribute("data-active", "true");
+  await expect(target).toHaveAccessibleDescription(RETURN_HINT);
+  await expect(page.locator("[data-active]")).toHaveCount(1);
+  // Screen-reader order: "Sitat start", the Quote, "Sitat slutt"; the Passage ID stays outside the mark.
+  const text = (await target.textContent()) ?? "";
+  expect(text.indexOf("Sitat start")).toBeGreaterThan(-1);
+  expect(text.indexOf("Sitat start")).toBeLessThan(text.indexOf(q));
+  expect(text.indexOf(q)).toBeLessThan(text.indexOf("Sitat slutt"));
+  await expect(target.locator("mark")).not.toContainText(`P${n}`);
+  await expect(page.getByText(`Viser P${n} fra sammendraget`)).toBeVisible();
+  await expect(returnAction(page)).toBeVisible();
+  const style = await target.evaluate((el) => {
+    const mark = getComputedStyle(el.querySelector("mark")!);
+    return { rule: getComputedStyle(el).borderLeftWidth, outline: mark.outlineWidth, outlineStyle: mark.outlineStyle };
+  });
+  expect(style).toEqual({ rule: "3px", outline: "2px", outlineStyle: "solid" });
+}
+
+test("jump, desktop: click 'Kilde: P2' highlights the Quote, focuses P2 and shows the return control", async ({ page }) => {
+  await openOverview(page);
+  await expect(page.locator("mark")).toHaveCount(0);
+  await expect(returnAction(page)).toHaveCount(0);
+  await ref(page, 2).click();
+  await expectJumpedTo(page, 2);
+  // The return control sits at the top of the source panel, above the scroll region.
+  const control = (await returnAction(page).boundingBox())!;
+  const regionBox = (await region(page).boundingBox())!;
+  expect(control.y).toBeLessThan(regionBox.y);
+  expect(await axeBlocking(page)).toEqual([]);
+});
+
+test("return: Enter jumps, Esc in the source panel returns to the exact reference; highlight and control stay", async ({ page }) => {
+  await openOverview(page);
+  await ref(page, 3).focus();
+  await page.keyboard.press("Enter");
+  await expectJumpedTo(page, 3);
+  await page.keyboard.press("Escape");
+  await expect(ref(page, 3)).toBeFocused();
+  await expect(page.locator("mark")).toHaveCount(1);
+  await expect(returnAction(page)).toBeVisible();
+
+  // Esc outside the source panel does nothing.
+  await h1(page).focus();
+  await page.keyboard.press("Escape");
+  await expect(h1(page)).toBeFocused();
+
+  // The return control does the same as Esc.
+  await ref(page, 1).click();
+  await expectJumpedTo(page, 1);
+  await returnAction(page).click();
+  await expect(ref(page, 1)).toBeFocused();
+});
+
+test("second jump: only one highlight and one active Passage at a time", async ({ page }) => {
+  await openOverview(page);
+  await ref(page, 2).click();
+  await expectJumpedTo(page, 2);
+  await ref(page, 4).click();
+  await expectJumpedTo(page, 4);
+  await expect(passage(page, 2).locator("mark")).toHaveCount(0);
+  await expect(passage(page, 2)).not.toHaveAttribute("data-active");
+  await expect(passage(page, 2)).not.toHaveAttribute("aria-describedby");
+  await expect(page.getByText("Viser P2 fra sammendraget")).toHaveCount(0);
+});
+
+test("mobile 390 px: the jump switches to 'Kilde'; returning switches to 'Studier' and focuses the reference", async ({ page }) => {
+  await openOverview(page, studySet(), 390);
+  const studyTab = page.getByRole("tab", { name: MSG.study });
+  const sourceTab = page.getByRole("tab", { name: MSG.source });
+  await ref(page, 3).click();
+  await expect(sourceTab).toHaveAttribute("aria-selected", "true");
+  await expectJumpedTo(page, 3);
+  await expect(passage(page, 3)).toBeInViewport();
+  expect(await axeBlocking(page)).toEqual([]);
+
+  await returnAction(page).click();
+  await expect(studyTab).toHaveAttribute("aria-selected", "true");
+  await expect(ref(page, 3)).toBeFocused();
+  await expect(ref(page, 3)).toBeInViewport();
+
+  // Esc returns the same way.
+  await ref(page, 5).click();
+  await expect(sourceTab).toHaveAttribute("aria-selected", "true");
+  await expectJumpedTo(page, 5);
+  await page.keyboard.press("Escape");
+  await expect(studyTab).toHaveAttribute("aria-selected", "true");
+  await expect(ref(page, 5)).toBeFocused();
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+});
+
+test("reduced motion: the source region scrolls to the Passage instantly", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openOverview(page);
+  await expect(h1(page)).toBeFocused();
+  await page.setViewportSize({ width: 1280, height: 300 });
+  // Start with the region scrolled to the bottom, so P1 is out of view and the jump must scroll up.
+  const scrollable = await region(page).evaluate((el) => {
+    el.scrollTop = el.scrollHeight;
+    return el.scrollHeight > el.clientHeight;
+  });
+  expect(scrollable).toBe(true);
+  const inRegion = () =>
+    page.evaluate(() => {
+      const area = document.querySelector<HTMLElement>("[role=region]")!.getBoundingClientRect();
+      const target = document.querySelector<HTMLElement>("#passage-p1 mark, #passage-p1")!.getBoundingClientRect();
+      return target.top >= area.top && target.bottom <= area.bottom;
+    });
+  expect(await inRegion()).toBe(false);
+  await ref(page, 1).click();
+  // One frame after the click: a smooth scroll would still be under way.
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => resolve(null))));
+  expect(await inRegion()).toBe(true);
+  await expectJumpedTo(page, 1);
+  await expect(returnAction(page)).toBeInViewport();
+});
+
+test("forced colors: the highlight uses Mark / MarkText with a CanvasText outline", async ({ page }) => {
+  await page.emulateMedia({ forcedColors: "active" });
+  await openOverview(page);
+  await ref(page, 1).click();
+  await expectJumpedTo(page, 1);
+  const colors = await page.evaluate(() => {
+    const probe = document.createElement("span");
+    probe.style.forcedColorAdjust = "none";
+    document.body.append(probe);
+    const system = (value: string) => {
+      probe.style.color = value;
+      return getComputedStyle(probe).color;
+    };
+    const expected = { bg: system("Mark"), fg: system("MarkText"), outline: system("CanvasText") };
+    probe.remove();
+    const mark = getComputedStyle(document.querySelector("mark")!);
+    return { expected, actual: { bg: mark.backgroundColor, fg: mark.color, outline: mark.outlineColor } };
+  });
+  expect(colors.actual).toEqual(colors.expected);
+});
+
+test("a jump survives crossing 768 px, and activating a Passage moves none of its text", async ({ page }) => {
+  await openOverview(page);
+  await expect(h1(page)).toBeFocused();
+  const textBox = () => passage(page, 2).locator("p").boundingBox();
+  const before = (await textBox())!;
+  await ref(page, 2).click();
+  await expectJumpedTo(page, 2);
+  const after = (await textBox())!;
+  expect(after.x).toBeCloseTo(before.x, 0);
+  expect(after.width).toBeCloseTo(before.width, 0);
+
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.getByRole("tab", { name: MSG.source }).click();
+  await expect(page.locator("mark")).toHaveCount(1);
+  await expect(passage(page, 2).locator("mark")).toHaveText(quote(PASSAGES[1]));
+  await returnAction(page).click();
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
+  await expect(ref(page, 2)).toBeFocused();
 });

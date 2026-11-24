@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Tabs } from "radix-ui";
 import { contentLang, hasCoveredConcept, noteFileName, passageLabel, sortConcepts } from "../../core/overview";
@@ -8,6 +8,17 @@ import { format, t } from "../../i18n/messages";
 import type { NoteRecord, StudySetRecord } from "../../storage/db";
 import { useAsideSlot } from "../AppShell/asideSlot";
 import { Button } from "../Button/Button";
+import {
+  HighlightedText,
+  passageActiveClass,
+  passageElementId,
+  ReferenceJumpProvider,
+  ReturnControl,
+  SourceRef,
+  useActivePassage,
+  useSourceEscape,
+  type ReturnContext,
+} from "../ReferenceJump/ReferenceJump";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import styles from "./NoteOverview.module.css";
@@ -17,17 +28,14 @@ const NO_CONCEPTS_ID = "no-concepts-error";
 const SOURCE_LABEL_ID = "source-label";
 type Tab = "study" | "source";
 
-/** The DOM id of a Passage in the source panel (Story 1.12 jumps to it). */
-export function passageElementId(passageId: string): string {
-  return `passage-${passageId}`;
-}
-
 /**
  * Notatoversikt (FR-6, FR-12, UX-DR6–9). The study panel is the content of `main`; the source panel is an
  * `<aside>` portalled into the shell's aside slot, so it follows `main` in the DOM and the AppShell grid
  * places it on the left from 768 px. Below 768 px (`wide` false) the panels become manual-activation Tabs
  * 'Studier' / 'Kilde'; the 'Kilde' Tabs.Content renders inside the aside, and the aside is hidden while
  * 'Studier' is active. Generated content and Passage text carry `lang` from `StudySet.language`.
+ * Story 1.12: both panels sit in one ReferenceJumpProvider; on mobile a jump switches to 'Kilde' and the
+ * return switches back to 'Studier'.
  */
 export function NoteOverview({
   note,
@@ -46,6 +54,8 @@ export function NoteOverview({
   const fileName = noteFileName(note);
   const lang = contentLang(studySet.language);
   const asideLabel = format("source.aria", { filnavn: fileName });
+  const showSource = useCallback(() => setTab("source"), []);
+  const showStudy = useCallback(() => setTab("study"), []);
 
   const study = <StudyPanel studySet={studySet} lang={lang} onRetry={onRetry} />;
   const source = <SourcePanel note={note} fileName={fileName} lang={lang} />;
@@ -59,46 +69,46 @@ export function NoteOverview({
         )
       : null;
 
-  if (wide) {
-    return (
-      <Screen note={note.title}>
-        <ScreenHeading>{note.title}</ScreenHeading>
-        {study}
-        {aside(source)}
-      </Screen>
-    );
-  }
-
+  // One provider at the same tree position for both widths, so a jump survives crossing 768 px.
   return (
     <Screen note={note.title}>
       <ScreenHeading>{note.title}</ScreenHeading>
-      <Tabs.Root value={tab} onValueChange={(value) => setTab(value as Tab)} activationMode="manual">
-        <Tabs.List className={styles.tabList}>
-          <Tabs.Trigger value="study" className={styles.tab}>
-            {t("tabs.study")}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="source" className={styles.tab}>
-            {t("tabs.source")}
-          </Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content value="study" tabIndex={-1} className={styles.tabPanel}>
-          <p className={styles.statusStrip}>{note.title}</p>
-          {study}
-        </Tabs.Content>
-        {aside(
-          <Tabs.Content value="source" tabIndex={-1} className={styles.tabPanel}>
-            {source}
-          </Tabs.Content>,
-          tab !== "source",
+      <ReferenceJumpProvider onShowSource={wide ? undefined : showSource} onShowStudy={wide ? undefined : showStudy}>
+        {wide ? (
+          <>
+            {study}
+            {aside(source)}
+          </>
+        ) : (
+          <Tabs.Root value={tab} onValueChange={(value) => setTab(value as Tab)} activationMode="manual">
+            <Tabs.List className={styles.tabList}>
+              <Tabs.Trigger value="study" className={styles.tab}>
+                {t("tabs.study")}
+              </Tabs.Trigger>
+              <Tabs.Trigger value="source" className={styles.tab}>
+                {t("tabs.source")}
+              </Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content value="study" tabIndex={-1} className={styles.tabPanel}>
+              <p className={styles.statusStrip}>{note.title}</p>
+              {study}
+            </Tabs.Content>
+            {aside(
+              <Tabs.Content value="source" tabIndex={-1} className={styles.tabPanel}>
+                {source}
+              </Tabs.Content>,
+              tab !== "source",
+            )}
+          </Tabs.Root>
         )}
-      </Tabs.Root>
+      </ReferenceJumpProvider>
     </Screen>
   );
 }
 
-function SourceRef({ passageId }: { passageId: string }) {
-  // Plain text until Story 1.12 makes it a reference jump.
-  return <p className={styles.ref}>{format("source.ref", { id: passageLabel(passageId) })}</p>;
+/** Summary Point references return to the summary (decided by Tor 2026-11-24). */
+function summaryReturn(): ReturnContext {
+  return { from: t("return.from.summary"), action: t("return.summary") };
 }
 
 function StudyPanel({ studySet, lang, onRetry }: { studySet: StudySetRecord; lang: string; onRetry: () => void }) {
@@ -120,7 +130,12 @@ function StudyPanel({ studySet, lang, onRetry }: { studySet: StudySetRecord; lan
                   </p>
                 </blockquote>
                 <figcaption>
-                  <SourceRef passageId={point.passageId} />
+                  <SourceRef
+                    id={`ref-${point.id}`}
+                    passageId={point.passageId}
+                    quote={point.quote}
+                    returnContext={summaryReturn()}
+                  />
                 </figcaption>
               </figure>
             </li>
@@ -171,23 +186,38 @@ function StudyPanel({ studySet, lang, onRetry }: { studySet: StudySetRecord; lan
 }
 
 function SourcePanel({ note, fileName, lang }: { note: NoteRecord; fileName: string; lang: string }) {
+  const escape = useSourceEscape();
   return (
-    <div className={styles.sourcePanel}>
+    <div className={styles.sourcePanel} {...escape}>
       <p id={SOURCE_LABEL_ID} className={styles.panelLabel}>
         {format("source.label", { filnavn: fileName })}
       </p>
+      <ReturnControl />
       <div role="region" tabIndex={0} aria-labelledby={SOURCE_LABEL_ID} className={styles.region}>
         <ol className={styles.passages}>
           {note.passages.map((passage) => (
-            <li key={passage.id} id={passageElementId(passage.id)} tabIndex={-1} className={styles.passage}>
-              <span className={styles.passageId}>{passageLabel(passage.id)}</span>
-              <p lang={lang} className={styles.passageText}>
-                {passage.text}
-              </p>
-            </li>
+            <Passage key={passage.id} id={passage.id} text={passage.text} lang={lang} />
           ))}
         </ol>
       </div>
     </div>
+  );
+}
+
+function Passage({ id, text, lang }: { id: string; text: string; lang: string }) {
+  const { active, describedBy, quote } = useActivePassage(id);
+  return (
+    <li
+      id={passageElementId(id)}
+      tabIndex={-1}
+      aria-describedby={describedBy}
+      data-active={active || undefined}
+      className={active ? `${styles.passage} ${passageActiveClass}` : styles.passage}
+    >
+      <span className={styles.passageId}>{passageLabel(id)}</span>
+      <p lang={lang} className={styles.passageText}>
+        <HighlightedText text={text} quote={quote} />
+      </p>
+    </li>
   );
 }
