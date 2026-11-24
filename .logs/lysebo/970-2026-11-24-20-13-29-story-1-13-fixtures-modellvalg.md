@@ -16,7 +16,7 @@
 - Branch: `story/1-13-record-fixtures-and-compare-models-on-the-reference-notes`.
 
 ### Resultat
-- Commit `57fa87a` på story-branchen (lokal, ikke pushet).
+- Commit `57fa87a` på story-branchen. Branchen er pushet, og PR #14 er opprettet: https://github.com/IBE160-2026/G75-andersen-drage/pull/14
 - Nye filer:
   - `web/scripts/export-passages.ts`, `evaluate.ts` og `isMain.ts`, med tester.
   - `proxy/scripts/record_fixtures.py`.
@@ -42,7 +42,7 @@
 - Issue lukket: «neste story: 1.13».
 
 ### Åpne punkter
-- PR for story 1.13 er ikke opprettet. Når den er merget, settes 1-13 til `done` i sprint-status.
+- Merge PR #14 når CI er grønn. Sett deretter 1-13 til `done` i sprint-status.
 - Simpler-oppføringene i Fixtures (`simpler: {}`) må tas opp på nytt i Story 3.6 (D-15).
 - `MinApiKey.env.example` ligger i mappa over prosjektroten (utenfor repoet) og kan inneholde en ekte nøkkel. Vurder å slette den.
 - Neste story: 1.14 (Demo Mode med de medfølgende eksempelnotatene).
