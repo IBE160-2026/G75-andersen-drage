@@ -1,12 +1,19 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ButtonLink } from "../../../components/Button/Button";
 import { EmptyState } from "../../../components/EmptyState/EmptyState";
-import { Screen, ScreenHeading } from "../../../components/Screen/Screen";
-import { t } from "../../../i18n/messages";
-import { readNote, type NoteRecord } from "../../../storage/db";
+import { Generating } from "../../../components/Generating/Generating";
+import { NoteOverview } from "../../../components/NoteOverview/NoteOverview";
+import { useNoteSession } from "../../../components/NoteSession/NoteSession";
+import { Screen } from "../../../components/Screen/Screen";
+import { extractedFromNote } from "../../../core/overview";
+import { format, t } from "../../../i18n/messages";
+import { readNote, readStudySet, type NoteRecord, type StudySetRecord } from "../../../storage/db";
+
+/** The same breakpoint as the CSS (EXPERIENCE.md › Responsive & Platform). */
+const WIDE_QUERY = "(min-width: 768px)";
 
 /** A malformed escape (for example `/notat/%E0`) gives "", which reads as a missing Note. */
 function decodeParam(value: unknown): string {
@@ -18,25 +25,68 @@ function decodeParam(value: unknown): string {
   }
 }
 
-type State = { kind: "loading" } | { kind: "found"; note: NoteRecord } | { kind: "missing" };
+type State =
+  | { kind: "loading" }
+  | { kind: "found"; note: NoteRecord; studySet: StudySetRecord }
+  | { kind: "missing" };
 
-// Notatoversikt, placeholder until Story 1.11: the stored Note's title as h1 and page title.
-// A missing or invalid record gets an empty state with a way back to Start.
+/** Both validated records, or null if either is missing or invalid. */
+async function loadRecords(noteHash: string): Promise<{ note: NoteRecord; studySet: StudySetRecord } | null> {
+  const note = await readNote(noteHash);
+  if (!note.ok) return null;
+  const studySet = await readStudySet(note.value.currentCacheKey);
+  return studySet.ok ? { note: note.value, studySet: studySet.value } : null;
+}
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const list = window.matchMedia(query);
+    const update = () => setMatches(list.matches);
+    update();
+    list.addEventListener("change", update);
+    return () => list.removeEventListener("change", update);
+  }, [query]);
+  return matches;
+}
+
+const number = new Intl.NumberFormat("nb-NO");
+
+// Notatoversikt (Story 1.11): the stored Note and its Study Set, both validated, in the NoteSession
+// context while this page shows them. A missing or invalid record gets the `note.missing` empty state.
+// After `err.noConcepts`, 'Prøv igjen' renders Genererer in place; once it has saved, the records reload.
 export default function NoteOverviewPage() {
   const params = useParams<{ noteHash: string }>();
   const noteHash = decodeParam(params?.noteHash);
-  const [state, setState] = useState<State>({ kind: "loading" });
+  const router = useRouter();
+  const { setSession } = useNoteSession();
+  const wide = useMediaQuery(WIDE_QUERY);
+  const [loaded, setLoaded] = useState<State>({ kind: "loading" });
+  const [regenerating, setRegenerating] = useState(false);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     let live = true;
-    setState({ kind: "loading" });
-    void readNote(noteHash).then((result) => {
-      if (live) setState(result.ok ? { kind: "found", note: result.value } : { kind: "missing" });
+    setLoaded({ kind: "loading" });
+    void loadRecords(noteHash).then((records) => {
+      if (!live) return;
+      setLoaded(records ? { kind: "found", ...records } : { kind: "missing" });
+      setRegenerating(false);
     });
     return () => {
       live = false;
     };
-  }, [noteHash]);
+  }, [noteHash, reload]);
+
+  // A different Note in the URL: the records on screen belong to the previous one until it loads.
+  const state: State = loaded.kind === "found" && loaded.note.noteHash !== noteHash ? { kind: "loading" } : loaded;
+  // The session holds what is on screen; Genererer is a single-column screen without it.
+  const shownNote = state.kind === "found" && !regenerating ? state.note : null;
+  const shownSet = state.kind === "found" && !regenerating ? state.studySet : null;
+  useEffect(() => {
+    setSession(shownNote && shownSet ? { note: shownNote, studySet: shownSet } : null);
+  }, [shownNote, shownSet, setSession]);
+  useEffect(() => () => setSession(null), [setSession]);
 
   if (state.kind === "loading") return null;
   if (state.kind === "missing") {
@@ -54,9 +104,29 @@ export default function NoteOverviewPage() {
       </Screen>
     );
   }
+  if (regenerating) {
+    const extracted = extractedFromNote(state.note);
+    return (
+      <Generating
+        note={extracted}
+        noteHash={state.note.noteHash}
+        meta={format("note.meta", {
+          filnavn: extracted.fileName,
+          ord: number.format(extracted.wordCount),
+          avsnitt: number.format(extracted.passages.length),
+        })}
+        onBack={() => router.push("/")}
+        onSaved={() => setReload((n) => n + 1)}
+      />
+    );
+  }
   return (
-    <Screen note={state.note.title}>
-      <ScreenHeading>{state.note.title}</ScreenHeading>
-    </Screen>
+    <NoteOverview
+      key={state.studySet.cacheKey + reload}
+      note={state.note}
+      studySet={state.studySet}
+      wide={wide}
+      onRetry={() => setRegenerating(true)}
+    />
   );
 }

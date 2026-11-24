@@ -32,3 +32,29 @@
     padding-inline: var(--spacing-5);
   }
 }
+
+/* Story 1.11: Notatoversikt split (DESIGN.md › Layout & Spacing). The aside is portalled in after main;
+   grid placement, not DOM order, puts the source panel on the left. */
+.layout {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+
+  .split > .main {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: none;
+    margin: 0;
+  }
+
+  .split > aside {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}

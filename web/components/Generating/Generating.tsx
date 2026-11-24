@@ -52,12 +52,18 @@ export function Generating({
   noteHash,
   meta,
   onBack,
+  onSaved,
 }: {
   note: ExtractedNote;
   noteHash: string;
   /** The `note.meta` line from Start. */
   meta: string;
   onBack: () => void;
+  /**
+   * Replaces the navigation to Notatoversikt once the records are saved. Notatoversikt passes it for
+   * 'Prøv igjen' after `err.noConcepts`: a push to the same route would not remount the page.
+   */
+  onSaved?: () => void;
 }) {
   const router = useRouter();
   const { status } = useAppSettings();
@@ -69,6 +75,8 @@ export function Generating({
   const retryingRef = useRef(false);
   // Captured at mount: the Start page ran the gate with this status, and api/ runs it again.
   const start = useRef({ note, noteHash, status, router });
+  const onSavedRef = useRef(onSaved);
+  onSavedRef.current = onSaved;
   useBlockWindowDrop();
 
   useEffect(() => {
@@ -104,7 +112,8 @@ export function Generating({
       if (!saved.ok) return fail("err.generation");
       stop();
       setProgress(100);
-      router.push(`/notat/${noteHash}`);
+      if (onSavedRef.current) onSavedRef.current();
+      else router.push(`/notat/${noteHash}`);
     })();
 
     return () => {
