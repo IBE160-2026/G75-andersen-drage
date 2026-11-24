@@ -36,3 +36,18 @@ Oppgaven var `bmad-build story 1.10`. Når genereringen feiler, skal Genererer v
 - Lag PR for story 1.10, få grønn CI og merge. Sett deretter 1-10 til `done` i `sprint-status.yaml`.
 - FR-4 (Epic 3): når nettleseren får en cache for studiesett, må «Prøv igjen» hoppe over cache-oppslaget (står i `deferred-work.md`).
 - Den nye Microcopy-nøkkelen `gen.retry` («Prøv igjen») og `err.demoOnly` er utkast som ikke er godkjent (D-12).
+
+## 2026-11-24 kl. 15:54 — lysebo
+
+### Oppgave
+Push branchen og lag PR for story 1.10.
+
+### Plan
+- `git push -u`. `gh` finnes ikke på maskinen, så PR-en ble laget med GitHub MCP.
+
+### Resultat
+- Branchen `story/1-10-generation-errors-retry-and-interrupted-generation` er pushet.
+- PR #11: https://github.com/IBE160-2026/G75-andersen-drage/pull/11
+
+### Åpne punkter
+- PR #11: vent på grønn CI og merge, og sett deretter 1-10 til `done` i `sprint-status.yaml`.

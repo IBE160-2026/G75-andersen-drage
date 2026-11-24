@@ -85,6 +85,6 @@
 - [ ] 2026-11-24 [story-1-9-generate-study-set](974-2026-11-24-15-12-39-story-1-9-generate-study-set.md) — utsatt til Epic 3 (FR-4): gjenopplasting nullstiller brukerfelt og kan etterlate foreldreløst studiesett (deferred-work.md)
 - [ ] 2026-11-24 [story-1-9-generate-study-set](974-2026-11-24-15-12-39-story-1-9-generate-study-set.md) — nye Microcopy-nøkler er ikke godkjent (draft): gen.status.*, gen.progress, title.generating, note.missing (D-11)
 - [ ] 2026-11-24 [story-1-9-generate-study-set](974-2026-11-24-15-12-39-story-1-9-generate-study-set.md) — e2e-testen «forlate Genererer» bruker waitForTimeout(500); følg med i CI
-- [ ] 2026-11-24 [story-1-10-generation-errors-retry](973-2026-11-24-15-49-44-story-1-10-generation-errors-retry.md) — PR for story 1.10: grønn CI og merge; sett deretter 1-10 til done i sprint-status.yaml
+- [ ] 2026-11-24 [story-1-10-generation-errors-retry](973-2026-11-24-15-49-44-story-1-10-generation-errors-retry.md) — PR for story 1.10 (https://github.com/IBE160-2026/G75-andersen-drage/pull/11, opprettet 2026-11-24): grønn CI og merge; sett deretter 1-10 til done i sprint-status.yaml
 - [ ] 2026-11-24 [story-1-10-generation-errors-retry](973-2026-11-24-15-49-44-story-1-10-generation-errors-retry.md) — FR-4 (Epic 3): «Prøv igjen» må hoppe over cache-oppslaget når nettleser-cachen kommer (deferred-work.md)
 - [ ] 2026-11-24 [story-1-10-generation-errors-retry](973-2026-11-24-15-49-44-story-1-10-generation-errors-retry.md) — nye Microcopy-nøkler er ikke godkjent (draft): gen.retry, err.demoOnly (D-12)
