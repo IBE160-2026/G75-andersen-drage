@@ -106,3 +106,11 @@
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — web-dev-profilen med ny reference-notes-montering er ikke startet manuelt
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — AC «Demo på + nøkkel konfigurert» er bare dekket av Vitest, ikke e2e (testoppsettet har aldri nøkkel)
 - [x] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — merge PR #15 (https://github.com/IBE160-2026/G75-andersen-drage/pull/15) når CI er grønn, sett deretter 1-14 til done i sprint-status (løst 2026-11-24: merget 364b727, 1-14 done)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — fullfør og logg manuell tastatur- og 320 px-sjekk av 1.9–1.14 før Epic 2 (delvis gjort; retro A8)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — gjør «Manual checks» obligatorisk i spec for UI-stories fra og med 2.1 (retro A8)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — rett err.noKey før /api/status har svart, på Start og ved «Prøv igjen» på Notatoversikt (retro R5)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — flytt AD-21-fiksen (behold brukerfelt, slett gammelt studiesett) fra Epic 3 til første Epic 2-story som skriver fremdrift (retro R2)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — hent inn punkter fra deferred-work.md/issues.md når en story-spec skrives; legg de tre åpne 1.13-sjekkene inn i Story 5.1 (retro A6)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — før pitfalls inn i project context: \u-escapes omgjøres av verktøylaget, ingen waitForTimeout i e2e (retro P1, A4)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — avgjør om demomodus kan sende egne notaters avsnitt til den lokale Proxy-en uten samtykke (retro R1)
+- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — epic-1 står som in-progress i sprint-status.yaml; sett til done via sprint-planning
