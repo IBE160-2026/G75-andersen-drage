@@ -20,3 +20,26 @@ Endringer i specen (ukommittert, filen er fortsatt utracket):
 
 ### Åpne punkter
 - FastAPI sine `/docs` og `/openapi.json` er åpne for GET uten Origin. Vurder `docs_url=None`/`openapi_url=None` (utenfor story 1.7).
+
+## 2026-11-24 kl. 10:37 — lysebo
+
+### Oppgave
+Kjøre bmad-build på story 1.7 (proxy-guards) fra den elicitation-justerte specen.
+
+### Plan
+- Kortet specen ned fra ca. 2 000 til ca. 1 560 tokens; Tor godkjente den og valgte å fortsette (branch `story/1-7-proxy-guards`).
+- Implementerte direkte fra [spec-1-7-proxy-guards.md](../../.docs/implementation-artifacts/spec-1-7-proxy-guards.md), deretter review med tre subagenter (Blind Hunter, Edge Case Hunter, Verification Gap) og triage.
+
+### Resultat
+- Commit 78c0f37 (spec ready-for-dev) og 828733f (implementering). Specen er `done`, sprint-status står på `review`.
+- `proxy/app/guards.py` (origin, telling, RateLimiter) og guarden i `log_request` i `main.py`. `config.py` har `MAX_BODY_BYTES`, normalisering av origins og fallback for ugyldig grense. Body-en leses med grensen og caches i `request._body`; Starlette spiller ikke av en body som bare er lest med `stream()`.
+- Tester: `test_guards.py` (hele matrisen) og `test_retention.py` (markør, ingen skriving til fil, ingen telemetri, `--no-access-log`). 143 pytest-tester består lokalt.
+- `compose.yaml`: `proxy-test` og `web-test` på et `internal`-nettverk, uten nøkkel og med grense 1000. `e2e/Dockerfile` kopierer `compose.yaml`. `e2e/guards.spec.ts` har tre tester.
+- README («Vern», testprofilen, `PROMPT_VERSION` rettet til 2) og `deviations.md` (D-7 telemetri, D-8 body-grense).
+- Review: 16 funn. 5 rettet (blant dem RecursionError ved dyp JSON, og at bare GET/HEAD/OPTIONS kan sendes uten Origin), 8 forkastet som `low` og 3 som `false`. Ingenting utsatt. Se Review Triage Log i specen.
+- Ikke verifisert lokalt: Docker kjørte ikke, så compose, Playwright og Vitest er ikke kjørt.
+
+### Åpne punkter
+- Kjør `docker compose run --rm --build test` (eller la CI gjøre det) for å verifisere testprofilen på det interne nettverket og `e2e/guards.spec.ts`, særlig at `Origin` overlever Next-rewriten.
+- Manuell sjekk: `docker compose up`, og bruk appen fra http://localhost:3000 som før. `curl` med fremmed `Origin` skal gi 403.
+- PR for story 1.7, grønn CI og merge; sett deretter 1-7 til `done` i sprint-status.yaml.

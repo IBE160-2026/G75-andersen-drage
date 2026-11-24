@@ -75,3 +75,6 @@
 - [ ] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — 1.9: nettleserens tidsgrense for /api/study-set må være over 85 s (Proxy-budsjettet)
 - [ ] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — README: Proxyen må startes på nytt etter endring av OPENROUTER_API_KEY eller OPENROUTER_MODEL (agenten er cachet)
 - [ ] 2026-11-24 [story-1-7-proxy-guards-elicitation](977-2026-11-24-10-09-27-story-1-7-proxy-guards-elicitation.md) — FastAPI `/docs` og `/openapi.json` er åpne for GET uten Origin; vurder `docs_url=None`/`openapi_url=None` (utenfor 1.7)
+- [ ] 2026-11-24 [story-1-7-proxy-guards-elicitation](977-2026-11-24-10-09-27-story-1-7-proxy-guards-elicitation.md) — kjør `docker compose run --rm --build test` (eller CI) for å verifisere testprofilen og e2e/guards.spec.ts; Docker var ikke tilgjengelig lokalt
+- [ ] 2026-11-24 [story-1-7-proxy-guards-elicitation](977-2026-11-24-10-09-27-story-1-7-proxy-guards-elicitation.md) — manuell sjekk: appen virker fra http://localhost:3000 som før, curl med fremmed Origin gir 403
+- [ ] 2026-11-24 [story-1-7-proxy-guards-elicitation](977-2026-11-24-10-09-27-story-1-7-proxy-guards-elicitation.md) — PR for story 1.7, grønn CI og merge; sett deretter 1-7 til done i sprint-status.yaml
