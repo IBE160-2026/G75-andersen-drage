@@ -11,6 +11,7 @@ import { t } from "../../i18n/messages";
 import { saveGeneratedNote } from "../../storage/db";
 import { useAppSettings } from "../AppSettings/AppSettings";
 import { Button } from "../Button/Button";
+import { ConsentDeclinedText } from "../ConsentNotice/ConsentNotice";
 import { useBlockWindowDrop } from "../DropZone/DropZone";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { Screen, ScreenHeading } from "../Screen/Screen";
@@ -25,6 +26,13 @@ const PROGRESS_TICK_MS = 500;
 const CARDS_STEP_MS = 15_000;
 
 type Step = "gen.status.concepts" | "gen.status.cards" | "gen.status.sources";
+/** What the failure view shows. `consent.declined` only if Consent was withdrawn (another tab) after Start. */
+export type FailureCode = "err.generation" | "err.tooFewItems" | "err.noKey" | "consent.declined";
+
+/** 'Prøv igjen' only where a fresh request can help; no key or no Consent needs the student to act first. */
+export function canRetry(code: FailureCode): boolean {
+  return code === "err.generation" || code === "err.tooFewItems";
+}
 
 export function progressAt(elapsedMs: number): number {
   return Math.min(PROGRESS_CAP, Math.round((elapsedMs / PROGRESS_SPAN_MS) * PROGRESS_CAP));
@@ -35,7 +43,9 @@ export function progressAt(elapsedMs: number): number {
  * On mount: one live POST (api/), then verifyStudySet, then the Note and its Study Set in one
  * transaction, then Notatoversikt. Unmounting aborts the request; an answer arriving after unmount is
  * discarded before storage. A save already under way completes, and only the navigation is skipped.
- * Any failure shows `err.generation` (Story 1.10 adds 'Prøv igjen' and the detailed texts).
+ * Any failure stores nothing and shows its message, focused, with 'Prøv igjen' (where it can help) and
+ * 'Tilbake til start' (Story 1.10). 'Prøv igjen' bumps `attempt`, which restarts the run in this same
+ * instance with a fresh POST; nothing ever retries on its own.
  */
 export function Generating({
   note,
@@ -53,12 +63,16 @@ export function Generating({
   const { status } = useAppSettings();
   const [step, setStep] = useState<Step>("gen.status.concepts");
   const [progress, setProgress] = useState(0);
-  const [failed, setFailed] = useState(false);
+  const [error, setError] = useState<FailureCode | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  // Ignores a second 'Prøv igjen' press that arrives before the progress view replaces the button.
+  const retryingRef = useRef(false);
   // Captured at mount: the Start page ran the gate with this status, and api/ runs it again.
   const start = useRef({ note, noteHash, status, router });
   useBlockWindowDrop();
 
   useEffect(() => {
+    retryingRef.current = false;
     const { note, noteHash, status, router } = start.current;
     const controller = new AbortController();
     const { signal } = controller;
@@ -69,24 +83,25 @@ export function Generating({
       clearInterval(tick);
       clearTimeout(cards);
     };
-    const fail = () => {
+    const fail = (code: FailureCode) => {
       stop();
-      setFailed(true);
+      setError(code);
     };
 
     void (async () => {
       const result = await requestStudySet({ noteHash, passages: note.passages, status, signal });
       if (signal.aborted) return;
-      if (!result.ok) return fail();
+      if (!result.ok) return fail(result.code);
       clearTimeout(cards);
       setStep("gen.status.sources");
       const verified = verifyStudySet(result.studySet, note.passages);
       const sourceType = fileType(note.fileName);
-      if (!verified.ok || !sourceType) return fail();
+      if (!verified.ok) return fail(verified.code);
+      if (!sourceType) return fail("err.generation");
       const record = buildNoteRecord({ ...note, sourceType }, noteHash, verified.set);
       const saved = await saveGeneratedNote(record, verified.set);
       if (signal.aborted) return;
-      if (!saved.ok) return fail();
+      if (!saved.ok) return fail("err.generation");
       stop();
       setProgress(100);
       router.push(`/notat/${noteHash}`);
@@ -96,22 +111,43 @@ export function Generating({
       stop();
       controller.abort();
     };
-  }, []);
+  }, [attempt]);
 
   useEffect(() => {
-    if (failed) document.getElementById(ERROR_ID)?.focus();
-  }, [failed]);
+    if (error) document.getElementById(ERROR_ID)?.focus();
+    // After 'Prøv igjen' the focused button is gone; focus the screen h1 instead of losing it to body.
+    else if (attempt > 0) document.querySelector<HTMLElement>("main h1")?.focus();
+  }, [error, attempt]);
+
+  function retry() {
+    if (retryingRef.current) return;
+    retryingRef.current = true;
+    setProgress(0);
+    setStep("gen.status.concepts");
+    setError(null);
+    setAttempt((n) => n + 1);
+  }
 
   return (
     <Screen title="title.generating" note={note.fileName}>
       <ScreenHeading>{t("title.generating")}</ScreenHeading>
-      {failed ? (
+      {error ? (
         <>
           <p className={styles.meta}>{meta}</p>
           <ErrorMessage
+            key={attempt}
             id={ERROR_ID}
-            text={t("err.generation")}
-            actions={<Button onClick={onBack}>{t("gen.back")}</Button>}
+            text={error === "consent.declined" ? <ConsentDeclinedText /> : t(error)}
+            actions={
+              <>
+                {canRetry(error) ? (
+                  <Button variant="primary" onClick={retry}>
+                    {t("gen.retry")}
+                  </Button>
+                ) : null}
+                <Button onClick={onBack}>{t("gen.back")}</Button>
+              </>
+            }
           />
         </>
       ) : (

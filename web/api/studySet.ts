@@ -18,6 +18,7 @@ export type StudySetErrorCode = "consent.declined" | "err.noKey" | "err.generati
 export type StudySetResult = { ok: true; studySet: StudySet } | { ok: false; code: StudySetErrorCode };
 
 const GENERATION_FAILED: StudySetResult = { ok: false, code: "err.generation" };
+const NO_KEY: StudySetResult = { ok: false, code: "err.noKey" };
 
 const QuoteRef = { passageId: z.string(), quote: z.string() };
 /** Runtime guard for the contract type; typed against schema.d.ts so the two cannot drift silently. */
@@ -58,8 +59,8 @@ const pending = new Map<string, Promise<StudySetResult>>();
 /**
  * One live generation. A second call for the same Note Hash while one is in flight returns the
  * pending promise (no second request). Aborting the caller's signal aborts the request, frees the
- * Note Hash at once and resolves to `err.generation`; every non-2xx, network, timeout or parse
- * failure is `err.generation` too.
+ * Note Hash at once and resolves to `err.generation`; every network, timeout or parse failure and
+ * every non-2xx is `err.generation` too, except a 503 `{code: "err.noKey"}`, which stays `err.noKey`.
  */
 export function requestStudySet({
   noteHash,
@@ -105,13 +106,28 @@ async function post(fetchImpl: typeof fetch, body: StudySetRequest, signal: Abor
       body: JSON.stringify(body),
       signal,
     });
-    // 429, 5xx, 503 err.noKey, unknown codes: all err.generation here (the gate covers no key up front).
-    if (!res.ok) return GENERATION_FAILED;
+    // The gate covers no key up front; a 503 err.noKey means the key was removed after startup.
+    // Every other non-2xx (429, 5xx, unknown or missing code) is err.generation.
+    if (!res.ok) {
+      if (res.status === 503 && (await errorCode(res)) === "err.noKey" && !signal.aborted) return NO_KEY;
+      return GENERATION_FAILED;
+    }
     const parsed = StudySetSchema.safeParse(await res.json());
     if (signal.aborted) return GENERATION_FAILED;
     return parsed.success ? { ok: true, studySet: parsed.data } : GENERATION_FAILED;
   } catch {
     // Network error, abort (caller or timeout), non-JSON body.
     return GENERATION_FAILED;
+  }
+}
+
+/** The `{code}` of an error body, or null for a missing, non-JSON or other-shaped body. */
+async function errorCode(res: Response): Promise<string | null> {
+  try {
+    const body: unknown = await res.json();
+    if (typeof body === "object" && body !== null && "code" in body && typeof body.code === "string") return body.code;
+    return null;
+  } catch {
+    return null;
   }
 }

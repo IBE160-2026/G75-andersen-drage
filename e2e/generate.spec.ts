@@ -1,5 +1,6 @@
 // Story 1.9: upload → Genererer → one live POST → verified Study Set stored → Notatoversikt
-// (spec I/O & Edge-Case Matrix; FR-5, FR-8, FR-11). The test stack is keyless, so /api/status and
+// (spec I/O & Edge-Case Matrix; FR-5, FR-8, FR-11). Story 1.10: the failure view, 'Prøv igjen',
+// double submit and reload mid-generation (FR-10, FR-24, NFR-8). The test stack is keyless, so /api/status and
 // /api/study-set are stubbed here; nothing reaches the provider. The 90 s timeout, abort and the
 // single-flight map are covered by Vitest (web/api/studySet.test.ts).
 import { readFileSync } from "node:fs";
@@ -17,7 +18,10 @@ const MSG = {
   generating: "Lager kort og quiz",
   concepts: "Finner nøkkelbegreper …",
   generation: "Det gikk ikke å lage kort og quiz nå.",
+  tooFewItems: "For få kort eller spørsmål kunne knyttes til notatet ditt.",
+  noKey: "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env.",
   back: "Tilbake til start",
+  retry: "Prøv igjen",
   startH1: "Dine notater: ingen ennå",
   declined: "Du har ikke godtatt at notater sendes til OpenRouter. Du kan bruke demomodus, eller godta nå.",
   missing: "Fant ikke notatet",
@@ -57,6 +61,42 @@ function studySetFor(passages: Passage[]) {
 }
 
 let studySetRequests: Body[];
+
+/** A promise that settles when `release()` is called: holds a stubbed POST open. */
+function hold() {
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => (release = resolve));
+  return { held, release };
+}
+
+/** Serious and critical axe violations on the current view. */
+async function axeBlocking(page: Page) {
+  const results = await new AxeBuilder({ page }).analyze();
+  return results.violations
+    .filter((v) => v.impact === "serious" || v.impact === "critical")
+    .map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`);
+}
+
+/** The failure view: focused alert with `text`; Tab goes 'Prøv igjen' (when shown) → 'Tilbake til start'. */
+async function expectFailureView(page: Page, text: string, retry: boolean) {
+  await expect(alert(page)).toContainText(`Feil: ${text}`);
+  await expect(page.locator("#generation-error")).toBeFocused();
+  await expect(page.getByRole("heading", { level: 1, name: MSG.generating })).toBeVisible();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("button", { name: MSG.retry })).toHaveCount(retry ? 1 : 0);
+  await page.keyboard.press("Tab");
+  if (retry) {
+    await expect(page.getByRole("button", { name: MSG.retry })).toBeFocused();
+    await page.keyboard.press("Tab");
+  }
+  await expect(page.getByRole("button", { name: MSG.back })).toBeFocused();
+}
+
+async function expectNothingStored(page: Page) {
+  const { noteHash } = studySetRequests[0];
+  const stored = await storedRecords(page, noteHash, `${noteHash}:${PROMPT_VERSION}:${MODEL}`);
+  expect(stored.counts).toEqual([0, 0]);
+}
 
 async function stubStatus(page: Page, keyConfigured: boolean) {
   await page.route("**/api/status", (route) =>
@@ -183,21 +223,17 @@ test("happy: Genererer, exactly 1 POST, both records stored, then Notatoversikt 
   expect(studySetRequests).toHaveLength(1);
 });
 
-test("HTTP 502: err.generation on Genererer, focused; nothing stored; 'Tilbake til start' returns to Start", async ({ page }) => {
+test("HTTP 502: err.generation on Genererer, focused, with 'Prøv igjen'; nothing stored; 'Tilbake til start' returns to Start", async ({ page }) => {
   await seedConsent(page, "accepted");
   await stubStatus(page, true);
   await stubStudySet(page, (_body, route) => route.fulfill({ status: 502, json: { code: "err.generation" } }));
   await gotoStartWithStatus(page);
   await upload(page);
 
-  await expect(alert(page)).toContainText(`Feil: ${MSG.generation}`);
-  await expect(page.locator("#generation-error")).toBeFocused();
-  await expect(page.getByRole("heading", { level: 1, name: MSG.generating })).toBeVisible();
-  await expect(page).toHaveURL(/\/$/);
+  await expectFailureView(page, MSG.generation, true);
+  expect(await axeBlocking(page)).toEqual([]);
   expect(studySetRequests).toHaveLength(1);
-  const { noteHash } = studySetRequests[0];
-  const stored = await storedRecords(page, noteHash, `${noteHash}:${PROMPT_VERSION}:${MODEL}`);
-  expect(stored.counts).toEqual([0, 0]);
+  await expectNothingStored(page);
 
   await page.getByRole("button", { name: MSG.back }).click();
   await expect(page.getByRole("heading", { level: 1, name: MSG.startH1 })).toBeFocused();
@@ -222,13 +258,200 @@ test("verify fails: a StudySet whose Quotes are not in the Note gives err.genera
   await gotoStartWithStatus(page);
   await upload(page);
 
-  await expect(alert(page)).toContainText(`Feil: ${MSG.generation}`);
-  await expect(page.locator("#generation-error")).toBeFocused();
-  await expect(page).toHaveURL(/\/$/);
+  await expectFailureView(page, MSG.generation, true);
   expect(studySetRequests).toHaveLength(1);
+  await expectNothingStored(page);
+});
+
+test("retry: 502, then 'Prøv igjen', then a valid answer: progress view again, Notatoversikt, 2 POSTs in total", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  await stubStatus(page, true);
+  const second = hold();
+  let calls = 0;
+  await stubStudySet(page, async (body, route) => {
+    if (++calls === 1) return route.fulfill({ status: 502, json: { code: "err.generation" } });
+    await second.held;
+    await route.fulfill({ json: studySetFor(body.passages) });
+  });
+  await gotoStartWithStatus(page);
+  await upload(page);
+  await expectFailureView(page, MSG.generation, true);
+
+  await page.getByRole("button", { name: MSG.retry }).click();
+  await expect(alert(page)).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1, name: MSG.generating })).toBeFocused();
+  await expect(page.getByRole("progressbar", { name: "Fremdrift" })).toHaveAttribute("value", "0");
+  await expect(page.locator('main [role="status"]')).toHaveText(MSG.concepts);
+  await expect.poll(() => studySetRequests.length).toBe(2);
+  expect(studySetRequests[1].noteHash).toBe(studySetRequests[0].noteHash);
+
+  second.release();
+  await expect(page).toHaveURL(/\/notat\/[0-9a-f]{64}$/);
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  expect(studySetRequests).toHaveLength(2);
+});
+
+test("retry twice: 502, 'Prøv igjen', 502, 'Prøv igjen', then valid: focused again, button live, 3 POSTs", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  await stubStatus(page, true);
+  let calls = 0;
+  await stubStudySet(page, async (body, route) => {
+    if (++calls <= 2) return route.fulfill({ status: 502, json: { code: "err.generation" } });
+    await route.fulfill({ json: studySetFor(body.passages) });
+  });
+  await gotoStartWithStatus(page);
+  await upload(page);
+  await expectFailureView(page, MSG.generation, true);
+
+  await page.getByRole("button", { name: MSG.retry }).click();
+  await expect.poll(() => studySetRequests.length).toBe(2);
+  // The second failure is announced and focused again, and 'Prøv igjen' works again.
+  await expectFailureView(page, MSG.generation, true);
+  const retry = page.getByRole("button", { name: MSG.retry });
+  await expect(retry).not.toHaveAttribute("aria-disabled");
+  await retry.click();
+
+  await expect(page).toHaveURL(/\/notat\/[0-9a-f]{64}$/);
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  expect(studySetRequests).toHaveLength(3);
+});
+
+test("double retry: 'Prøv igjen' double-clicked while the next POST is held gives exactly 1 new POST", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  await stubStatus(page, true);
+  const next = hold();
+  let calls = 0;
+  await stubStudySet(page, async (body, route) => {
+    if (++calls === 1) return route.fulfill({ status: 502, json: { code: "err.generation" } });
+    await next.held;
+    await route.fulfill({ json: studySetFor(body.passages) });
+  });
+  await gotoStartWithStatus(page);
+  await upload(page);
+  await expectFailureView(page, MSG.generation, true);
+
+  await page.getByRole("button", { name: MSG.retry }).dblclick();
+  await expect(page.getByRole("progressbar", { name: "Fremdrift" })).toBeVisible();
+  await expect.poll(() => studySetRequests.length).toBe(2);
+  await page.waitForTimeout(500);
+  expect(studySetRequests).toHaveLength(2);
+
+  next.release();
+  await expect(page).toHaveURL(/\/notat\/[0-9a-f]{64}$/);
+  expect(studySetRequests).toHaveLength(2);
+});
+
+test("too few Items: fewer than 5 surviving Quiz Questions gives err.tooFewItems with both buttons; nothing stored, no new POST", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  await stubStatus(page, true);
+  await stubStudySet(page, async (body, route) => {
+    const set = studySetFor(body.passages);
+    // Quotes stay valid; duplicate options drop the first concept's only Quiz Question (4 of 5 survive).
+    const [first, ...rest] = set.concepts;
+    const dropped = { ...first, quizQuestions: first.quizQuestions.map((q) => ({ ...q, options: ["Ja", "Ja", "Nei", "Kanskje"] })) };
+    await route.fulfill({ json: { ...set, concepts: [dropped, ...rest] } });
+  });
+  await gotoStartWithStatus(page);
+  await upload(page);
+
+  await expectFailureView(page, MSG.tooFewItems, true);
+  expect(await axeBlocking(page)).toEqual([]);
+  await expectNothingStored(page);
+  // No automatic retry.
+  await page.waitForTimeout(2_000);
+  expect(studySetRequests).toHaveLength(1);
+});
+
+test("Proxy 503 err.noKey (key removed after startup): err.noKey with 'Tilbake til start' only", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  await stubStatus(page, true);
+  await stubStudySet(page, (_body, route) => route.fulfill({ status: 503, json: { code: "err.noKey" } }));
+  await gotoStartWithStatus(page);
+  await upload(page);
+
+  await expectFailureView(page, MSG.noKey, false);
+  expect(studySetRequests).toHaveLength(1);
+  await expectNothingStored(page);
+
+  await page.getByRole("button", { name: MSG.back }).click();
+  await expect(page.getByRole("heading", { level: 1, name: MSG.startH1 })).toBeFocused();
+});
+
+test("reload while the POST is held: Start, nothing stored; uploading again sends 1 POST and succeeds", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  await stubStatus(page, true);
+  const never = hold();
+  let calls = 0;
+  await stubStudySet(page, async (body, route) => {
+    if (++calls === 1) {
+      // Held until the reload has killed the request; it is never answered.
+      await never.held;
+      return route.abort().catch(() => undefined);
+    }
+    await route.fulfill({ json: studySetFor(body.passages) });
+  });
+  await gotoStartWithStatus(page);
+  await upload(page);
+  await expect(page.getByRole("heading", { level: 1, name: MSG.generating })).toBeFocused();
+  await expect.poll(() => studySetRequests.length).toBe(1);
+
+  const status = page.waitForResponse("**/api/status");
+  await page.reload();
+  await status;
+  // The reload killed the request; let the held handler finish instead of hanging.
+  never.release();
+  await expect(page.getByRole("heading", { level: 1, name: MSG.startH1 })).toBeFocused();
+  await expect(page).toHaveURL(/\/$/);
+  await expectNothingStored(page);
+
+  await upload(page);
+  await expect(page).toHaveURL(/\/notat\/[0-9a-f]{64}$/);
+  expect(studySetRequests).toHaveLength(2);
+  expect(studySetRequests[1].noteHash).toBe(studySetRequests[0].noteHash);
   const { noteHash } = studySetRequests[0];
   const stored = await storedRecords(page, noteHash, `${noteHash}:${PROMPT_VERSION}:${MODEL}`);
-  expect(stored.counts).toEqual([0, 0]);
+  expect(stored.counts).toEqual([1, 1]);
+});
+
+test("double drop: two drops at once, and a drop on Genererer, give exactly 1 POST", async ({ page }) => {
+  await seedConsent(page, "accepted");
+  await stubStatus(page, true);
+  const answer = hold();
+  await stubStudySet(page, async (body, route) => {
+    await answer.held;
+    await route.fulfill({ json: studySetFor(body.passages) });
+  });
+  await gotoStartWithStatus(page);
+  const text = readFileSync(join(__dirname, "..", "reference-notes", FIXTURE), "utf8");
+  const drop = (target: "zone" | "body") =>
+    page.evaluate(
+      ([name, text, target]) => {
+        const el = target === "zone" ? document.querySelector("label[for=note-file]")! : document.body;
+        const event = () => {
+          const dt = new DataTransfer();
+          dt.items.add(new File([text], name));
+          return new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: dt });
+        };
+        // Two drops in the same task: the second arrives before React re-renders.
+        const first = event();
+        el.dispatchEvent(first);
+        el.dispatchEvent(event());
+        return first.defaultPrevented;
+      },
+      [FIXTURE, text, target] as const,
+    );
+  await drop("zone");
+  await expect(page.getByRole("heading", { level: 1, name: MSG.generating })).toBeFocused();
+  await expect(input(page)).toHaveCount(0);
+  // On Genererer a dropped file is not opened by the browser and starts nothing.
+  expect(await drop("body")).toBe(true);
+  await expect.poll(() => studySetRequests.length).toBe(1);
+  await page.waitForTimeout(500);
+  expect(studySetRequests).toHaveLength(1);
+
+  answer.release();
+  await expect(page).toHaveURL(/\/notat\/[0-9a-f]{64}$/);
+  expect(studySetRequests).toHaveLength(1);
 });
 
 test("gate: Consent declined with a key configured stays on Start with consent.declined inline; no request", async ({ page }) => {

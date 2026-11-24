@@ -108,11 +108,30 @@ describe("request and response", () => {
     [429, { code: "err.generation" }],
     [500, { code: "err.generation" }],
     [502, { code: "err.generation" }],
-    [503, { code: "err.noKey" }],
+    [503, { code: "err.generation" }],
+    [503, { code: "err.somethingNew" }],
+    [503, {}],
+    [500, { code: "err.noKey" }],
     [504, { code: "err.generation" }],
     [400, { code: "err.somethingNew" }],
-  ])("HTTP %i: err.generation", async (status, body) => {
+  ])("HTTP %i %j: err.generation", async (status, body) => {
     const fetchImpl = vi.fn<typeof fetch>(async () => json(body, status));
+    expect(await requestStudySet({ noteHash: hash(), passages: PASSAGES, status: STATUS, fetchImpl })).toEqual({
+      ok: false,
+      code: "err.generation",
+    });
+  });
+
+  it("HTTP 503 err.noKey (key removed after startup): err.noKey", async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => json({ code: "err.noKey" }, 503));
+    expect(await requestStudySet({ noteHash: hash(), passages: PASSAGES, status: STATUS, fetchImpl })).toEqual({
+      ok: false,
+      code: "err.noKey",
+    });
+  });
+
+  it("HTTP 503 with a non-JSON body: err.generation", async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => new Response("<html>", { status: 503 }));
     expect(await requestStudySet({ noteHash: hash(), passages: PASSAGES, status: STATUS, fetchImpl })).toEqual({
       ok: false,
       code: "err.generation",
