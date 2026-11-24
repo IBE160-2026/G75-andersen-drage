@@ -479,13 +479,16 @@ test("reduced motion: the source region scrolls to the Passage instantly", async
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openOverview(page);
   await expect(h1(page)).toBeFocused();
-  await page.setViewportSize({ width: 1280, height: 300 });
+  // Low enough that the region scrolls whatever the fonts (CI's differ from local), and polled because
+  // the resize lays out asynchronously.
+  await page.setViewportSize({ width: 1280, height: 240 });
+  await expect
+    .poll(() => region(page).evaluate((el) => el.scrollHeight - el.clientHeight))
+    .toBeGreaterThan(100);
   // Start with the region scrolled to the bottom, so P1 is out of view and the jump must scroll up.
-  const scrollable = await region(page).evaluate((el) => {
+  await region(page).evaluate((el) => {
     el.scrollTop = el.scrollHeight;
-    return el.scrollHeight > el.clientHeight;
   });
-  expect(scrollable).toBe(true);
   const inRegion = () =>
     page.evaluate(() => {
       const area = document.querySelector<HTMLElement>("[role=region]")!.getBoundingClientRect();
