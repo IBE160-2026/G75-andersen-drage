@@ -1,3 +1,8 @@
+import os
+import subprocess
+import sys
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -70,3 +75,31 @@ def test_unhandled_error_returns_code_and_logs_without_input(client, error_route
     logged = caplog.text
     assert "GET /api/_test/raises 500" in logged
     assert MARKER not in logged
+
+
+LAZY_CHECK = """
+import sys
+from fastapi.testclient import TestClient
+from app.main import app
+with TestClient(app) as client:
+    res = client.get("/api/status")
+    assert res.status_code == 200 and res.json()["keyConfigured"] is True, res.status_code
+loaded = sorted(m for m in sys.modules if "openrouter" in m or m == "openai" or m.startswith("openai."))
+assert not loaded, loaded
+print("lazy-ok")
+"""
+
+
+def test_provider_and_model_modules_not_imported_at_boot():
+    """A fresh interpreter with a key: boot, lifespan and /api/status never import OpenRouter."""
+    env = {**os.environ, "OPENROUTER_API_KEY": "sk-test-not-real"}
+    proc = subprocess.run(
+        [sys.executable, "-c", LAZY_CHECK],
+        cwd=Path(__file__).resolve().parent.parent,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert proc.returncode == 0, proc.stderr[-2000:]
+    assert "lazy-ok" in proc.stdout

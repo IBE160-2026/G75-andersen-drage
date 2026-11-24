@@ -21,10 +21,82 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/study-set": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Study Set
+         * @description Generate a Study Set from the Passages (FR-6, FR-7, FR-8). Demo Mode arrives in 1.13/1.14.
+         */
+        post: operations["post_study_set_api_study_set_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ErrorBody */
+        ErrorBody: {
+            /** Code */
+            code: string;
+        };
+        /** Flashcard */
+        Flashcard: {
+            /** Back */
+            back: string;
+            /** Front */
+            front: string;
+            /** Passageid */
+            passageId: string;
+            /** Quote */
+            quote: string;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** KeyConcept */
+        KeyConcept: {
+            /** Centralityrank */
+            centralityRank: number;
+            /** Flashcards */
+            flashcards: components["schemas"]["Flashcard"][];
+            /** Name */
+            name: string;
+            /** Quizquestions */
+            quizQuestions: components["schemas"]["QuizQuestion"][];
+        };
+        /** Passage */
+        Passage: {
+            /** Id */
+            id: string;
+            /** Text */
+            text: string;
+        };
+        /** QuizQuestion */
+        QuizQuestion: {
+            /** Correctindex */
+            correctIndex: number;
+            /** Options */
+            options: string[];
+            /** Passageid */
+            passageId: string;
+            /** Question */
+            question: string;
+            /** Quote */
+            quote: string;
+        };
         /** Status */
         Status: {
             /** Keyconfigured */
@@ -35,6 +107,53 @@ export interface components {
             promptVersion: string;
             /** Provider */
             provider: string;
+        };
+        /** StudySet */
+        StudySet: {
+            /** Concepts */
+            concepts: components["schemas"]["KeyConcept"][];
+            /** Language */
+            language: string;
+            /** Model */
+            model: string;
+            /** Promptversion */
+            promptVersion: string;
+            /** Summarypoints */
+            summaryPoints: components["schemas"]["SummaryPoint"][];
+        };
+        /** StudySetRequest */
+        StudySetRequest: {
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "live" | "demo";
+            /** Notehash */
+            noteHash: string;
+            /** Passages */
+            passages: components["schemas"]["Passage"][];
+        };
+        /** SummaryPoint */
+        SummaryPoint: {
+            /** Passageid */
+            passageId: string;
+            /** Quote */
+            quote: string;
+            /** Text */
+            text: string;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
         };
     };
     responses: never;
@@ -61,6 +180,84 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Status"];
+                };
+            };
+        };
+    };
+    post_study_set_api_study_set_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudySetRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StudySet"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorBody"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorBody"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Bad Gateway */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorBody"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorBody"];
+                };
+            };
+            /** @description Gateway Timeout */
+            504: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorBody"];
                 };
             };
         };

@@ -43,7 +43,7 @@
 - [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — vurder ASCII-tittel for story 1.10 (nøkkel/branch med «ø») (løst 2026-11-22)
 - [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — neste steg: bmad-build på story 1.1 (løst 2026-11-22: se [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md))
 - [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — slå på branch protection på main i GitHub (krev grønn CI før merge)
-- [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — sterkere lazy-provider-test i proxy/tests/test_status.py (utsatt til Story 1.6)
+- [x] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — sterkere lazy-provider-test i proxy/tests/test_status.py (utsatt til Story 1.6) (løst 2026-11-23: subprocess-test, se [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md))
 - [x] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — neste steg: story 1.2 etter at 1.1 er merget (løst 2026-11-22: PR #1 merget, 1.2 startet)
 - [x] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — story 1.2: svar på CHECKPOINT 1 for spec-1-2-norwegian-app-shell.md (godkjenn/gjennomgå, samlet eller delt), deretter implementer (løst 2026-11-22: godkjent, implementert og committet i 7ab8e08)
 - [x] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — manuell tastatursjekk av / og /innstillinger ved 320 px (spec › Manual checks) (løst 2026-11-23: godkjent av Tor, se [manuelle-sjekker](981-2026-11-23-12-18-29-manuelle-sjekker-1-2-og-1-3.md))
@@ -66,4 +66,8 @@
 - [x] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — PR #5 for story 1.5 (https://github.com/IBE160-2026/G75-andersen-drage/pull/5, opprettet 2026-11-23): grønn CI og merge; sett deretter 1-5 til done i sprint-status.yaml (løst 2026-11-23: merget i 24eaa69, 1-5 done)
 - [x] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — manuell sjekk: slipp nb-digital-verden.docx og en-unit-testing.pdf i appen, se at antall avsnitt i note.meta er rimelig (løst 2026-11-23: godkjent av Tor)
 - [ ] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — utsatt: PDF-er med fonter uten ToUnicode kan gi uleselig tekst som godtas (deferred-work.md)
-- [ ] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — neste story: 1.6 (Proxy genererer og validerer et Study Set)
+- [x] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — neste story: 1.6 (Proxy genererer og validerer et Study Set) (løst 2026-11-23: implementert, se [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md))
+- [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — PR #6 for story 1.6 (https://github.com/IBE160-2026/G75-andersen-drage/pull/6, opprettet 2026-11-24): grønn CI og merge; sett deretter 1-6 til done i sprint-status.yaml
+- [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — ustabil e2e-test: én Playwright-test feilet én gang og besto ved ny kjøring (navn ikke fanget opp); følg med i CI
+- [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — utsatt: MAX_OUTPUT_TOKENS = 16 000 kan overstige 40 s per forsøk; mål i 1.13 (deferred-work.md)
+- [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — 1.13: sjekk JSON-schema-støtte hos kandidatmodellene, og live-sjekk at nb-injeksjon ikke gir KODE-RØD-4471
