@@ -13,12 +13,15 @@ import styles from "./Screen.module.css";
  * The focused h1 sits inside main, so a plain Tab would skip the skip link. The first
  * Tab after mount, while focus is still on the h1, therefore goes to the skip link,
  * which keeps it the first Tab stop on every route (spec 1.2, Implementation Notes).
+ *
+ * `title` is a message key; `note` adds the Note's name as a page-title segment (spec 1.9):
+ * both give "{side} · {notat} · …" (Genererer), `note` alone gives "{notat} · …" (Notatoversikt).
  */
-export function Screen({ title, children }: { title: MessageKey; children: ReactNode }) {
+export function Screen({ title, note, children }: { title?: MessageKey; note?: string; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.title = pageTitle(title);
+    document.title = pageTitle(title, note);
     const heading = ref.current?.querySelector<HTMLElement>("h1");
     if (!heading) return;
     const dialogOpen = () => !!document.querySelector('[role="dialog"]');
@@ -38,7 +41,7 @@ export function Screen({ title, children }: { title: MessageKey; children: React
     }
     document.addEventListener("keydown", onKeyDown, true);
     return () => document.removeEventListener("keydown", onKeyDown, true);
-  }, [title]);
+  }, [title, note]);
 
   return (
     <div ref={ref} className={styles.screen}>

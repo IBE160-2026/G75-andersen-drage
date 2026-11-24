@@ -1,0 +1,37 @@
+/* Genererer (DESIGN.md › Components › Generation progress; mockup key-generating, frames a/b). */
+.status {
+  color: var(--colors-ink-muted);
+}
+
+.meta {
+  color: var(--colors-ink-muted);
+}
+
+/* Native <progress>: line track, accent fill, track radius. No animated fill (reduced motion is moot). */
+.progress {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: var(--spacing-progress-height);
+  border: 0;
+  border-radius: var(--rounded-track);
+  background: var(--colors-line);
+  color: var(--colors-accent);
+  overflow: hidden;
+}
+
+.progress::-webkit-progress-bar {
+  background: var(--colors-line);
+  border-radius: var(--rounded-track);
+}
+
+.progress::-webkit-progress-value {
+  background: var(--colors-accent);
+  border-radius: var(--rounded-track);
+  transition: none;
+}
+
+.progress::-moz-progress-bar {
+  background: var(--colors-accent);
+  border-radius: var(--rounded-track);
+}

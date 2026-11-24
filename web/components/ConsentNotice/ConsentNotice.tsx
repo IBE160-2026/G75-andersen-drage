@@ -5,19 +5,16 @@ import { useAppSettings } from "../AppSettings/AppSettings";
 import styles from "./ConsentNotice.module.css";
 
 /**
- * `consent.declined` on Start (FR-5): shown after declining or withdrawing. The bracketed
- * part of the string is an inline link-styled button that reopens the Consent dialog.
+ * The `consent.declined` text with its bracketed part as an inline link-styled button that
+ * reopens the Consent dialog. Also shown inline at the drop zone when the send gate blocks (Story 1.9).
  */
-export function ConsentNotice() {
-  const { settings, provider, openConsent } = useAppSettings();
-  if (settings.consent !== "declined") return null;
-
+export function ConsentDeclinedText() {
+  const { provider, openConsent } = useAppSettings();
   const text = format("consent.declined", { leverandør: provider });
   const match = text.match(/^([\s\S]*)\[([^\]]+)\]([\s\S]*)$/);
   const [before, link, after] = match ? [match[1], match[2], match[3]] : [text, null, ""];
-
   return (
-    <p className={styles.notice}>
+    <>
       {before}
       {link ? (
         <button type="button" className={styles.link} onClick={(event) => openConsent(event.currentTarget)}>
@@ -25,6 +22,17 @@ export function ConsentNotice() {
         </button>
       ) : null}
       {after}
+    </>
+  );
+}
+
+/** `consent.declined` on Start (FR-5): shown after declining or withdrawing. */
+export function ConsentNotice() {
+  const { settings } = useAppSettings();
+  if (settings.consent !== "declined") return null;
+  return (
+    <p className={styles.notice}>
+      <ConsentDeclinedText />
     </p>
   );
 }
