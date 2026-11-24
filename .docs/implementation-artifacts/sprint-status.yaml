@@ -43,7 +43,7 @@ development_status:
   1-5-upload-docx-and-text-based-pdf-notes: done
   1-6-proxy-generates-and-validates-a-study-set: done
   1-7-proxy-guards-origin-rate-limit-and-no-data-retention: done
-  1-8-verify-the-study-set-in-the-browser-quote-check-and-minimums: review
+  1-8-verify-the-study-set-in-the-browser-quote-check-and-minimums: done
   1-9-generate-a-study-set-from-an-uploaded-note: backlog
   1-10-generation-errors-retry-and-interrupted-generation: backlog
   1-11-notatoversikt-with-summary-key-concepts-and-source-panel: backlog
