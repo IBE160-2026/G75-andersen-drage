@@ -42,7 +42,7 @@
 - [ ] 2026-11-22 [epics-og-stories](988-2026-11-21-14-05-13-epics-og-stories.md) — milepæler (5 t/dag): M0 26.11 (1.1–1.4), M1 1.12 (Demo-løkka), M2 4.12 (Epic 2 + prøvekjøring ren klon), Should-kutt 6.12, M3 8.12, frys 9.12; logg timer brukt mot budsjett
 - [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — vurder ASCII-tittel for story 1.10 (nøkkel/branch med «ø») (løst 2026-11-22)
 - [x] 2026-11-22 [sprint-planning](987-2026-11-22-14-15-00-sprint-planning.md) — neste steg: bmad-build på story 1.1 (løst 2026-11-22: se [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md))
-- [ ] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — slå på branch protection på main i GitHub (krev grønn CI før merge)
+- [x] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — slå på branch protection på main i GitHub (krev grønn CI før merge) (løst 2026-11-24: kravet fjernet etter avklaring med faglærer, D-10)
 - [x] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — sterkere lazy-provider-test i proxy/tests/test_status.py (utsatt til Story 1.6) (løst 2026-11-23: subprocess-test, se [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md))
 - [x] 2026-11-22 [story-1-1](986-2026-11-22-16-48-19-story-1-1-one-command-start.md) — neste steg: story 1.2 etter at 1.1 er merget (løst 2026-11-22: PR #1 merget, 1.2 startet)
 - [x] 2026-11-22 [story-1-2](985-2026-11-22-18-08-04-story-1-2-norwegian-app-shell.md) — story 1.2: svar på CHECKPOINT 1 for spec-1-2-norwegian-app-shell.md (godkjenn/gjennomgå, samlet eller delt), deretter implementer (løst 2026-11-22: godkjent, implementert og committet i 7ab8e08)
