@@ -88,6 +88,15 @@ export const messages = {
   "overview.start.hint": "Usikre begreper kommer først.",
   "err.noConcepts": "Fant ingen nøkkelbegreper med verifisert kilde, så runden kan ikke starte.",
 
+  // Reference jump (Story 1.12, D-14). quote.* bracket the <mark> for screen readers; {id} is "P4" and
+  // {kilde} names where the student came from. Notatoversikt's context decided by Tor 2026-11-24.
+  "quote.start": "Sitat start",
+  "quote.end": "Sitat slutt",
+  "return.label": "Viser {id} fra {kilde}",
+  "return.hint": "Trykk Esc for å gå tilbake.",
+  "return.from.summary": "sammendraget",
+  "return.summary": "Tilbake til sammendraget",
+
   // Innstillinger
   "settings.h1": "Innstillinger",
   "settings.consent.h2": "Samtykke",

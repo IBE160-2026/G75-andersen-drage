@@ -44,3 +44,17 @@ export function contentLang(language: string): string {
 export function passageLabel(passageId: string): string {
   return passageId.replace(/^p/, "P");
 }
+
+/** A Passage split around its Quote for the highlight (Story 1.12): first exact occurrence, or null. */
+export type QuoteSplit = { before: string; quote: string; after: string };
+
+/**
+ * The stored Quote is already normalized and passed the Quote Check, so it is an exact substring of its
+ * Passage (AD-8); no fuzzy search. Returns null for an empty Quote or no match.
+ */
+export function splitQuote(text: string, quote: string): QuoteSplit | null {
+  if (!quote) return null;
+  const start = text.indexOf(quote);
+  if (start < 0) return null;
+  return { before: text.slice(0, start), quote, after: text.slice(start + quote.length) };
+}

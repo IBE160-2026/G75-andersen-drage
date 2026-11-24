@@ -7,6 +7,7 @@ import {
   noteFileName,
   passageLabel,
   sortConcepts,
+  splitQuote,
 } from "./overview";
 import type { Note } from "./types";
 
@@ -75,5 +76,20 @@ describe("passageLabel", () => {
   it("shows p4 as P4", () => {
     expect(passageLabel("p4")).toBe("P4");
     expect(passageLabel("p12")).toBe("P12");
+  });
+});
+
+describe("splitQuote", () => {
+  it("splits around the first exact occurrence", () => {
+    expect(splitQuote("abc Quote def Quote", "Quote")).toEqual({ before: "abc ", quote: "Quote", after: " def Quote" });
+  });
+  it("handles a Quote at the start, at the end and as the whole text", () => {
+    expect(splitQuote("Quote rest", "Quote")).toEqual({ before: "", quote: "Quote", after: " rest" });
+    expect(splitQuote("rest Quote", "Quote")).toEqual({ before: "rest ", quote: "Quote", after: "" });
+    expect(splitQuote("Quote", "Quote")).toEqual({ before: "", quote: "Quote", after: "" });
+  });
+  it("returns null when the Quote is not found (no fuzzy match) or empty", () => {
+    expect(splitQuote("Normalisering er en metode.", "normalisering er")).toBeNull();
+    expect(splitQuote("Normalisering", "")).toBeNull();
   });
 });
