@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: 2026-11-24
+last_updated: 11-24-2026 23:36
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -50,7 +50,7 @@ development_status:
   1-12-jump-from-a-source-reference-to-the-highlighted-quote: done
   1-13-record-fixtures-and-compare-models-on-the-reference-notes: done
   1-14-demo-mode-with-the-bundled-sample-notes: done
-  epic-1-retrospective: optional
+  epic-1-retrospective: done
 
   epic-2: backlog
   2-1-start-a-round-from-notatoversikt: backlog
@@ -85,3 +85,77 @@ development_status:
   5-3-complete-readme-and-planning-documents-that-match-the-app: backlog
   5-4-fresh-clone-run-before-delivery: backlog
   epic-5-retrospective: optional
+action_items:
+  - id: "epic-1-retro-item-1-approve-or-edit-the-draft-microcopy-keys"
+    epic: 1
+    action: "Approve or edit the draft Microcopy keys of D-11 to D-16 (and older EXPERIENCE.md
+      drafts) in one pass; mark them approved in EXPERIENCE.md before Epic 2"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-2-finish-and-log-a-manual-keyboard-and-320"
+    epic: 1
+    action: "Finish and log a manual keyboard and 320 px pass over Genererer, error
+      view, Notatoversikt, reference jump and Demovelger/Innstillinger before Epic
+      2"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-3-make-a-manual-checks-section-required-in"
+    epic: 1
+    action: "Make a Manual checks section required in every story spec that adds or
+      changes UI, from Story 2.1"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-4-fix-err-nokey-shown-before-api-status-an"
+    epic: 1
+    action: "Fix err.noKey shown before /api/status answers: wait for status or clear
+      the error when status reports a key (Start and overview retry)"
+    owner: "Tor (bmad-build)"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-5-keep-user-fields-and-delete-the-previous"
+    epic: 1
+    action: "Keep user fields and delete the previous Study Set on regenerate (AD-21);
+      move from Epic 3 to the first Epic 2 story that writes progress"
+    owner: "Tor (bmad-build)"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-6-pull-deferred-work-md-and-issues-md-item"
+    epic: 1
+    action: "Pull deferred-work.md and issues.md items naming a story into its spec;
+      carry the three open 1.13 checks (MAX_OUTPUT_TOKENS vs 40 s, JSON-schema support,
+      live injection check) into Story 5.1"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-7-add-pitfalls-to-project-context-tool-lay"
+    epic: 1
+    action: "Add pitfalls to project context: tool layer rewrites backslash-u escapes
+      (build with chr(92), verify bytes); no waitForTimeout in e2e"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-8-readme-restart-the-proxy-and-build-for-c"
+    epic: 1
+    action: "README: restart the Proxy (and --build for code changes) after changing
+      OPENROUTER_API_KEY or OPENROUTER_MODEL"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-9-decide-whether-demo-mode-may-send-a-non"
+    epic: 1
+    action: "Decide whether Demo Mode may send a non-sample Note's Passages to the
+      local Proxy without Consent; if not, send empty passages in demo mode or check
+      the manifest first"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-1-retro-item-10-decide-whether-to-log-hours-against-the"
+    epic: 1
+    action: "Decide whether to log hours against the milestone budget or drop that
+      part of the re-plan rule"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
