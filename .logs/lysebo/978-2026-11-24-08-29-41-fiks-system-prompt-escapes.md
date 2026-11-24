@@ -11,7 +11,7 @@ Rette feilen i `proxy/app/prompts/system.md` linje 32 (fra issues.md, 2026-11-24
 - Legge til en test som binder prompten til `render_passages`.
 
 ### Resultat
-- Gren `fix/system-prompt-escapes`, commit `6251765`, ikke pushet.
+- Gren `fix/system-prompt-escapes`, commit `6251765`, pushet. PR #7: https://github.com/IBE160-2026/G75-andersen-drage/pull/7 (inneholder også den lokale loggcommiten `8d58452` fra 1.6-walkthrough, som ikke var pushet til main).
 - `proxy/app/prompts/system.md`: linja navngir nå de tre escapene.
 - `proxy/app/config.py`: `PROMPT_VERSION = "2"`. Testen i `tests/test_study_set.py` er oppdatert.
 - Ny test `test_system_prompt_names_the_escapes_render_passages_uses` sjekker at hver escape som `render_passages` skriver, står i backticks i `SYSTEM_PROMPT`.
