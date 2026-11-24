@@ -1,0 +1,120 @@
+/* Innstillinger › Studier (DESIGN.md › Toggle (switch), Settings row; components.toggle). */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--colors-line);
+}
+
+.heading {
+  font-family: var(--typography-body-font-family);
+  font-size: var(--typography-body-font-size);
+  font-weight: var(--typography-headline-font-weight);
+  line-height: var(--typography-body-line-height);
+}
+
+/* Label and description left, control right; stacked below 480 px. */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+}
+
+.label {
+  color: var(--colors-ink);
+  cursor: pointer;
+}
+
+.desc {
+  color: var(--colors-ink-muted);
+}
+
+/* The whole control is a 44 px hit area. */
+.control {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: 44px;
+}
+
+/* Track 36 × 20 px (2.25rem × 1.25rem). Off: surface + line-strong border, ink-muted thumb left. */
+.switch {
+  position: relative;
+  flex: none;
+  width: 2.25rem;
+  height: 1.25rem;
+  padding: 0;
+  background: var(--colors-surface);
+  border: 1px solid var(--colors-line-strong);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+}
+
+/* The track is small; a transparent border-box extension gives it a 44 px tall pointer target. */
+.switch::before {
+  content: "";
+  position: absolute;
+  inset: -0.75rem -0.25rem;
+}
+
+.switch[data-state="checked"] {
+  background: var(--colors-accent);
+  border-color: var(--colors-accent);
+}
+
+.thumb {
+  display: block;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: var(--colors-ink-muted);
+  border-radius: var(--rounded-full);
+  transform: translateX(0.125rem);
+  transition: transform 120ms ease;
+}
+
+.thumb[data-state="checked"] {
+  background: var(--colors-on-accent);
+  transform: translateX(1.125rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .switch[data-state="checked"] {
+    background: Highlight;
+    border-color: Highlight;
+  }
+
+  .thumb {
+    background: CanvasText;
+  }
+
+  .thumb[data-state="checked"] {
+    background: Canvas;
+  }
+}
+
+.state {
+  color: var(--colors-ink-muted);
+}
+
+@media (min-width: 480px) {
+  .row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+  }
+}

@@ -4,6 +4,8 @@ import { expect, test, type Page } from "@playwright/test";
 import { seedConsent, SETTINGS_KEY } from "./seed";
 
 const START_H1 = "Dine notater: ingen ennå";
+// Story 1.14: the first-open decline lands on Demovelger (decided by Tor 2026-11-24).
+const DEMO_H1 = "Velg et eksempelnotat";
 const BODY_START = "Notatet ditt sendes til";
 
 const dialog = (page: Page) => page.getByRole("dialog", { name: "Før du starter" });
@@ -68,12 +70,15 @@ test.describe("first open", () => {
     await expect(dialog(page).locator('[data-variant="primary"]')).toHaveCount(1);
   });
 
-  for (const choice of ["Jeg forstår, fortsett", "Nei takk, vis demo"]) {
-    test(`after '${choice}', the first Tab from the Start h1 reaches the skip link`, async ({ page }) => {
+  for (const [choice, h1] of [
+    ["Jeg forstår, fortsett", START_H1],
+    ["Nei takk, vis demo", DEMO_H1],
+  ]) {
+    test(`after '${choice}', the first Tab from the '${h1}' h1 reaches the skip link`, async ({ page }) => {
       await page.goto("/");
       await dialog(page).getByRole("button", { name: choice }).click();
       await expect(dialog(page)).toHaveCount(0);
-      await expect(page.getByRole("heading", { level: 1, name: START_H1 })).toBeFocused();
+      await expect(page.getByRole("heading", { level: 1, name: h1 })).toBeFocused();
       await page.keyboard.press("Tab");
       await expect(page.getByRole("link", { name: "Gå til hovedinnhold" })).toBeFocused();
     });
@@ -153,13 +158,17 @@ test.describe("decision", () => {
     expect(seen.consentAtHead).toBe("accepted");
   });
 
-  test("decline stores 'declined' and Start shows consent.declined; its link reopens the dialog", async ({ page }) => {
+  test("decline stores 'declined' and lands on Demovelger; Start shows consent.declined, its link reopens the dialog", async ({ page }) => {
     await page.goto("/");
     await dialog(page).getByRole("button", { name: "Nei takk, vis demo" }).click();
     await expect(dialog(page)).toHaveCount(0);
-    await expect(page.getByRole("heading", { level: 1, name: START_H1 })).toBeFocused();
+    await expect(page).toHaveURL(/\/demo$/);
+    await expect(page.getByRole("heading", { level: 1, name: DEMO_H1 })).toBeFocused();
     expect(await stored(page)).toEqual({ schemaVersion: 1, consent: "declined" });
     await expect(page.locator("html")).toHaveAttribute("data-consent", "declined");
+
+    await page.getByRole("link", { name: "Torsas læringsassistent" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: START_H1 })).toBeFocused();
     await expect(
       page.getByText("Du har ikke godtatt at notater sendes til OpenRouter. Du kan bruke demomodus, eller godta nå."),
     ).toBeVisible();
@@ -177,11 +186,18 @@ test.describe("decision", () => {
     expect(await stored(page)).toEqual({ schemaVersion: 1, consent: "accepted" });
   });
 
-  test("a decision made on first open at /innstillinger lands on Start", async ({ page }) => {
+  test("accept made on first open at /innstillinger lands on Start", async ({ page }) => {
     await page.goto("/innstillinger");
-    await dialog(page).getByRole("button", { name: "Nei takk, vis demo" }).click();
+    await dialog(page).getByRole("button", { name: "Jeg forstår, fortsett" }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole("heading", { level: 1, name: START_H1 })).toBeFocused();
+  });
+
+  test("decline made on first open at /innstillinger lands on Demovelger", async ({ page }) => {
+    await page.goto("/innstillinger");
+    await dialog(page).getByRole("button", { name: "Nei takk, vis demo" }).click();
+    await expect(page).toHaveURL(/\/demo$/);
+    await expect(page.getByRole("heading", { level: 1, name: DEMO_H1 })).toBeFocused();
   });
 });
 
@@ -204,7 +220,8 @@ test.describe("Innstillinger › Samtykke", () => {
     await seedConsent(page, "declined");
     await page.goto("/innstillinger");
     await expect(dialog(page)).toHaveCount(0);
-    const trigger = page.locator("main button");
+    // Scoped to Samtykke: Studier (Story 1.14) adds the Demomodus switch, also a button.
+    const trigger = page.locator('main section[aria-labelledby="settings-consent"] button');
     await expect(trigger).toHaveText("Godta at notater sendes");
 
     await trigger.click();

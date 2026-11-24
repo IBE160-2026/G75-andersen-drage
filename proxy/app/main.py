@@ -1,7 +1,9 @@
 """FastAPI entry point for the Proxy (AD-5, AD-6, AD-14)."""
 
+import json
 import logging
 import time
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -11,6 +13,7 @@ from . import llm
 from .config import MAX_BODY_BYTES, PROMPT_VERSION, PROVIDER_NAME, load_settings
 from .generation import GENERATION_ERROR, GenerationError, generate
 from .guards import RateLimiter, is_counted, origin_allowed
+from .rules import validate_study_set
 from .schemas import ErrorBody, Status, StudySet, StudySetRequest
 
 for _name in ("httpx", "httpx2", "httpcore", "httpcore2", "openai", "pydantic_ai", "uvicorn.access"):
@@ -23,6 +26,9 @@ if not logger.handlers:
     logger.addHandler(_handler)
 logger.setLevel(logging.INFO)
 logger.propagate = False
+
+# Demo Mode (Story 1.14, AD-12): `{noteHash}.json` per bundled sample. Module-level so tests can monkeypatch it.
+FIXTURES_DIR = Path(__file__).resolve().parents[1] / "fixtures"
 
 app = FastAPI(title="Torsa Proxy", version="0.1.0")
 app.state.rate_limiter = RateLimiter()
@@ -136,9 +142,9 @@ _ERRORS = {status: {"model": ErrorBody} for status in (400, 404, 502, 503, 504)}
     responses=_ERRORS,
 )
 async def post_study_set(body: StudySetRequest, request: Request):
-    """Generate a Study Set from the Passages (FR-6, FR-7, FR-8). Demo Mode arrives in 1.13/1.14."""
+    """Generate a Study Set from the Passages (FR-6, FR-7, FR-8), or serve a Fixture in Demo Mode (FR-23)."""
     if body.mode == "demo":
-        return _error(request, 404, "err.demoOnly")
+        return _demo_study_set(body, request)
     settings = load_settings()
     if not settings.key_configured:
         return _error(request, 503, "err.noKey")
@@ -150,3 +156,24 @@ async def post_study_set(body: StudySetRequest, request: Request):
     if isinstance(result, GenerationError):
         return _error(request, result.status, result.code)
     return result
+
+
+def _demo_study_set(body: StudySetRequest, request: Request):
+    """The Fixture for this Note Hash through the live count rules; no agent, key or rate-limit count.
+
+    `note_hash` is 64 lowercase hex (schema), so it cannot escape FIXTURES_DIR. Unknown → 404
+    `err.demoOnly`; a Fixture that does not read or validate → 502 `err.generation`.
+    """
+    path = FIXTURES_DIR / f"{body.note_hash}.json"
+    if not path.is_file():
+        return _error(request, 404, "err.demoOnly")
+    try:
+        fixture = json.loads(path.read_text(encoding="utf-8"))
+        study_set = validate_study_set(
+            fixture["studySet"], model=fixture["model"], prompt_version=fixture["promptVersion"]
+        )
+    except Exception:  # noqa: BLE001 -- never logged; text could hold Fixture content
+        study_set = None
+    if study_set is None:
+        return _error(request, 502, GENERATION_ERROR)
+    return study_set

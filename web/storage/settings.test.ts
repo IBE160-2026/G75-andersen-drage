@@ -28,12 +28,22 @@ describe("settings storage", () => {
   });
 
   it("keeps unknown fields", () => {
-    const s = fakeStorage({ [SETTINGS_KEY]: JSON.stringify({ schemaVersion: 1, consent: "declined", demoMode: true }) });
+    const s = fakeStorage({ [SETTINGS_KEY]: JSON.stringify({ schemaVersion: 1, consent: "declined", theme: "dark" }) });
     const store = createSettingsStore(() => s);
     const read = store.read();
-    expect(read).toEqual({ schemaVersion: 1, consent: "declined", demoMode: true });
+    expect(read).toEqual({ schemaVersion: 1, consent: "declined", theme: "dark" });
     store.write({ ...read, consent: "accepted" });
-    expect(JSON.parse(s.data.get(SETTINGS_KEY)!)).toEqual({ schemaVersion: 1, consent: "accepted", demoMode: true });
+    expect(JSON.parse(s.data.get(SETTINGS_KEY)!)).toEqual({ schemaVersion: 1, consent: "accepted", theme: "dark" });
+  });
+
+  it("round-trips demoMode (Story 1.14) and rejects a non-boolean value", () => {
+    const s = fakeStorage();
+    const store = createSettingsStore(() => s);
+    store.write({ schemaVersion: 1, consent: "declined", demoMode: true });
+    expect(store.read()).toEqual({ schemaVersion: 1, consent: "declined", demoMode: true });
+    s.data.set(SETTINGS_KEY, JSON.stringify({ schemaVersion: 1, demoMode: "yes" }));
+    expect(store.read()).toEqual(DEFAULT_SETTINGS);
+    expect(s.data.has(SETTINGS_KEY)).toBe(false);
   });
 
   it.each([

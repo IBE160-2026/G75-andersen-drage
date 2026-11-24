@@ -35,7 +35,9 @@ services:
     restart: unless-stopped
 
   web:
-    build: ./web
+    build:
+      context: .
+      dockerfile: web/Dockerfile
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
@@ -63,7 +65,9 @@ services:
 
   web-test:
     profiles: [test]
-    build: ./web
+    build:
+      context: .
+      dockerfile: web/Dockerfile
     depends_on:
       proxy-test:
         condition: service_healthy
@@ -109,6 +113,8 @@ services:
     volumes:
       - ./web:/app
       - web-dev-node-modules:/app/node_modules
+      # `npm run dev` copies the sample notes from ../reference-notes first (Story 1.14).
+      - ./reference-notes:/reference-notes:ro
     ports:
       - "127.0.0.1:3001:3000"
     depends_on:

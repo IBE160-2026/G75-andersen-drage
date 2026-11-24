@@ -1,9 +1,10 @@
 // POST /api/study-set (AD-6, AD-7, AD-11, AD-20). Never throws, never retries.
-// Order: send gate with freshly read settings → single-flight per Note Hash → POST with a 90 s
-// browser timeout merged with the caller's signal → guarded parse of the StudySet.
+// Order: mode and send gate from freshly read settings → single-flight per mode and Note Hash → POST with a
+// 90 s browser timeout merged with the caller's signal → guarded parse of the StudySet.
+// Story 1.14: `demoMode` in the settings makes the POST `mode: "demo"` (the Proxy serves a Fixture).
 import { z } from "zod";
-import { canSend, type GateResult } from "../core/gate";
-import { readSettings } from "../storage/settings";
+import { canSend, type GateResult, type SendMode } from "../core/gate";
+import { readSettings, type Settings } from "../storage/settings";
 import type { components } from "./schema";
 import type { Status } from "./status";
 
@@ -14,11 +15,13 @@ type Passage = components["schemas"]["Passage"];
 /** FR-11, AD-7: the browser gives up after 90 s (the Proxy deadline is 85 s). */
 export const STUDY_SET_TIMEOUT_MS = 90_000;
 
-export type StudySetErrorCode = "consent.declined" | "err.noKey" | "err.generation";
-export type StudySetResult = { ok: true; studySet: StudySet } | { ok: false; code: StudySetErrorCode };
+export type StudySetErrorCode = "consent.declined" | "err.noKey" | "err.demoOnly" | "err.generation";
+/** `mode` is what was sent: the caller stores a demo answer under `demo:` keys (AD-9). */
+export type StudySetResult = { ok: true; studySet: StudySet; mode: SendMode } | { ok: false; code: StudySetErrorCode };
 
 const GENERATION_FAILED: StudySetResult = { ok: false, code: "err.generation" };
 const NO_KEY: StudySetResult = { ok: false, code: "err.noKey" };
+const DEMO_ONLY: StudySetResult = { ok: false, code: "err.demoOnly" };
 
 const QuoteRef = { passageId: z.string(), quote: z.string() };
 /** Runtime guard for the contract type; typed against schema.d.ts so the two cannot drift silently. */
@@ -39,9 +42,15 @@ const StudySetSchema: z.ZodType<StudySet> = z.object({
   promptVersion: z.string(),
 });
 
-/** AD-20 for a live send, with settings read now (Consent may have changed since startup). */
+/** Demo Mode on → `"demo"`, else `"live"` (AD-20: api/ derives the mode, no screen decides it). */
+export function sendMode(settings: Settings): SendMode {
+  return settings.demoMode === true ? "demo" : "live";
+}
+
+/** AD-20 with settings read now (Consent or Demo Mode may have changed since startup). */
 export function checkSendGate(status: Status | null): GateResult {
-  return canSend(readSettings(), status, "live");
+  const settings = readSettings();
+  return canSend(settings, status, sendMode(settings));
 }
 
 type RequestOptions = {
@@ -57,10 +66,11 @@ type RequestOptions = {
 const pending = new Map<string, Promise<StudySetResult>>();
 
 /**
- * One live generation. A second call for the same Note Hash while one is in flight returns the
- * pending promise (no second request). Aborting the caller's signal aborts the request, frees the
+ * One generation, live or demo by the current settings. A second call for the same mode and Note Hash
+ * while one is in flight returns the pending promise (no second request). Aborting the caller's signal aborts the request, frees the
  * Note Hash at once and resolves to `err.generation`; every network, timeout or parse failure and
- * every non-2xx is `err.generation` too, except a 503 `{code: "err.noKey"}`, which stays `err.noKey`.
+ * every non-2xx is `err.generation` too, except a 503 `{code: "err.noKey"}`, which stays `err.noKey`, and a
+ * 404 `{code: "err.demoOnly"}` (no Fixture for this Note in Demo Mode), which stays `err.demoOnly`.
  */
 export function requestStudySet({
   noteHash,
@@ -70,17 +80,20 @@ export function requestStudySet({
   fetchImpl = fetch,
   timeoutMs = STUDY_SET_TIMEOUT_MS,
 }: RequestOptions): Promise<StudySetResult> {
-  const gate = checkSendGate(status);
+  const settings = readSettings();
+  const mode = sendMode(settings);
+  const gate = canSend(settings, status, mode);
   if (!gate.ok) return Promise.resolve({ ok: false, code: gate.code });
 
   if (signal?.aborted) return Promise.resolve(GENERATION_FAILED);
-  const inFlight = pending.get(noteHash);
+  const flightKey = `${mode}:${noteHash}`;
+  const inFlight = pending.get(flightKey);
   if (inFlight) return inFlight;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const release = () => {
-    if (pending.get(noteHash) === promise) pending.delete(noteHash);
+    if (pending.get(flightKey) === promise) pending.delete(flightKey);
   };
   const onAbort = () => {
     release();
@@ -88,13 +101,13 @@ export function requestStudySet({
   };
   signal?.addEventListener("abort", onAbort, { once: true });
 
-  const body: StudySetRequest = { mode: "live", noteHash, passages: passages.map((p) => ({ id: p.id, text: p.text })) };
+  const body: StudySetRequest = { mode, noteHash, passages: passages.map((p) => ({ id: p.id, text: p.text })) };
   const promise: Promise<StudySetResult> = post(fetchImpl, body, controller.signal).finally(() => {
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);
     release();
   });
-  pending.set(noteHash, promise);
+  pending.set(flightKey, promise);
   return promise;
 }
 
@@ -109,12 +122,17 @@ async function post(fetchImpl: typeof fetch, body: StudySetRequest, signal: Abor
     // The gate covers no key up front; a 503 err.noKey means the key was removed after startup.
     // Every other non-2xx (429, 5xx, unknown or missing code) is err.generation.
     if (!res.ok) {
-      if (res.status === 503 && (await errorCode(res)) === "err.noKey" && !signal.aborted) return NO_KEY;
+      if (res.status === 503 || res.status === 404) {
+        const code = await errorCode(res);
+        if (signal.aborted) return GENERATION_FAILED;
+        if (res.status === 503 && code === "err.noKey") return NO_KEY;
+        if (res.status === 404 && code === "err.demoOnly") return DEMO_ONLY;
+      }
       return GENERATION_FAILED;
     }
     const parsed = StudySetSchema.safeParse(await res.json());
     if (signal.aborted) return GENERATION_FAILED;
-    return parsed.success ? { ok: true, studySet: parsed.data } : GENERATION_FAILED;
+    return parsed.success ? { ok: true, studySet: parsed.data, mode: body.mode } : GENERATION_FAILED;
   } catch {
     // Network error, abort (caller or timeout), non-JSON body.
     return GENERATION_FAILED;

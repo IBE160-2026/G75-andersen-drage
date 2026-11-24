@@ -1,6 +1,6 @@
 // Story 1.8: AD-9 identity helpers.
 import { describe, expect, it } from "vitest";
-import { cacheKey, flashcardId, keyConceptId, quizQuestionId, summaryPointId } from "./ids";
+import { bareNoteHash, cacheKey, demoKey, flashcardId, keyConceptId, quizQuestionId, summaryPointId } from "./ids";
 
 describe("keyConceptId", () => {
   it("builds k- + slug: lowercased, non-letter/digit runs → -, ends trimmed", () => {
@@ -33,5 +33,18 @@ describe("Item IDs and cache key", () => {
 
   it("builds {noteHash}:{promptVersion}:{model}", () => {
     expect(cacheKey("abc", "v1", "anthropic/claude-haiku-5.5")).toBe("abc:v1:anthropic/claude-haiku-5.5");
+  });
+});
+
+describe("demoKey / bareNoteHash (Story 1.14)", () => {
+  const hash = "a".repeat(64);
+  it("prefixes demo: to a Note Hash and to a cache key", () => {
+    expect(demoKey(hash)).toBe(`demo:${hash}`);
+    expect(demoKey(cacheKey(hash, "2", "anthropic/claude-haiku-5.5"))).toBe(`demo:${hash}:2:anthropic/claude-haiku-5.5`);
+  });
+
+  it("strips demo: back to the bare Note Hash; a live key is unchanged", () => {
+    expect(bareNoteHash(demoKey(hash))).toBe(hash);
+    expect(bareNoteHash(hash)).toBe(hash);
   });
 });

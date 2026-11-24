@@ -32,7 +32,7 @@ export interface paths {
         put?: never;
         /**
          * Post Study Set
-         * @description Generate a Study Set from the Passages (FR-6, FR-7, FR-8). Demo Mode arrives in 1.13/1.14.
+         * @description Generate a Study Set from the Passages (FR-6, FR-7, FR-8), or serve a Fixture in Demo Mode (FR-23).
          */
         post: operations["post_study_set_api_study_set_post"];
         delete?: never;

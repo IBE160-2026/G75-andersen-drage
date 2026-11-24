@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { checkSendGate, type StudySetErrorCode } from "../api/studySet";
-import { useAppSettings } from "../components/AppSettings/AppSettings";
+import { DEMO_PATH, useAppSettings } from "../components/AppSettings/AppSettings";
+import { ButtonLink } from "../components/Button/Button";
 import { ConsentDeclinedText, ConsentNotice } from "../components/ConsentNotice/ConsentNotice";
 import { DropZone } from "../components/DropZone/DropZone";
 import { EmptyState } from "../components/EmptyState/EmptyState";
@@ -30,6 +31,8 @@ const number = new Intl.NumberFormat("nb-NO");
 // Story 1.9: after a successful extraction the send gate runs (AD-20). If it blocks, its code is shown
 // inline at the drop zone and the Note meta stays; if it passes, Genererer replaces the Start content.
 // After declining Consent, consent.declined is shown with a link that reopens the dialog.
+// Story 1.14: 'Prøv demomodus' links to Demovelger. In Demo Mode an own file passes FR-3 and the gate,
+// and the Proxy's 404 comes back through Genererer's `onRejected` as `err.demoOnly`, inline at the drop zone.
 export default function StartPage() {
   const { status, settings } = useAppSettings();
   // onFile awaits extraction; the gate must see the status as it is then, not as it was at the drop.
@@ -99,6 +102,13 @@ export default function StartPage() {
     setGenerating(next);
   }
 
+  /** The file was fine, but Demo Mode only serves the sample notes: back to Start, meta kept, error inline. */
+  function rejectedInDemo(code: "err.demoOnly") {
+    busyRef.current = false;
+    setGenerating(null);
+    block(code);
+  }
+
   function backToStart() {
     busyRef.current = false;
     setGenerating(null);
@@ -114,6 +124,7 @@ export default function StartPage() {
         noteHash={generating.noteHash}
         meta={generating.meta}
         onBack={backToStart}
+        onRejected={rejectedInDemo}
       />
     );
   }
@@ -135,6 +146,11 @@ export default function StartPage() {
           {extracted ? <p>{extracted.meta}</p> : null}
           {extracted?.encodingFallback ? <p>{t("warn.encoding")}</p> : null}
         </div>
+      </div>
+      <div>
+        <ButtonLink href={DEMO_PATH} variant="secondary">
+          {t("start.demo")}
+        </ButtonLink>
       </div>
       {error?.key === "consent.declined" ? null : <ConsentNotice />}
     </Screen>

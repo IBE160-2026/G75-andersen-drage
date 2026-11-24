@@ -1,6 +1,6 @@
 // Story 1.9: the Note record (AD-21) and its title (spec I/O matrix, row "title").
 import { describe, expect, it } from "vitest";
-import { buildNoteRecord, noteTitle, TITLE_MAX_CODE_POINTS } from "./noteRecord";
+import { buildNoteRecord, noteTitle, recordsForMode, TITLE_MAX_CODE_POINTS } from "./noteRecord";
 import type { ExtractedNote, VerifiedStudySet } from "./types";
 
 describe("noteTitle", () => {
@@ -53,5 +53,40 @@ describe("buildNoteRecord", () => {
     const record = buildNoteRecord(extracted, "abc", set);
     expect(record).not.toHaveProperty("fileName");
     expect(record).not.toHaveProperty("encodingFallback");
+  });
+});
+
+describe("recordsForMode (Story 1.14)", () => {
+  const hash = "f".repeat(64);
+  const key = `${hash}:2:anthropic/claude-haiku-5.5`;
+  const set = { cacheKey: key, model: "anthropic/claude-haiku-5.5" } as VerifiedStudySet;
+  const note = buildNoteRecord(
+    {
+      fileName: "Smidig utvikling og Scrum.md",
+      passages: [{ id: "p1", text: "Første avsnitt." }],
+      wordCount: 2,
+      normalizationVersion: 1,
+      encodingFallback: false,
+      sourceType: "md",
+    },
+    hash,
+    set,
+  );
+
+  it("live: unchanged", () => {
+    const records = recordsForMode("live", note, set);
+    expect(records.note).toBe(note);
+    expect(records.set).toBe(set);
+  });
+
+  it("demo: demo:{noteHash} and demo:{noteHash}:{promptVersion}:{model}, separate from the live keys", () => {
+    const records = recordsForMode("demo", note, set);
+    expect(records.note.noteHash).toBe(`demo:${hash}`);
+    expect(records.note.currentCacheKey).toBe(`demo:${key}`);
+    expect(records.set.cacheKey).toBe(`demo:${key}`);
+    expect(records.note.title).toBe("Smidig utvikling og Scrum");
+    expect(records.set.model).toBe(set.model);
+    expect(note.noteHash).toBe(hash);
+    expect(set.cacheKey).toBe(key);
   });
 });
