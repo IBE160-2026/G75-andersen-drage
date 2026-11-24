@@ -105,4 +105,4 @@
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — nye Microcopy-nøkler er ikke godkjent (draft): title.demo, demo.h1, demo.lang.*, start.demo, settings.studies.h2, settings.demo, settings.demo.desc, toggle.on/off (D-16)
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — web-dev-profilen med ny reference-notes-montering er ikke startet manuelt
 - [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — AC «Demo på + nøkkel konfigurert» er bare dekket av Vitest, ikke e2e (testoppsettet har aldri nøkkel)
-- [ ] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — merge PR #15 (https://github.com/IBE160-2026/G75-andersen-drage/pull/15) når CI er grønn, sett deretter 1-14 til done i sprint-status
+- [x] 2026-11-24 [story-1-14-demomodus](969-2026-11-24-21-06-38-story-1-14-demomodus.md) — merge PR #15 (https://github.com/IBE160-2026/G75-andersen-drage/pull/15) når CI er grønn, sett deretter 1-14 til done i sprint-status (løst 2026-11-24: merget 364b727, 1-14 done)
