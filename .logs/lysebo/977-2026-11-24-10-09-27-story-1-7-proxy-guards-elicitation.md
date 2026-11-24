@@ -43,3 +43,19 @@ Kjøre bmad-build på story 1.7 (proxy-guards) fra den elicitation-justerte spec
 - Kjør `docker compose run --rm --build test` (eller la CI gjøre det) for å verifisere testprofilen på det interne nettverket og `e2e/guards.spec.ts`, særlig at `Origin` overlever Next-rewriten.
 - Manuell sjekk: `docker compose up`, og bruk appen fra http://localhost:3000 som før. `curl` med fremmed `Origin` skal gi 403.
 - PR for story 1.7, grønn CI og merge; sett deretter 1-7 til `done` i sprint-status.yaml.
+
+## 2026-11-24 kl. 10:52 — lysebo
+
+### Oppgave
+Kjøre testene i Docker etter at Docker Desktop var startet.
+
+### Plan
+- `docker compose --profile test build` og `docker compose run --rm test`, deretter verifiseringskommandoen i specen mot `docker compose up`.
+
+### Resultat
+- Alle suiter besto: Vitest 251, pytest 143, Playwright 76. Alle tre testene i `guards.spec.ts` besto, så `Origin` overlever Next-rewriten, og testprofilen virker på det interne nettverket.
+- Mot `docker compose up`: POST med fremmed `Origin` gir 403, `GET /api/status` gir 200, og en demo-POST fra localhost gir 404 `err.demoOnly`. Proxy-loggen viser bare `METHOD path status ms code`.
+
+### Åpne punkter
+- Manuell bruk av appen i nettleseren på http://localhost:3000 gjenstår (står allerede i `issues.md`).
+- PR for story 1.7 (står allerede i `issues.md`).
