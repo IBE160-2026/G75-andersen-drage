@@ -16,7 +16,7 @@
 - Arbeidsflyt: en subagent implementerte, og tre reviewere gikk gjennom diffen parallelt (Blind Hunter, Edge Case Hunter og Verification Gap). Deretter ble funnene triagert og rettet.
 
 ### Resultat
-- **Commit:** `16b6e5c` på branchen `story/1-9-generate-study-set`. Den er ikke pushet, og det er ikke laget noen PR.
+- **Commit:** `16b6e5c` på branchen `story/1-9-generate-study-set`. Branchen er pushet, og PR #10 er opprettet: https://github.com/IBE160-2026/G75-andersen-drage/pull/10
 - **Nye filer:**
   - `web/storage/db.ts` med `idb`: alle fire AD-21-stores, og notat og studiesett lagres i én transaksjon.
   - `web/api/studySet.ts`: send-gate, single-flight, 90 s timeout og abort.
@@ -41,7 +41,7 @@
 - Lukker punktet fra story 1.6 om at nettleserens tidsgrense må være over 85 s. Den er nå 90 s, i `STUDY_SET_TIMEOUT_MS`.
 
 ### Åpne punkter
-- PR for story 1.9: vent på grønn CI og merge, og sett deretter 1-9 til done i sprint-status.yaml.
+- PR #10 for story 1.9 (https://github.com/IBE160-2026/G75-andersen-drage/pull/10): vent på grønn CI og merge, og sett deretter 1-9 til done i sprint-status.yaml.
 - Utsatt til Epic 3 (FR-4): gjenopplasting av et lagret notat nullstiller brukerfeltene og kan etterlate et foreldreløst studiesett (deferred-work.md).
 - De nye Microcopy-nøklene er utkast som ikke er godkjent: `gen.status.*`, `gen.progress`, `title.generating` og `note.missing` (D-11).
 - E2E-testen «forlate Genererer» bruker `waitForTimeout(500)`. Den er litt tidsavhengig, så følg med i CI.
