@@ -93,4 +93,5 @@
 - [ ] 2026-11-24 [story-1-11-notatoversikt](972-2026-11-24-16-28-41-story-1-11-notatoversikt.md) — ny generering fra Notatoversikt nullstiller archived/importanceLevel/lastPractisedAt; vurder i Epic 2/4
 - [x] 2026-11-24 [story-1-11-notatoversikt](972-2026-11-24-16-28-41-story-1-11-notatoversikt.md) — neste story: 1.12 (hopp fra kildereferanse til markert sitat) (løst 2026-11-24)
 - [ ] 2026-11-24 [story-1-12-kildehopp](971-2026-11-24-18-36-34-story-1-12-kildehopp.md) — nye Microcopy-nøkler er ikke godkjent (draft): return.label, return.from.summary, return.summary (D-14)
-- [ ] 2026-11-24 [story-1-12-kildehopp](971-2026-11-24-18-36-34-story-1-12-kildehopp.md) — PR for story 1.12 er ikke opprettet
+- [x] 2026-11-24 [story-1-12-kildehopp](971-2026-11-24-18-36-34-story-1-12-kildehopp.md) — PR for story 1.12 er ikke opprettet (løst 2026-11-24: PR #13)
+- [ ] 2026-11-24 [story-1-12-kildehopp](971-2026-11-24-18-36-34-story-1-12-kildehopp.md) — merge PR #13 når CI er grønn, sett deretter 1.12 til done i sprint-status
