@@ -46,6 +46,32 @@ describe("fetchStatus", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(3);
   });
 
+  // Epic 1 retrospective R5 follow-up: the send gate awaits the settled status, so a hung try must end.
+  it("ends a try that never answers after the per-try timeout, then tries again", async () => {
+    const hangingThenOk = vi
+      .fn<typeof fetch>()
+      .mockImplementationOnce(
+        (_url, init) =>
+          new Promise((_resolve, reject) => {
+            init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
+          }),
+      )
+      .mockResolvedValueOnce(ok(STATUS));
+    expect(await fetchStatus({ fetchImpl: hangingThenOk, delay: async () => {}, tryTimeoutMs: 10 })).toEqual(STATUS);
+    expect(hangingThenOk).toHaveBeenCalledTimes(2);
+  });
+
+  it("returns null when every try hangs", async () => {
+    const hanging = vi.fn<typeof fetch>(
+      (_url, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
+        }),
+    );
+    expect(await fetchStatus({ fetchImpl: hanging, delay: async () => {}, tryTimeoutMs: 10 })).toBeNull();
+    expect(hanging).toHaveBeenCalledTimes(3);
+  });
+
   it("stops when aborted", async () => {
     const controller = new AbortController();
     controller.abort();

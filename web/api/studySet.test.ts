@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Settings } from "../storage/settings";
 import type { Status } from "./status";
-import { checkSendGate, requestStudySet, STUDY_SET_TIMEOUT_MS, type StudySet } from "./studySet";
+import { checkSendGate, gateNeedsStatus, requestStudySet, STUDY_SET_TIMEOUT_MS, type StudySet } from "./studySet";
 
 let settings: Settings = { schemaVersion: 1, consent: "accepted" };
 vi.mock("../storage/settings", () => ({ readSettings: () => settings }));
@@ -85,6 +85,19 @@ describe("send gate (AD-20)", () => {
       code: "consent.declined",
     });
     expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+
+  // Epic 1 retrospective R5: only a live request with Consent waits for /api/status.
+  it.each<[Settings, boolean]>([
+    [{ schemaVersion: 1, consent: "accepted" }, true],
+    [{ schemaVersion: 1, consent: "accepted", demoMode: false }, true],
+    [{ schemaVersion: 1, consent: "accepted", demoMode: true }, false],
+    [{ schemaVersion: 1, consent: "declined" }, false],
+    [{ schemaVersion: 1 }, false],
+    [{ schemaVersion: 1, consent: "declined", demoMode: true }, false],
+  ])("gateNeedsStatus with %j: %s", (next, expected) => {
+    settings = next;
+    expect(gateNeedsStatus()).toBe(expected);
   });
 });
 
