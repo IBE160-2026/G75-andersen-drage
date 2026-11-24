@@ -113,4 +113,4 @@
 - [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — hent inn punkter fra deferred-work.md/issues.md når en story-spec skrives; legg de tre åpne 1.13-sjekkene inn i Story 5.1 (retro A6)
 - [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — før pitfalls inn i project context: \u-escapes omgjøres av verktøylaget, ingen waitForTimeout i e2e (retro P1, A4)
 - [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — avgjør om demomodus kan sende egne notaters avsnitt til den lokale Proxy-en uten samtykke (retro R1)
-- [ ] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — epic-1 står som in-progress i sprint-status.yaml; sett til done via sprint-planning
+- [x] 2026-11-24 [epic-1-retrospektiv](968-2026-11-24-23-36-58-epic-1-retrospektiv.md) — epic-1 står som in-progress i sprint-status.yaml; sett til done via sprint-planning (løst 2026-11-24: commit 692d71c)
