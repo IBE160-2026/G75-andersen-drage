@@ -44,7 +44,7 @@ development_status:
   1-6-proxy-generates-and-validates-a-study-set: done
   1-7-proxy-guards-origin-rate-limit-and-no-data-retention: done
   1-8-verify-the-study-set-in-the-browser-quote-check-and-minimums: done
-  1-9-generate-a-study-set-from-an-uploaded-note: review
+  1-9-generate-a-study-set-from-an-uploaded-note: done
   1-10-generation-errors-retry-and-interrupted-generation: backlog
   1-11-notatoversikt-with-summary-key-concepts-and-source-panel: backlog
   1-12-jump-from-a-source-reference-to-the-highlighted-quote: backlog
