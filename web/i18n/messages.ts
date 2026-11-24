@@ -12,6 +12,8 @@ export const messages = {
   "nav.label": "Hovedmeny",
   "err.prefix": "Feil:",
   "err.noKey": "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env.",
+  // Proxy 404 for mode "demo" with a Note that has no Fixture (EXPERIENCE.md › Microcopy, draft).
+  "err.demoOnly": "Demomodus støtter bare eksempelnotatene.",
 
   // Page titles (document.title = "{side} · {app.brand}")
   "title.notes": "Dine notater",
@@ -63,6 +65,8 @@ export const messages = {
   // Accessible name of the time-based progress bar (D-11).
   "gen.progress": "Fremdrift",
   "gen.back": "Tilbake til start",
+  // Primary action after err.generation / err.tooFewItems: a fresh request, never automatic (D-12).
+  "gen.retry": "Prøv igjen",
   "err.generation": "Det gikk ikke å lage kort og quiz nå.",
   "err.tooFewItems": "For få kort eller spørsmål kunne knyttes til notatet ditt.",
 
