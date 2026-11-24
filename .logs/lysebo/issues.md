@@ -71,6 +71,6 @@
 - [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — ustabil e2e-test: én Playwright-test feilet én gang og besto ved ny kjøring (navn ikke fanget opp); følg med i CI (2026-11-24: grønn i CI for PR #6, men én kjøring beviser ikke at den er stabil)
 - [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — utsatt: MAX_OUTPUT_TOKENS = 16 000 kan overstige 40 s per forsøk; mål i 1.13 (deferred-work.md)
 - [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — 1.13: sjekk JSON-schema-støtte hos kandidatmodellene, og live-sjekk at nb-injeksjon ikke gir KODE-RØD-4471
-- [ ] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — feil: system.md:32 har mistet `<`/`>`/`&` (står «< arrive as <»); rett, bump PROMPT_VERSION, legg til test. Påvirker Quote Check i 1.8
+- [x] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — feil: system.md:32 har mistet `<`/`>`/`&` (står «< arrive as <»); rett, bump PROMPT_VERSION, legg til test. Påvirker Quote Check i 1.8 (løst 2026-11-24: commit 6251765, PROMPT_VERSION 2)
 - [ ] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — 1.9: nettleserens tidsgrense for /api/study-set må være over 85 s (Proxy-budsjettet)
 - [ ] 2026-11-24 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — README: Proxyen må startes på nytt etter endring av OPENROUTER_API_KEY eller OPENROUTER_MODEL (agenten er cachet)
