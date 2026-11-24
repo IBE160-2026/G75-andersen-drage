@@ -31,3 +31,18 @@ Tiltak 4 fra Epic 1-retroen (funn R5, `epic-1-retro-item-4`). En fil som slippes
 ### Åpne punkter
 - PR for `fix/gate-waits-for-status` (commit `d8b41cf`): push, grønn CI og merge. Sett deretter `epic-1-retro-item-4` til `done` i `sprint-status.yaml` (`sprint_status.py update --set-action-status`).
 - Utsatt: flere tester for ventingen (enhetstest for `waitForStatus`, e2e der status aldri svarer, at demomodus ikke venter, andre slipp under ventingen); se `deferred-work.md`.
+
+## 2026-11-25 kl. 00:01 — lysebo
+
+### Oppgave
+Pushe grenen og opprette PR for fiksen.
+
+### Plan
+- `git push -u origin fix/gate-waits-for-status`, deretter PR mot `main`.
+
+### Resultat
+- Første push fikk `Internal Server Error` fra GitHub. Andre forsøk gikk gjennom.
+- `gh` finnes ikke på maskinen (verken i Bash, PowerShell eller vanlige installasjonsmapper), så PR-en ble opprettet med GitHub-integrasjonen: PR #16, https://github.com/IBE160-2026/G75-andersen-drage/pull/16.
+
+### Åpne punkter
+- PR #16: grønn CI og merge. Sett deretter `epic-1-retro-item-4` til `done` i `sprint-status.yaml` (se issues.md).
