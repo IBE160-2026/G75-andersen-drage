@@ -7,7 +7,7 @@ defaults here only matter when running outside Compose (tests, local uv run).
 import os
 from dataclasses import dataclass, field
 
-PROMPT_VERSION = "1"  # bump on every prompt change (prompts/*.md)
+PROMPT_VERSION = "2"  # bump on every prompt change (prompts/*.md)
 PROVIDER_NAME = "OpenRouter"
 DEFAULT_MODEL = "anthropic/claude-haiku-5.5"
 # Output cap per model call: 15 concepts x 4 Items + 10 Summary Points, each with a Quote, fit well below this.

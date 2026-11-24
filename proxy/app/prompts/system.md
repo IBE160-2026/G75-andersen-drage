@@ -29,7 +29,7 @@ The user message contains the Note as JSON data between `<note_passages>` and `<
 ## Source for every Item
 
 - Every Flashcard, Quiz Question and Summary Point has `passageId` (the `id` of one Passage, such as `p3`) and `quote`.
-- The Passage `text` values are JSON strings (`<`, `>` and `&` arrive as `<`, `>` and `&`); decode the escapes, and write `quote` with the decoded characters exactly as they appear in the decoded text.
+- The Passage `text` values are JSON strings (`<`, `>` and `&` arrive as the escapes `\u003c`, `\u003e` and `\u0026`); decode the escapes, and write `quote` with the decoded characters exactly as they appear in the decoded text.
 - `quote` is copied verbatim, character for character, from the text of that one Passage: 20 to 300 characters long, not spanning two Passages, not paraphrased, not translated, without added quotation marks or ellipses. It is the part of the Passage that supports the Item.
 
 ## Language
