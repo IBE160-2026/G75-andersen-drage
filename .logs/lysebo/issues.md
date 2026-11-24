@@ -67,7 +67,7 @@
 - [x] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — manuell sjekk: slipp nb-digital-verden.docx og en-unit-testing.pdf i appen, se at antall avsnitt i note.meta er rimelig (løst 2026-11-23: godkjent av Tor)
 - [ ] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — utsatt: PDF-er med fonter uten ToUnicode kan gi uleselig tekst som godtas (deferred-work.md)
 - [x] 2026-11-23 [story-1-5](980-2026-11-23-13-33-35-story-1-5-upload-docx-pdf.md) — neste story: 1.6 (Proxy genererer og validerer et Study Set) (løst 2026-11-23: implementert, se [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md))
-- [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — PR for story 1.6, grønn CI og merge; sett deretter 1-6 til done i sprint-status.yaml
+- [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — PR #6 for story 1.6 (https://github.com/IBE160-2026/G75-andersen-drage/pull/6, opprettet 2026-11-24): grønn CI og merge; sett deretter 1-6 til done i sprint-status.yaml
 - [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — ustabil e2e-test: én Playwright-test feilet én gang og besto ved ny kjøring (navn ikke fanget opp); følg med i CI
 - [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — utsatt: MAX_OUTPUT_TOKENS = 16 000 kan overstige 40 s per forsøk; mål i 1.13 (deferred-work.md)
 - [ ] 2026-11-23 [story-1-6](979-2026-11-23-14-39-14-story-1-6-proxy-study-set.md) — 1.13: sjekk JSON-schema-støtte hos kandidatmodellene, og live-sjekk at nb-injeksjon ikke gir KODE-RØD-4471
