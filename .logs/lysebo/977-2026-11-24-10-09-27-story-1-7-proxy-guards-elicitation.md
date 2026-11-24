@@ -59,3 +59,20 @@ Kjøre testene i Docker etter at Docker Desktop var startet.
 ### Åpne punkter
 - Manuell bruk av appen i nettleseren på http://localhost:3000 gjenstår (står allerede i `issues.md`).
 - PR for story 1.7 (står allerede i `issues.md`).
+
+## 2026-11-24 kl. 11:24 — lysebo
+
+### Oppgave
+Lage PR for story 1.7, sjekke CI, og gjøre etterarbeidet etter merge (sprint-status og rydding av merkede brancher). Også sjekke at PR #6 og #7 ikke hadde noe utestående.
+
+### Plan
+- Pushet `story/1-7-proxy-guards` og laget PR #8 (https://github.com/IBE160-2026/G75-andersen-drage/pull/8). CI-jobben `test` var grønn.
+- Etter at Tor merget: byttet til `main`, hentet endringene, satte 1-7 til `done` og slettet merkede brancher.
+
+### Resultat
+- PR #8 er merget i 82260b2. `sprint-status.yaml` har 1-7 som `done` (af81fec, pushet til `main`).
+- PR #6 og #7 hadde ikke noe utestående: statusen og punktene i `issues.md` var allerede oppdatert.
+- Slettet på GitHub: `story/1-2` til `story/1-7`. Slettet lokalt: `story/1-4` til `story/1-7`. Remote-referansene er fjernet med `fetch --prune`. Nå finnes bare `main`.
+
+### Åpne punkter
+Ingen nye.
