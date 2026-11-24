@@ -18,6 +18,8 @@ COPY proxy proxy
 COPY web web
 COPY e2e e2e
 COPY scripts scripts
+# proxy/tests/test_retention.py checks every uvicorn command keeps the access log off.
+COPY compose.yaml compose.yaml
 # Reference notes, Key Concepts and edge cases: Vitest (web/core, web/extract) and Playwright (e2e/upload.spec.ts) read them.
 COPY reference-notes reference-notes
 # Source of truth for the design tokens; web/core/tokens.test.ts reads it at this path.

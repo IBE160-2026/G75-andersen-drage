@@ -16,6 +16,13 @@ x-proxy-healthcheck: &proxy-healthcheck
   retries: 10
   start_period: 10s
 
+x-web-healthcheck: &web-healthcheck
+  test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+  interval: 5s
+  timeout: 5s
+  retries: 12
+  start_period: 10s
+
 services:
   proxy:
     build: ./proxy
@@ -34,13 +41,34 @@ services:
     depends_on:
       proxy:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
-      interval: 5s
-      timeout: 5s
-      retries: 12
-      start_period: 10s
+    healthcheck: *web-healthcheck
     restart: unless-stopped
+
+  # Test profile (Story 1.7): its own Proxy + web pair on an internal network, keyless,
+  # with a raised rate limit so e2e never trips the guard. The web image rewrites to
+  # http://proxy:8000, so proxy-test answers as `proxy` on that network.
+  proxy-test:
+    profiles: [test]
+    build: ./proxy
+    environment:
+      <<: *proxy-env
+      OPENROUTER_API_KEY: ""
+      ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://web-test:3000
+      RATE_LIMIT_PER_MIN: "1000"
+    healthcheck: *proxy-healthcheck
+    read_only: true
+    networks:
+      test:
+        aliases: [proxy]
+
+  web-test:
+    profiles: [test]
+    build: ./web
+    depends_on:
+      proxy-test:
+        condition: service_healthy
+    healthcheck: *web-healthcheck
+    networks: [test]
 
   test:
     profiles: [test]
@@ -48,10 +76,11 @@ services:
       context: .
       dockerfile: e2e/Dockerfile
     environment:
-      BASE_URL: http://web:3000
+      BASE_URL: http://web-test:3000
     depends_on:
-      web:
+      web-test:
         condition: service_healthy
+    networks: [test]
     ipc: host
 
   proxy-dev:
@@ -85,6 +114,11 @@ services:
     depends_on:
       proxy-dev:
         condition: service_healthy
+
+networks:
+  # No route out: nothing in the test run can reach the provider or the internet.
+  test:
+    internal: true
 
 volumes:
   web-dev-node-modules:

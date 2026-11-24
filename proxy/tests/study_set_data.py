@@ -8,6 +8,9 @@ from typing import Any
 from pydantic_ai.messages import ModelMessage, ModelResponse, TextPart
 from pydantic_ai.models.function import AgentInfo, FunctionModel
 
+# Origin every browser request from the app carries (Story 1.7 guard).
+ORIGIN = "http://localhost:3000"
+
 MARKER = "SECRET-MARKER-7f3a"
 NOTE_HASH = "a" * 64
 QUOTE = "Dette er et sitat som er langt nok til kontrollen."
