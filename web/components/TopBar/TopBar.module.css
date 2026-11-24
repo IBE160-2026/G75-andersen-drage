@@ -27,6 +27,13 @@
   text-decoration: underline;
 }
 
+/* Story 1.11: the open Note's name after the brand (DESIGN.md › Top bar). */
+.noteName {
+  min-width: 0;
+  color: var(--colors-ink-muted);
+  overflow-wrap: anywhere;
+}
+
 .nav {
   margin-left: auto;
 }

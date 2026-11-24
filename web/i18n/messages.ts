@@ -70,8 +70,23 @@ export const messages = {
   "err.generation": "Det gikk ikke å lage kort og quiz nå.",
   "err.tooFewItems": "For få kort eller spørsmål kunne knyttes til notatet ditt.",
 
-  // Notatoversikt (placeholder until Story 1.11): the Note is not stored in this browser (D-11).
+  // Notatoversikt empty state: the Note or its Study Set is missing or invalid in this browser (D-11, Story 1.11).
   "note.missing": "Fant ikke notatet",
+
+  // Notatoversikt (Story 1.11, D-13). {id} is the Passage label "P4"; {filnavn} is "{title}.{sourceType}".
+  "overview.summary": "Sammendrag",
+  "overview.concepts": "Nøkkelbegreper",
+  "overview.notCovered": "ingen verifiserte elementer",
+  "mastery.new": "ny",
+  "source.ref": "Kilde: {id}",
+  "source.label": "Kilde · {filnavn}",
+  "source.aria": "Kilde: {filnavn}",
+  "tabs.study": "Studier",
+  "tabs.source": "Kilde",
+  // 'Start runde' stays aria-disabled with this hint until Story 2.1 (decided by Tor 2026-11-24).
+  "overview.start": "Start runde",
+  "overview.start.hint": "Usikre begreper kommer først.",
+  "err.noConcepts": "Fant ingen nøkkelbegreper med verifisert kilde, så runden kan ikke starte.",
 
   // Innstillinger
   "settings.h1": "Innstillinger",
