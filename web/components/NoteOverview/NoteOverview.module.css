@@ -1,5 +1,5 @@
-/* Notatoversikt study panel (DESIGN.md › Components: Summary Point, Quote block, Key Concept list,
-   Start). The Mastery chip is MasteryChip.module.css; the source panel, tabs and status strip live in StudyLayout.module.css (Story 2.1). */
+/* Notatoversikt study panel (DESIGN.md › Components: Summary Point, Key Concept list,
+   Start). The Mastery chip is MasteryChip.module.css, the Quote block QuoteBlock.module.css (Story 2.2); the source panel, tabs and status strip live in StudyLayout.module.css (Story 2.1). */
 
 .studyPanel {
   display: flex;
@@ -32,38 +32,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-}
-
-/* Quote block: square on the left where its 3 px rule sits, rounded on the right. */
-.quote {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--colors-quote-bg);
-  border-left: var(--spacing-quote-rule) solid var(--colors-accent);
-  border-radius: 0 var(--rounded-sm) var(--rounded-sm) 0;
-}
-
-.blockquote {
-  margin: 0;
-}
-
-.quoteText {
-  font-family: var(--typography-quote-font-family);
-  font-size: var(--typography-quote-font-size);
-  font-weight: var(--typography-quote-font-weight);
-  line-height: var(--typography-quote-line-height);
-  color: var(--colors-ink);
-}
-
-.quoteText::before {
-  content: "«";
-}
-
-.quoteText::after {
-  content: "»";
 }
 
 .concepts {

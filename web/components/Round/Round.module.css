@@ -41,7 +41,7 @@
   color: var(--colors-ink);
 }
 
-/* Flashcard: surface-card, 1 px line, rounded-md, spacing-5 padding. Front: question + reference only. */
+/* Quiz part shell (Story 2.2; options in Story 2.3): the Flashcard card surface, the stem in card-front. */
 .card {
   display: flex;
   flex-direction: column;
@@ -52,7 +52,7 @@
   border-radius: var(--rounded-md);
 }
 
-.front {
+.stem {
   font-family: var(--typography-card-front-font-family);
   font-size: var(--typography-card-front-font-size);
   font-weight: var(--typography-card-front-font-weight);

@@ -106,6 +106,14 @@ export const messages = {
   "round.review": "Du kan alle nøkkelbegrepene. Dette er en repetisjonsrunde.",
   "mastery.shaky": "usikker",
   "mastery.known": "kan",
+  // Flashcard (Story 2.2, D-20): texts from EXPERIENCE.md › Microcopy card.reveal / marks and return.label
+  // (approved 2026-11-25); round.item.question is the Quiz part's Item h2 (UX-DR15).
+  "card.reveal": "Snu kortet",
+  "card.unknown": "Kunne det ikke",
+  "card.known": "Kunne det",
+  "round.item.question": "Spørsmål {x} av {y}",
+  "return.from.card": "kort {x}",
+  "return.card": "Tilbake til kortet",
 
   // Reference jump (Story 1.12, D-14). quote.* bracket the <mark> for screen readers; {id} is "P4" and
   // {kilde} names where the student came from. Notatoversikt's context decided by Tor 2026-11-24.

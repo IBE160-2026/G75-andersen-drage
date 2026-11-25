@@ -10,6 +10,7 @@ import { readConceptProgress, startRound, type NoteRecord, type StudySetRecord }
 import { Button } from "../Button/Button";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { MasteryChip } from "../MasteryChip/MasteryChip";
+import { QuoteBlock } from "../QuoteBlock/QuoteBlock";
 import { SourceRef, type ReturnContext } from "../ReferenceJump/ReferenceJump";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import { StudyLayout } from "../StudyLayout/StudyLayout";
@@ -147,21 +148,14 @@ function StudyPanel({
           {studySet.summaryPoints.map((point) => (
             <li key={point.id} className={styles.point}>
               <p lang={lang}>{point.text}</p>
-              <figure className={styles.quote}>
-                <blockquote className={styles.blockquote}>
-                  <p lang={lang} className={styles.quoteText}>
-                    {point.quote}
-                  </p>
-                </blockquote>
-                <figcaption>
-                  <SourceRef
-                    id={`ref-${point.id}`}
-                    passageId={point.passageId}
-                    quote={point.quote}
-                    returnContext={summaryReturn()}
-                  />
-                </figcaption>
-              </figure>
+              <QuoteBlock quote={point.quote} lang={lang}>
+                <SourceRef
+                  id={`ref-${point.id}`}
+                  passageId={point.passageId}
+                  quote={point.quote}
+                  returnContext={summaryReturn()}
+                />
+              </QuoteBlock>
             </li>
           ))}
         </ul>

@@ -2,7 +2,7 @@
 // browser storage. Every function here resolves to a result and never throws to React.
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 import { z } from "zod";
-import type { ConceptProgress, Round, RoundComposition } from "../core/round";
+import type { ConceptProgress, MasteryState, Round, RoundComposition } from "../core/round";
 import type { Note, VerifiedStudySet } from "../core/types";
 
 export const DB_NAME = "torsa";
@@ -89,7 +89,7 @@ export const RoundRecordSchema = z.looseObject({
   conceptIds: z.array(z.string()),
   itemIds: z.array(z.string()),
   optionOrder: z.record(z.string(), z.array(z.number().int().nonnegative())),
-  answers: z.array(z.looseObject({ itemId: z.string() })),
+  answers: z.array(z.looseObject({ itemId: z.string(), knew: z.boolean(), answeredAt: Timestamp })),
   status: z.enum(["active", "complete", "abandoned"]),
   startedAt: Timestamp,
   completedAt: Timestamp.nullable(),
@@ -321,5 +321,82 @@ export function readRound(roundId: string): Promise<StorageResult<RoundRecord>> 
   return withDb(async (db) => {
     const parsed = RoundRecordSchema.safeParse(await db.get("rounds", roundId));
     return parsed.success ? { ok: true, value: parsed.data } : FAILED;
+  });
+}
+
+export type FlashcardMark = {
+  roundId: string;
+  /** The Flashcard's Item ID; must be the Round's next unanswered Item. */
+  itemId: string;
+  keyConceptId: string;
+  knew: boolean;
+  /** The concept's new Mastery State (`core/mastery.ts` › `updateMastery`). */
+  state: MasteryState;
+  /** ISO 8601 UTC. */
+  answeredAt: string;
+};
+
+export type MarkResult = { round: RoundRecord; progress: ConceptProgressRecord };
+
+/**
+ * Story 2.2 (AD-21 › Answering): stores one Flashcard mark in one `readwrite` transaction: appends
+ * `{itemId, knew, answeredAt}` to the Round's `answers` and puts the concept's `conceptProgress` row with
+ * `state` (its other fields kept; a missing or invalid row is created). When the mark answers the Round's
+ * last Item, the Round becomes `complete` with `completedAt` = `answeredAt` in the same transaction.
+ * Not ok, with nothing written, unless the Round is valid and `active`, `itemId` is its next unanswered
+ * Item and a Flashcard (`{keyConceptId}.fc{n}`) of `keyConceptId`, an included concept. A repeat of the
+ * last answered Item (a double press, also on the mark that just completed the Round) writes nothing and
+ * resolves to the stored records; an abandoned Round never resolves ok.
+ */
+export function recordFlashcardMark(mark: FlashcardMark): Promise<StorageResult<MarkResult>> {
+  return withDb(async (db) => {
+    const tx = db.transaction(["conceptProgress", "rounds"], "readwrite");
+    const done = tx.done;
+    const writes: Promise<unknown>[] = [];
+    try {
+      const progressStore = tx.objectStore("conceptProgress");
+      const roundStore = tx.objectStore("rounds");
+      const parsed = RoundRecordSchema.safeParse(await roundStore.get(mark.roundId));
+      if (!parsed.success) throw new Error("round");
+      const round = parsed.data;
+      const key: [string, string] = [round.noteHash, mark.keyConceptId];
+      const storedRow = ConceptProgressRecordSchema.safeParse(await progressStore.get(key));
+
+      const owned = round.conceptIds.includes(mark.keyConceptId) && mark.itemId.startsWith(`${mark.keyConceptId}.fc`);
+      if (!owned || round.status === "abandoned") throw new Error("mark");
+      if (round.answers.at(-1)?.itemId === mark.itemId) {
+        await done;
+        if (!storedRow.success) return FAILED;
+        return { ok: true, value: { round, progress: storedRow.data } };
+      }
+      if (round.status !== "active" || round.itemIds[round.answers.length] !== mark.itemId) throw new Error("mark");
+
+      const progress: ConceptProgressRecord = {
+        ...(storedRow.success
+          ? storedRow.data
+          : {
+              schemaVersion: RECORD_SCHEMA_VERSION,
+              noteHash: round.noteHash,
+              keyConceptId: mark.keyConceptId,
+              lastShownAt: round.startedAt,
+              lastUsedQuizQuestionId: null,
+            }),
+        state: mark.state,
+      };
+      const answers = [...round.answers, { itemId: mark.itemId, knew: mark.knew, answeredAt: mark.answeredAt }];
+      const finished = answers.length === round.itemIds.length;
+      const updated: RoundRecord = {
+        ...round,
+        answers,
+        ...(finished ? { status: "complete" as const, completedAt: mark.answeredAt } : {}),
+      };
+      writes.push(progressStore.put(progress));
+      writes.push(roundStore.put(updated));
+      await Promise.all([...writes, done]);
+      return { ok: true, value: { round: updated, progress } };
+    } catch {
+      await abortQuietly(tx, [...writes, done]);
+      return FAILED;
+    }
   });
 }

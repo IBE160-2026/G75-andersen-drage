@@ -1,7 +1,7 @@
 // Story 2.1: the Round screen's pure helpers, and the Round route built by Notatoversikt.
 import { describe, expect, it } from "vitest";
 import { roundPath } from "../NoteOverview/NoteOverview";
-import { itemsResolve, roundFlashcards } from "./Round";
+import { itemsResolve, roundFlashcards, roundPosition, roundQuizQuestions } from "./Round";
 
 const ref = { passageId: "p1", quote: "q" };
 const concept = (id: string, cards: number, quiz: number) => ({
@@ -47,5 +47,26 @@ describe("roundPath", () => {
   it("keeps the demo: prefix of the Note key", () => {
     expect(roundPath("demo:abc", "r-1")).toBe("/notat/demo:abc/runde/r-1");
     expect(roundPath("abc", "r-1")).toBe("/notat/abc/runde/r-1");
+  });
+});
+
+describe("roundPosition (Story 2.2)", () => {
+  it("is the Flashcard part until every card is answered, then the Quiz part, then done", () => {
+    expect(roundPosition(0, 3, 2)).toEqual({ part: "cards", index: 0, total: 3 });
+    expect(roundPosition(2, 3, 2)).toEqual({ part: "cards", index: 2, total: 3 });
+    expect(roundPosition(3, 3, 2)).toEqual({ part: "quiz", index: 0, total: 2 });
+    expect(roundPosition(5, 3, 2)).toEqual({ part: "done" });
+    expect(roundPosition(0, 0, 1)).toEqual({ part: "quiz", index: 0, total: 1 });
+    expect(roundPosition(2, 2, 0)).toEqual({ part: "done" });
+  });
+});
+
+describe("roundQuizQuestions (Story 2.2)", () => {
+  it("returns the Quiz Questions in Item order with their concept, skipping Flashcard IDs", () => {
+    const questions = roundQuizQuestions({ itemIds: ["k-a.fc1", "k-b.qq1", "k-a.qq1"] }, SET);
+    expect(questions.map(({ question, conceptId }) => [question.id, conceptId])).toEqual([
+      ["k-b.qq1", "k-b"],
+      ["k-a.qq1", "k-a"],
+    ]);
   });
 });
