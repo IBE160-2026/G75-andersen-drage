@@ -136,4 +136,4 @@
 - [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — utsatt til 2.3: test av fremdriftslinjens fyll (kort- og quizdel), per del eller hele runden (deferred-work.md)
 - [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — Story 2.3: utvid RoundAnswer og answers-skjemaet med quizsvaret samtidig, ellers avbrytes ikke aktive runder ved regenerering
 - [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — les gjennom D-20 (agent-skrevet: nøkkelnavn, svarform, quiz-skall)
-- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — PR for feat/story-2-2-flashcards: grønn CI og merge
+- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — PR #26 (https://github.com/IBE160-2026/G75-andersen-drage/pull/26): grønn CI og merge
