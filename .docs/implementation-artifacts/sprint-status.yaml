@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: '11-25-2026 18:43'
+last_updated: '11-25-2026 20:05'
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -56,7 +56,7 @@ development_status:
   2-1-start-a-round-from-notatoversikt: done
   2-2-review-flashcards-and-mark-them: done
   2-3-answer-quiz-questions: review
-  2-4-resultat-with-score-and-sources: backlog
+  2-4-resultat-with-score-and-sources: review
   2-5-the-next-round-targets-my-weak-spots: backlog
   epic-2-retrospective: optional
 

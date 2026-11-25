@@ -17,6 +17,7 @@ import {
 } from "../../storage/db";
 import { Flashcard } from "../Flashcard/Flashcard";
 import { MasteryChip } from "../MasteryChip/MasteryChip";
+import { notePath, resultPath } from "../NoteOverview/NoteOverview";
 import { displayOrder, QuizQuestion } from "../QuizQuestion/QuizQuestion";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import { StudyLayout } from "../StudyLayout/StudyLayout";
@@ -92,7 +93,7 @@ export function itemsResolve(round: Pick<RoundRecord, "itemIds">, studySet: Pick
  * transaction); on success the stored Round and row replace the local ones. A mark shows the next Item
  * at once; an answer shows its feedback, and `quiz.next` the next question. When a mark completes the
  * Round (no Quiz Questions), the screen goes back to Notatoversikt; after the answer that completes it,
- * the control reads `quiz.result` and goes there too (Resultat is Story 2.4).
+ * the control reads `quiz.result` and opens Resultat (Story 2.4).
  */
 export function RoundScreen({
   note,
@@ -170,7 +171,7 @@ export function RoundScreen({
     });
     if (saved.ok && saved.value.round.status === "complete") {
       // Stays pending while the screen leaves: the marks must not fire again during navigation.
-      router.push(`/notat/${note.noteHash}`);
+      router.push(notePath(note.noteHash));
       return;
     }
     pendingRef.current = false;
@@ -209,7 +210,8 @@ export function RoundScreen({
 
   function next() {
     if (round.status === "complete") {
-      router.push(`/notat/${note.noteHash}`);
+      // Replace: Back from Resultat goes to Notatoversikt, not to the Round URL (which replaces to Resultat).
+      router.replace(resultPath(note.noteHash, round.roundId));
       return;
     }
     setFailed(false);

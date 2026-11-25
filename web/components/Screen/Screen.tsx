@@ -65,10 +65,18 @@ export function Screen({
   );
 }
 
-/** The screen's h1: programmatically focusable, not a Tab stop. */
-export function ScreenHeading({ children, className }: { children: ReactNode; className?: string }) {
+/** The screen's h1: programmatically focusable, not a Tab stop. `describedBy` sets its `aria-describedby`. */
+export function ScreenHeading({
+  children,
+  className,
+  describedBy,
+}: {
+  children: ReactNode;
+  className?: string;
+  describedBy?: string;
+}) {
   return (
-    <h1 tabIndex={-1} className={[styles.heading, className].filter(Boolean).join(" ")}>
+    <h1 tabIndex={-1} aria-describedby={describedBy} className={[styles.heading, className].filter(Boolean).join(" ")}>
       {children}
     </h1>
   );

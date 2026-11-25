@@ -1,0 +1,77 @@
+/* Resultat (DESIGN.md › Components: Resultat row, tokens `result-row`; mockups/key-result.html). The split /
+   tabs are StudyLayout.module.css, the Quote block QuoteBlock.module.css, the button Button.module.css. */
+
+/* The score under the h1: serif and large as in the mockup (the card-front type). */
+.score {
+  font-family: var(--typography-card-front-font-family);
+  font-size: var(--typography-card-front-font-size);
+  font-weight: var(--typography-card-front-font-weight);
+  line-height: var(--typography-card-front-line-height);
+  color: var(--colors-ink);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  padding-bottom: var(--spacing-4);
+}
+
+/* result-row: line top divider, spacing-4 vertical padding, blocks spacing-2 apart. */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4) 0;
+  border-top: 1px solid var(--colors-line);
+  min-width: 0;
+}
+
+/* result-row.heading-type / heading-color: reference size, ink-muted. */
+.h2 {
+  font-family: var(--typography-reference-font-family);
+  font-size: var(--typography-reference-font-size);
+  font-weight: var(--typography-reference-font-weight);
+  line-height: var(--typography-body-line-height);
+  color: var(--colors-ink-muted);
+}
+
+/* result-row.question-type: the source family. */
+.question {
+  font-family: var(--typography-source-font-family);
+  font-size: var(--typography-source-font-size);
+  font-weight: 500;
+  line-height: var(--typography-source-line-height);
+  color: var(--colors-ink);
+  overflow-wrap: anywhere;
+}
+
+/* result-row.answer-type / answer-color: body, ink. */
+.answer {
+  font-family: var(--typography-body-font-family);
+  font-size: var(--typography-body-font-size);
+  font-weight: var(--typography-body-font-weight);
+  line-height: var(--typography-body-line-height);
+  color: var(--colors-ink);
+  overflow-wrap: anywhere;
+}
+
+/* result-row.mark-correct / mark-wrong; the text labels carry the meaning, the marks are aria-hidden. */
+.markCorrect,
+.markWrong {
+  font-weight: 600;
+}
+
+.markCorrect {
+  color: var(--colors-mastery-known-fg);
+}
+
+.markWrong {
+  color: var(--colors-mastery-shaky-fg);
+}

@@ -1,8 +1,10 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { resultPath } from "../../../../../components/NoteOverview/NoteOverview";
 import { useNoteSession } from "../../../../../components/NoteSession/NoteSession";
+import { resultReady } from "../../../../../components/Result/Result";
 import { itemsResolve, RoundScreen } from "../../../../../components/Round/Round";
 import { useWide } from "../../../../../components/StudyLayout/StudyLayout";
 import {
@@ -18,16 +20,22 @@ import {
 import { decodeParam, NoteMissing } from "../../../shared";
 
 type Records = { note: NoteRecord; studySet: StudySetRecord; round: RoundRecord; progress: ConceptProgressRecord[] };
-type State = { kind: "loading" } | ({ kind: "found" } & Records) | { kind: "missing" };
+type State = { kind: "loading" } | ({ kind: "found" } & Records) | { kind: "missing" } | { kind: "result" };
 
 /**
  * The stored Round, its Note and the Study Set it was composed from, all validated, or null when any is
  * missing or invalid, the Round belongs to another Note or is no longer `active` (abandoned or complete:
- * later marks must never land on it), or an Item is no longer in the set.
+ * later marks must never land on it), or an Item is no longer in the set. `"result"` when the Round is
+ * complete and has a Resultat (Story 2.4): the page then replaces its URL with Resultat's.
  */
-async function loadRecords(noteHash: string, roundId: string): Promise<Records | null> {
+async function loadRecords(noteHash: string, roundId: string): Promise<Records | "result" | null> {
   const [note, round] = await Promise.all([readNote(noteHash), readRound(roundId)]);
-  if (!note.ok || !round.ok || round.value.noteHash !== noteHash || round.value.status !== "active") return null;
+  if (!note.ok || !round.ok || round.value.noteHash !== noteHash) return null;
+  if (round.value.status !== "active") {
+    if (round.value.status !== "complete") return null;
+    const set = await readStudySet(round.value.cacheKey);
+    return set.ok && resultReady(round.value, noteHash, set.value) ? "result" : null;
+  }
   const studySet = await readStudySet(round.value.cacheKey);
   if (!studySet.ok || !itemsResolve(round.value, studySet.value)) return null;
   // Progress only colours the Mastery chip; unreadable rows read as `new`.
@@ -38,11 +46,13 @@ async function loadRecords(noteHash: string, roundId: string): Promise<Records |
 // Round screen (Story 2.1): `/notat/{noteHash}/runde/{roundId}`. Rendered only from the stored Round, so a
 // reload shows the same Items; it never recomposes. Sets its own NoteSession (split layout, top bar).
 // An unknown Round, a Round of another Note, a Round that is not active, or a Study Set that is gone gets the
-// `note.missing` empty state.
+// `note.missing` empty state. A complete Round with Quiz Questions `replace`s the URL with its Resultat
+// (Story 2.4), so browser back does not return to the finished Round.
 export default function RoundPage() {
   const params = useParams<{ noteHash: string; roundId: string }>();
   const noteHash = decodeParam(params?.noteHash);
   const roundId = decodeParam(params?.roundId);
+  const router = useRouter();
   const { setSession } = useNoteSession();
   const wide = useWide();
   const [loaded, setLoaded] = useState<State>({ kind: "loading" });
@@ -51,12 +61,18 @@ export default function RoundPage() {
     let live = true;
     setLoaded({ kind: "loading" });
     void loadRecords(noteHash, roundId).then((records) => {
-      if (live) setLoaded(records ? { kind: "found", ...records } : { kind: "missing" });
+      if (!live) return;
+      if (records === "result") {
+        setLoaded({ kind: "result" });
+        router.replace(resultPath(noteHash, roundId));
+        return;
+      }
+      setLoaded(records ? { kind: "found", ...records } : { kind: "missing" });
     });
     return () => {
       live = false;
     };
-  }, [noteHash, roundId]);
+  }, [noteHash, roundId, router]);
 
   // A different Round in the URL: the records on screen belong to the previous one until it loads.
   const state: State =
@@ -70,7 +86,7 @@ export default function RoundPage() {
   }, [shownNote, shownSet, setSession]);
   useEffect(() => () => setSession(null), [setSession]);
 
-  if (state.kind === "loading") return null;
+  if (state.kind === "loading" || state.kind === "result") return null;
   if (state.kind === "missing") return <NoteMissing />;
   return (
     <RoundScreen

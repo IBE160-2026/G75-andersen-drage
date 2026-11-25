@@ -4,9 +4,15 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { uuidFromBytes } from "../../core/ids";
 import { contentLang, hasCoveredConcept, sortConcepts } from "../../core/overview";
-import { composeRound } from "../../core/round";
+import { composeRound, type MasteryState } from "../../core/round";
 import { t } from "../../i18n/messages";
-import { readConceptProgress, startRound, type NoteRecord, type StudySetRecord } from "../../storage/db";
+import {
+  readConceptProgress,
+  startRound,
+  type ConceptProgressRecord,
+  type NoteRecord,
+  type StudySetRecord,
+} from "../../storage/db";
 import { Button } from "../Button/Button";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { MasteryChip } from "../MasteryChip/MasteryChip";
@@ -20,9 +26,19 @@ const START_HINT_ID = "start-hint";
 const START_ERROR_ID = "start-error";
 const NO_CONCEPTS_ID = "no-concepts-error";
 
+/** Notatoversikt's route; Note keys keep their `demo:` prefix. */
+export function notePath(noteHash: string): string {
+  return `/notat/${noteHash}`;
+}
+
 /** The Round screen's route; Note keys keep their `demo:` prefix, as on `/notat/{noteHash}`. */
 export function roundPath(noteHash: string, roundId: string): string {
-  return `/notat/${noteHash}/runde/${roundId}`;
+  return `${notePath(noteHash)}/runde/${roundId}`;
+}
+
+/** Resultat's route (Story 2.4): the complete Round's route + `/resultat`. */
+export function resultPath(noteHash: string, roundId: string): string {
+  return `${roundPath(noteHash, roundId)}/resultat`;
 }
 
 /** `crypto.randomUUID()`, which exists only in a secure context; elsewhere a v4 UUID from getRandomValues. */
@@ -37,15 +53,19 @@ function newRoundId(): string {
  * `StudySet.language`. Story 2.1: 'Start runde' reads the progress rows, composes the Round in core/
  * (Round ID and time from here) and stores it in one transaction, then opens the Round screen. While it
  * runs the button is pending; a failure keeps the student here with `err.generation` inline.
+ * Story 2.4: each covered concept's Mastery chip shows its stored state from `progress` (no row → 'ny').
  */
 export function NoteOverview({
   note,
   studySet,
+  progress,
   wide,
   onRetry,
 }: {
   note: NoteRecord;
   studySet: StudySetRecord;
+  /** The Note's `conceptProgress` rows; empty when the read failed (every chip then reads 'ny'). */
+  progress: readonly Pick<ConceptProgressRecord, "keyConceptId" | "state">[];
   wide: boolean;
   /** 'Prøv igjen' after `err.noConcepts`. */
   onRetry: () => void;
@@ -105,6 +125,7 @@ export function NoteOverview({
         study={
           <StudyPanel
             studySet={studySet}
+            progress={progress}
             lang={lang}
             onRetry={onRetry}
             onStart={() => void start()}
@@ -124,6 +145,7 @@ function summaryReturn(): ReturnContext {
 
 function StudyPanel({
   studySet,
+  progress,
   lang,
   onRetry,
   onStart,
@@ -131,6 +153,7 @@ function StudyPanel({
   failed,
 }: {
   studySet: StudySetRecord;
+  progress: readonly Pick<ConceptProgressRecord, "keyConceptId" | "state">[];
   lang: string;
   onRetry: () => void;
   onStart: () => void;
@@ -138,6 +161,7 @@ function StudyPanel({
   failed: boolean;
 }) {
   const concepts = sortConcepts(studySet.concepts);
+  const states = new Map<string, MasteryState>(progress.map((p) => [p.keyConceptId, p.state]));
   return (
     <div className={styles.studyPanel}>
       <section className={styles.section} aria-labelledby="overview-summary">
@@ -169,9 +193,8 @@ function StudyPanel({
           {concepts.map((concept) => (
             <li key={concept.id} className={styles.concept}>
               <span lang={lang}>{concept.name}</span>
-              {/* Chips from conceptProgress arrive in Story 2.4. */}
               {concept.covered ? (
-                <MasteryChip state="new" />
+                <MasteryChip state={states.get(concept.id) ?? "new"} />
               ) : (
                 <span className={styles.notCovered}>{t("overview.notCovered")}</span>
               )}
