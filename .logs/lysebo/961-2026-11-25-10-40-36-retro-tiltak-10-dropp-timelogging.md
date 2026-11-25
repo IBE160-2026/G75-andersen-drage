@@ -14,7 +14,7 @@ Gjennomføre retro-tiltak 10 fra Epic 1-retroen (funn P2): avgjøre om timer ska
 - `.docs/deviations.md`: ny D-17 (`reconciled`, siden `epics.md` er oppdatert i samme endring).
 - `epic-1-retro-2026-11-24.md`: åpent spørsmål 2 er besvart.
 - `issues.md`: punktet fra 2026-11-22 («… logg timer brukt mot budsjett») er lukket.
-- Commit `c86476e` på branchen `docs/retro-item-10-drop-hours` (ikke pushet). Ingen kode er endret, så ingen tester er kjørt.
+- Commit `c86476e` på branchen `docs/retro-item-10-drop-hours` (pushet kl. 10:42, PR #22 mot `main`: https://github.com/IBE160-2026/G75-andersen-drage/pull/22). Ingen kode er endret, så ingen tester er kjørt.
 - `sprint-status.yaml` er ikke oppdatert. Item 10 settes til `done` etter merge, som for de forrige tiltakene.
 
 ### Åpne punkter
