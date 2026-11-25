@@ -119,3 +119,4 @@
 - [x] 2026-11-25 [retro-tiltak-7-og-8](966-2026-11-25-07-06-34-retro-tiltak-7-og-8.md) — PR #17 for docs/retro-items-7-8 (https://github.com/IBE160-2026/G75-andersen-drage/pull/17, opprettet 2026-11-25): grønn CI og merge; sett deretter epic-1-retro-item-7 og -8 til done i sprint-status.yaml (løst 2026-11-25: merget 29568ee, item-7 og -8 done i e81c211)
 - [ ] 2026-11-25 [retro-tiltak-7-og-8](966-2026-11-25-07-06-34-retro-tiltak-7-og-8.md) — utsatt: CI-sjekk mot nye waitForTimeout i e2e (krever at de fem eksisterende fjernes eller unntas)
 - [x] 2026-11-25 [github-cli-installasjon](996-2026-10-29-12-20-31-github-cli-installasjon.md) — kjør `gh auth login` etter reinstallasjonen av gh 2.105.0 (løst 2026-11-25: innlogget som lysebo)
+- [ ] 2026-11-25 [retro-tiltak-1-microcopy](965-2026-11-25-07-53-33-retro-tiltak-1-microcopy.md) — mockups/key-quiz.html og key-quiz.png viser gammel quiz.wrong-tekst; oppdater hvis de skal vises i README/rapport
