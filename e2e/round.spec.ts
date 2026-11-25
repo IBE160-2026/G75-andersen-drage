@@ -665,6 +665,8 @@ test("320 px: front, back and Quiz Question without horizontal scroll, axe clean
   const qref = questionRegion(page).getByRole("button", { name: /^Kilde: P\d+$/ });
   await qref.click();
   await expect(page.getByRole("tab", { name: MSG.source })).toHaveAttribute("aria-selected", "true");
+  // Esc is handled inside the source panel: wait until the jump has focused the Passage.
+  await expect(page.locator('[id^="passage-"]:focus')).toHaveCount(1);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
   await expect(qref).toBeFocused();
@@ -675,6 +677,7 @@ test("320 px: front, back and Quiz Question without horizontal scroll, axe clean
   const quoteRef = questionRegion(page).locator("figcaption").getByRole("button");
   await quoteRef.click();
   await expect(page.getByRole("tab", { name: MSG.source })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator('[id^="passage-"]:focus')).toHaveCount(1);
   await page.keyboard.press("Escape");
   await expect(quoteRef).toBeFocused();
   await button(page, MSG.next).click();
