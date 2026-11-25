@@ -129,3 +129,5 @@
 - [ ] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — utsatt til 2.3: runde med bare quizspørsmål gir tomt studiepanel, ikke testet (deferred-work.md)
 - [x] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — PR #23 (https://github.com/IBE160-2026/G75-andersen-drage/pull/23): grønn CI og merge (løst 2026-11-25: merget 2d7c368)
 - [ ] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — sett 2.1 til done i sprint-status.yaml når de manuelle sjekkene er godkjent
+- [ ] 2026-11-25 [regenereringsfiks](959-2026-11-25-13-10-00-regenereringsfiks.md) — PR for fix/regenerate-keeps-user-fields: grønn CI og merge; deretter epic-1-retro-item-5 done i sprint-status.yaml og kryss av story-1-9-, story-1-11-, epic-1-retro- (R2) og story-2-1-punktene om regenerering
+- [ ] 2026-11-25 [regenereringsfiks](959-2026-11-25-13-10-00-regenereringsfiks.md) — vurder AGENTS.md-fallgruve: docker compose --profile test build før docker compose run --rm test (ellers testes utdatert image)
