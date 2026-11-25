@@ -17,8 +17,12 @@ export type ConceptProgress = {
 
 export type RoundStatus = "active" | "complete" | "abandoned";
 
-/** One answered Item; Stories 2.2–2.3 add the mark / chosen option. Empty in Story 2.1. */
-export type RoundAnswer = { itemId: string };
+/**
+ * One answered Item, in Item order. A Flashcard mark (Story 2.2): `knew` is 'Kunne det' (true) or
+ * 'Kunne det ikke' (false). Story 2.3 adds the Quiz Question variant (the chosen original option index).
+ */
+export type FlashcardAnswer = { itemId: string; knew: boolean; answeredAt: string };
+export type RoundAnswer = FlashcardAnswer;
 
 /** One `rounds` record (AD-21). Composed once and never recomposed. */
 export type Round = {

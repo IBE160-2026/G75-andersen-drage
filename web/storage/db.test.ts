@@ -12,10 +12,13 @@ import {
   readNote,
   readRound,
   readStudySet,
+  recordFlashcardMark,
   saveGeneratedNote,
   startRound,
   STORES,
   type ConceptProgressRecord,
+  type FlashcardMark,
+  type RoundRecord,
 } from "./db";
 
 const HASH = "a".repeat(64);
@@ -398,9 +401,9 @@ describe("saveGeneratedNote on a stored Note (AD-21)", () => {
       number: 1,
       review: false,
       conceptIds: ["k-a"],
-      itemIds: ["k-a.qq1"],
+      itemIds: ["k-a.fc1", "k-a.qq1"],
       optionOrder: { "k-a.qq1": [0, 1, 2, 3] },
-      answers: [{ itemId: "k-a.qq1", choice: 0 }],
+      answers: [{ itemId: "k-a.fc1", knew: true, answeredAt: T1 }],
       status,
       startedAt: T1,
       completedAt: null,
@@ -621,5 +624,148 @@ describe("saveGeneratedNote on a stored Note (AD-21)", () => {
       ok: true,
       value: { ...NEW_FILE, schemaVersion: 1, title: "A", archived: true, importanceLevel: 3, lastPractisedAt: T1 },
     });
+  });
+});
+
+describe("recordFlashcardMark (Story 2.2)", () => {
+  const T3 = "2026-11-25T12:00:00.000Z";
+  const mark = (itemId: string, knew: boolean, state: FlashcardMark["state"] = knew ? "known" : "shaky"): FlashcardMark => ({
+    roundId: "r-1",
+    itemId,
+    keyConceptId: itemId.split(".")[0],
+    knew,
+    state,
+    answeredAt: T3,
+  });
+  const started = async () => {
+    const saved = await startRound(await compose("r-1", T1));
+    if (!saved.ok) throw new Error("start failed");
+    return saved.value;
+  };
+
+  it("appends the answer and puts the concept's state in one go; the other progress fields stay", async () => {
+    const round = await started();
+    expect(round.itemIds[0]).toBe("k-a.fc1");
+    const saved = await recordFlashcardMark(mark("k-a.fc1", true));
+    expect(saved.ok).toBe(true);
+    const { progress, rounds } = await all();
+    const row = progress.find((p) => p.keyConceptId === "k-a");
+    expect(row).toEqual({
+      schemaVersion: 1,
+      noteHash: DEMO_HASH,
+      keyConceptId: "k-a",
+      state: "known",
+      lastShownAt: T1,
+      lastUsedQuizQuestionId: "k-a.qq1",
+    });
+    expect(rounds[0]).toEqual({ ...round, answers: [{ itemId: "k-a.fc1", knew: true, answeredAt: T3 }] });
+    expect(saved.ok && saved.value).toEqual({ round: rounds[0], progress: row });
+  });
+
+  it("'Kunne det ikke' stores shaky; each mark puts only its own concept's state", async () => {
+    await started();
+    expect((await recordFlashcardMark(mark("k-a.fc1", false))).ok).toBe(true);
+    let progress = await readConceptProgress(DEMO_HASH);
+    expect(progress.ok && progress.value.find((p) => p.keyConceptId === "k-a")?.state).toBe("shaky");
+    expect((await recordFlashcardMark(mark("k-b.fc1", true))).ok).toBe(true);
+    progress = await readConceptProgress(DEMO_HASH);
+    const states = Object.fromEntries((progress.ok ? progress.value : []).map((p) => [p.keyConceptId, p.state]));
+    expect(states).toEqual({ "k-a": "shaky", "k-b": "known", "k-c": "new" });
+  });
+
+  it("the same Item twice (double press): one answer, the second call resolves to the stored records", async () => {
+    await started();
+    const first = await recordFlashcardMark(mark("k-a.fc1", true));
+    const second = await recordFlashcardMark(mark("k-a.fc1", false));
+    expect(second).toEqual(first);
+    const { rounds, progress } = await all();
+    expect(rounds[0].answers).toHaveLength(1);
+    expect(progress.find((p) => p.keyConceptId === "k-a")?.state).toBe("known");
+  });
+
+  it("rejects, writing nothing: an Item out of order, a concept that does not own the Item, an unknown Round", async () => {
+    await started();
+    const before = await all();
+    expect(await recordFlashcardMark(mark("k-b.fc1", true))).toEqual({ ok: false, code: "err.generation" });
+    expect((await recordFlashcardMark({ ...mark("k-a.fc1", true), keyConceptId: "k-b" })).ok).toBe(false);
+    expect((await recordFlashcardMark({ ...mark("k-a.fc1", true), roundId: "nope" })).ok).toBe(false);
+    expect(await all()).toEqual(before);
+  });
+
+  it("rejects a mark on a Round that is not active, also a repeat of its last answer", async () => {
+    await started();
+    await recordFlashcardMark(mark("k-a.fc1", true));
+    await startRound(await compose("r-2", T2));
+    const before = await all();
+    expect((await recordFlashcardMark(mark("k-b.fc1", true))).ok).toBe(false);
+    expect((await recordFlashcardMark(mark("k-a.fc1", true))).ok).toBe(false);
+    expect(await all()).toEqual(before);
+  });
+
+  it("rejects a Quiz Question ID, and a repeat of an earlier (not the last) answer", async () => {
+    const round = await started();
+    let db = await openDb();
+    await db.put("rounds", { ...round, itemIds: ["k-a.qq1", "k-a.fc1"] });
+    db.close();
+    expect((await recordFlashcardMark(mark("k-a.qq1", true))).ok).toBe(false);
+    db = await openDb();
+    await db.put("rounds", round);
+    db.close();
+    await recordFlashcardMark(mark("k-a.fc1", true));
+    await recordFlashcardMark(mark("k-b.fc1", true));
+    expect((await recordFlashcardMark(mark("k-a.fc1", false))).ok).toBe(false);
+    const read = await readRound("r-1");
+    expect(read.ok && read.value.answers).toHaveLength(2);
+  });
+
+  it("the mark that answers the last Item completes the Round in the same transaction", async () => {
+    const round = await started();
+    const onlyCards: RoundRecord = { ...round, itemIds: ["k-a.fc1", "k-b.fc1"], optionOrder: {} };
+    const db = await openDb();
+    await db.put("rounds", onlyCards);
+    db.close();
+    const first = await recordFlashcardMark(mark("k-a.fc1", true));
+    expect(first.ok && first.value.round).toMatchObject({ status: "active", completedAt: null });
+    const last = await recordFlashcardMark(mark("k-b.fc1", false));
+    expect(last.ok && last.value.round).toMatchObject({ status: "complete", completedAt: T3 });
+    const read = await readRound("r-1");
+    expect(read.ok && read.value).toMatchObject({ status: "complete", completedAt: T3 });
+    expect(read.ok && read.value.answers.map((a) => a.itemId)).toEqual(["k-a.fc1", "k-b.fc1"]);
+  });
+
+  it("the last Flashcard of a Round with Quiz Questions leaves it active", async () => {
+    await started();
+    for (const id of ["k-a.fc1", "k-b.fc1", "k-c.fc1"]) await recordFlashcardMark(mark(id, true));
+    const read = await readRound("r-1");
+    expect(read.ok && read.value).toMatchObject({ status: "active", completedAt: null });
+  });
+
+  it("a missing progress row is created with the new state", async () => {
+    await started();
+    const db = await openDb();
+    await db.delete("conceptProgress", [DEMO_HASH, "k-a"]);
+    db.close();
+    const saved = await recordFlashcardMark(mark("k-a.fc1", false));
+    expect(saved.ok && saved.value.progress).toEqual({
+      schemaVersion: 1,
+      noteHash: DEMO_HASH,
+      keyConceptId: "k-a",
+      state: "shaky",
+      lastShownAt: T1,
+      lastUsedQuizQuestionId: null,
+    });
+  });
+
+  it("write fails (a value that cannot be cloned): nothing changes", async () => {
+    await started();
+    const before = await all();
+    const broken = { ...mark("k-a.fc1", true), answeredAt: (() => 1) as unknown as string };
+    expect((await recordFlashcardMark(broken)).ok).toBe(false);
+    expect(await all()).toEqual(before);
+  });
+
+  it("without IndexedDB: not ok, no throw", async () => {
+    globalThis.indexedDB = undefined as unknown as IDBFactory;
+    expect(await recordFlashcardMark(mark("k-a.fc1", true))).toEqual({ ok: false, code: "err.generation" });
   });
 });

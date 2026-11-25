@@ -1,0 +1,71 @@
+/* DESIGN.md › Components: Flashcard, Concept chip. The Quote block is QuoteBlock.module.css. */
+
+/* surface-card, 1 px line, rounded-md, spacing-5 padding. */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  background: var(--colors-surface-card);
+  border: 1px solid var(--colors-line);
+  border-radius: var(--rounded-md);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Concept chip: pill, surface with a line border, the Key Concept name. */
+.conceptChip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0 var(--spacing-2);
+  background: var(--colors-surface);
+  color: var(--colors-ink);
+  border: 1px solid var(--colors-line);
+  border-radius: var(--rounded-full);
+  font-family: var(--typography-chip-font-family);
+  font-size: var(--typography-chip-font-size);
+  font-weight: var(--typography-chip-font-weight);
+  line-height: var(--typography-body-line-height);
+  overflow-wrap: anywhere;
+}
+
+.front {
+  font-family: var(--typography-card-front-font-family);
+  font-size: var(--typography-card-front-font-size);
+  font-weight: var(--typography-card-front-font-weight);
+  line-height: var(--typography-card-front-line-height);
+  color: var(--colors-ink);
+  overflow-wrap: anywhere;
+}
+
+.back {
+  font-family: var(--typography-card-back-font-family);
+  font-size: var(--typography-card-back-font-size);
+  font-weight: var(--typography-card-back-font-weight);
+  line-height: var(--typography-card-back-line-height);
+  color: var(--colors-ink);
+  overflow-wrap: anywhere;
+}
+
+/* back-divider: 1 px dashed line. */
+.divider {
+  margin: 0;
+  border: 0;
+  border-top: 1px dashed var(--colors-line);
+}
+
+.ref {
+  font-size: var(--typography-reference-font-size);
+}
+
+/* Marks right-aligned; they wrap onto their own lines at 320 px. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--spacing-2);
+}

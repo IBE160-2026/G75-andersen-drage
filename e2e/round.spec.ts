@@ -1,5 +1,6 @@
 // Story 2.1: start a Round from Notatoversikt (FR-18, AD-3, AD-11, AD-21, NFR-6, NFR-7, UX-DR7, UX-DR8,
-// UX-DR15, UX-DR19). Records are seeded straight into IndexedDB; nothing is POSTed, so nothing reaches
+// UX-DR15, UX-DR19). Story 2.2: review Flashcards and mark them (FR-13, FR-17, UX-DR11, UX-DR13, UX-DR21).
+// Records are seeded straight into IndexedDB; nothing is POSTed, so nothing reaches
 // the provider.
 import { createHash } from "node:crypto";
 import AxeBuilder from "@axe-core/playwright";
@@ -25,6 +26,10 @@ const MSG = {
   missing: "Fant ikke notatet",
   study: "Studier",
   source: "Kilde",
+  reveal: "Snu kortet",
+  unknown: "Kunne det ikke",
+  known: "Kunne det",
+  back: "Tilbake til kortet",
 };
 
 const PASSAGES: SeedPassage[] = [
@@ -53,7 +58,7 @@ const COVERED = CONCEPTS.filter((c) => c.cards > 0);
 const CARD_COUNT = COVERED.reduce((sum, c) => sum + c.cards, 0);
 const front = (id: string, n = 1) => `Hva sier notatet om ${id}, kort ${n}?`;
 
-function records(noteKey: string) {
+function records(noteKey: string, { quiz = true } = {}) {
   const cacheKey = `${noteKey}:${PROMPT_VERSION}:${MODEL}`;
   const note: SeedNote = {
     noteHash: noteKey,
@@ -88,7 +93,7 @@ function records(noteKey: string) {
           quote: quote(p),
         })),
         quizQuestions:
-          c.cards > 0
+          quiz && c.cards > 0
             ? [{ id: `${c.id}.qq1`, question: "Hva?", options: ["A", "B", "C", "D"], correctIndex: 0, passageId: p.id, quote: quote(p) }]
             : [],
       };
@@ -104,12 +109,15 @@ async function axeBlocking(page: Page) {
     .map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`);
 }
 
-async function openOverview(page: Page, { width = 1280, progress = [] as SeedConceptProgress[], noteKey = BARE_HASH } = {}) {
+async function openOverview(
+  page: Page,
+  { width = 1280, progress = [] as SeedConceptProgress[], noteKey = BARE_HASH, quiz = true } = {},
+) {
   await page.setViewportSize({ width, height: 800 });
   await seedConsent(page, "accepted");
   await page.goto("/innstillinger");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  const { note, studySet } = records(noteKey);
+  const { note, studySet } = records(noteKey, { quiz });
   await seedNoteRecords(page, note, studySet, progress);
   await page.goto(`/notat/${noteKey}`);
   await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
@@ -121,6 +129,34 @@ const cardHeading = (page: Page, x = 1) => page.getByRole("heading", { level: 2,
 const cardRegion = (page: Page, x = 1) => page.getByRole("region", { name: `Kort ${x} av ${CARD_COUNT}` });
 const overflow = (page: Page) =>
   page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+/**
+ * Keep every transaction that puts a Round open after the put: a chain of requests on the same store holds
+ * it until `releaseRoundPuts`, so the storage call has not resolved yet.
+ */
+async function holdRoundPuts(page: Page) {
+  await page.evaluate(() => {
+    const w = window as unknown as { e2eHold: boolean };
+    w.e2eHold = true;
+    const put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (this: IDBObjectStore, ...args: Parameters<IDBObjectStore["put"]>) {
+      const request = put.apply(this, args);
+      if (this.name === "rounds" && w.e2eHold) {
+        const spin = () => {
+          if (w.e2eHold) this.count().onsuccess = spin;
+        };
+        spin();
+      }
+      return request;
+    };
+  });
+}
+
+async function releaseRoundPuts(page: Page) {
+  await page.evaluate(() => {
+    (window as unknown as { e2eHold: boolean }).e2eHold = false;
+  });
+}
+
 const roundUrl = (noteKey: string) => new RegExp(`/notat/${noteKey}/runde/[0-9a-f-]{36}$`);
 
 test("keyboard start: records stored in one go, focus on h1 'Runde 1', first card front, axe clean; reload shows the same", async ({ page }) => {
@@ -133,11 +169,10 @@ test("keyboard start: records stored in one go, focus on h1 'Runde 1', first car
   await expect(page).toHaveTitle(`Runde 1 · ${TITLE} · ${BRAND}`);
   await expect(cardHeading(page)).toHaveAttribute("tabindex", "-1");
 
-  // First card: the rank-1 new concept. Front = question + "Kilde: P1" as text; no buttons, no Quote.
+  // First card: the rank-1 new concept. Front = question + "Kilde: P1" + 'Snu kortet'; no Quote (Story 2.2).
   const region = cardRegion(page);
   await expect(region).toContainText(front("k-normalisering"));
-  await expect(region).toContainText("Kilde: P1");
-  await expect(region.getByRole("button")).toHaveCount(0);
+  await expect(region.getByRole("button")).toHaveText(["Kilde: P1", MSG.reveal]);
   await expect(region.locator("blockquote")).toHaveCount(0);
   await expect(region).not.toContainText(quote(PASSAGES[0]));
   await expect(page.locator("main").getByText("ny", { exact: true })).toHaveCount(1);
@@ -282,30 +317,13 @@ test("320 px: no horizontal scroll, tabs work by keyboard, axe clean on both tab
 
 test("while the start is pending, 'Start runde' is aria-disabled", async ({ page }) => {
   await openOverview(page);
-  // Keep the start transaction open after the Round's put: a chain of requests on the same store holds it
-  // until the test releases it, so startRound has not resolved yet.
-  await page.evaluate(() => {
-    const w = window as unknown as { e2eHold: boolean };
-    w.e2eHold = true;
-    const put = IDBObjectStore.prototype.put;
-    IDBObjectStore.prototype.put = function (this: IDBObjectStore, ...args: Parameters<IDBObjectStore["put"]>) {
-      const request = put.apply(this, args);
-      if (this.name === "rounds" && w.e2eHold) {
-        const spin = () => {
-          if (w.e2eHold) this.count().onsuccess = spin;
-        };
-        spin();
-      }
-      return request;
-    };
-  });
+  // Keep the start transaction open after the Round's put, so startRound has not resolved yet.
+  await holdRoundPuts(page);
   await startButton(page).click();
   await expect(startButton(page)).toHaveAttribute("aria-disabled", "true");
   await expect(startButton(page)).toBeFocused();
   await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
-  await page.evaluate(() => {
-    (window as unknown as { e2eHold: boolean }).e2eHold = false;
-  });
+  await releaseRoundPuts(page);
   await expect(roundH1(page)).toBeFocused();
   expect(await readStore(page, "rounds")).toHaveLength(1);
 });
@@ -378,4 +396,226 @@ test("bad URL: an existing Round opened under another existing Note's URL shows 
   // The other Note itself is still there.
   await page.goto(`/notat/${demoKey}`);
   await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+});
+
+// ---- Story 2.2: Flashcards ----
+
+const QUIZ_COUNT = COVERED.length;
+const button = (page: Page, name: string) => page.locator("main").getByRole("button", { name, exact: true });
+const answer = (page: Page) => page.locator("main").getByText("Se kilden.", { exact: true });
+const anyRef = (page: Page, x: number) => cardRegion(page, x).getByRole("button", { name: /^Kilde: P\d+$/ });
+const questionHeading = (page: Page, x = 1) =>
+  page.getByRole("heading", { level: 2, name: `Spørsmål ${x} av ${QUIZ_COUNT}` });
+
+async function startRound(page: Page, options: Parameters<typeof openOverview>[1] = {}) {
+  await openOverview(page, options);
+  await startButton(page).click();
+  await expect(roundH1(page)).toBeFocused();
+}
+
+/** Reveal and mark card `x` with the mouse; waits for focus on the next Item heading. */
+async function markCard(page: Page, x: number, knew: boolean) {
+  await button(page, MSG.reveal).click();
+  await button(page, knew ? MSG.known : MSG.unknown).click();
+  await expect(x < CARD_COUNT ? cardHeading(page, x + 1) : questionHeading(page)).toBeFocused();
+}
+
+test("keyboard only: reveal and mark every card (Tab / Enter / Space), states stored, Quiz shell after the last", async ({ page }) => {
+  await startRound(page);
+  // Normalisering (two cards), Første, Tredje, Funksjonell.
+  const marks = [true, false, true, false, true];
+  await cardHeading(page, 1).focus();
+  for (const [i, knew] of marks.entries()) {
+    const x = i + 1;
+    const activate = x % 2 ? "Enter" : "Space";
+    await expect(cardHeading(page, x)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(anyRef(page, x)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(button(page, MSG.reveal)).toBeFocused();
+    await page.keyboard.press(activate);
+    await expect(answer(page)).toBeFocused();
+    await expect(cardRegion(page, x).locator("blockquote")).toHaveCount(1);
+    if (x === 1) expect(await axeBlocking(page)).toEqual([]);
+    await page.keyboard.press("Tab");
+    await expect(anyRef(page, x)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(button(page, MSG.unknown)).toBeFocused();
+    if (knew) {
+      await page.keyboard.press("Tab");
+      await expect(button(page, MSG.known)).toBeFocused();
+    }
+    await page.keyboard.press(activate === "Enter" ? "Space" : "Enter");
+    if (x === 1) {
+      // Same concept on card 2: its chip shows the stored state at once, and the card shows its front.
+      await expect(cardHeading(page, 2)).toBeFocused();
+      await expect(page.locator("main").getByText("kan", { exact: true })).toBeVisible();
+      await expect(button(page, MSG.reveal)).toBeVisible();
+    }
+  }
+
+  await expect(questionHeading(page)).toBeFocused();
+  await expect(questionHeading(page)).toHaveAttribute("tabindex", "-1");
+  const region = page.getByRole("region", { name: `Spørsmål 1 av ${QUIZ_COUNT}` });
+  await expect(region).toContainText("Hva?");
+  await expect(region.getByRole("button")).toHaveCount(0);
+  expect(await axeBlocking(page)).toEqual([]);
+
+  const [round] = await readStore(page, "rounds");
+  expect(round.status).toBe("active");
+  const answers = round.answers as { itemId: string; knew: boolean; answeredAt: string }[];
+  expect(answers.map((a) => [a.itemId, a.knew])).toEqual(
+    (round.itemIds as string[]).slice(0, CARD_COUNT).map((id, i) => [id, marks[i]]),
+  );
+  for (const a of answers) expect(a.answeredAt).toMatch(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/);
+  const progress = await readStore(page, "conceptProgress");
+  expect(Object.fromEntries(progress.map((p) => [p.keyConceptId, p.state]))).toEqual({
+    "k-normalisering": "shaky", // 'Kunne det', then 'Kunne det ikke': the latest wins.
+    "k-forste": "known",
+    "k-tredje": "shaky",
+    "k-funksjonell": "known",
+  });
+
+  // Reload in the Quiz part: the same shell.
+  await page.reload();
+  await expect(questionHeading(page)).toBeVisible();
+});
+
+test("reload mid-Round: the first unanswered card, front side, with the stored chip", async ({ page }) => {
+  await startRound(page);
+  await markCard(page, 1, true);
+  await markCard(page, 2, true);
+  await page.reload();
+  await expect(roundH1(page)).toBeFocused();
+  await expect(cardHeading(page, 3)).toBeVisible();
+  await expect(cardRegion(page, 3)).toContainText(front("k-forste"));
+  await expect(button(page, MSG.reveal)).toBeVisible();
+  await expect(page.locator("main").getByText("ny", { exact: true })).toBeVisible();
+});
+
+test("reference jump from a card: 'Viser P1 fra kort 1', 'Tilbake til kortet' returns focus to the reference", async ({ page }) => {
+  await startRound(page);
+  const ref = cardRegion(page).getByRole("button", { name: "Kilde: P1" });
+  await ref.click();
+  await expect(page.locator("#passage-p1")).toBeFocused();
+  await expect(page.getByText("Viser P1 fra kort 1")).toBeVisible();
+  await page.getByRole("button", { name: MSG.back }).click();
+  await expect(ref).toBeFocused();
+
+  // After reveal the reference sits under the Quote; Esc in the source panel returns to it.
+  await button(page, MSG.reveal).click();
+  await ref.click();
+  await expect(page.locator("#passage-p1")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(ref).toBeFocused();
+
+  // The next card starts without the previous card's return control or highlight.
+  await button(page, MSG.known).click();
+  await expect(cardHeading(page, 2)).toBeFocused();
+  await expect(page.getByText("Viser P1 fra kort 1")).toHaveCount(0);
+  await expect(page.locator("mark")).toHaveCount(0);
+});
+
+test("320 px: front, back and Quiz shell without horizontal scroll, axe clean; the jump switches tabs and back", async ({ page }) => {
+  await startRound(page, { width: 320 });
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  expect(await axeBlocking(page)).toEqual([]);
+  await button(page, MSG.reveal).click();
+  await expect(answer(page)).toBeFocused();
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  expect(await axeBlocking(page)).toEqual([]);
+  for (const name of [MSG.unknown, MSG.known]) {
+    const box = await button(page, name).boundingBox();
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+  }
+
+  const ref = cardRegion(page).getByRole("button", { name: "Kilde: P1" });
+  await ref.click();
+  await expect(page.getByRole("tab", { name: MSG.source })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("#passage-p1")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
+  await expect(ref).toBeFocused();
+
+  await button(page, MSG.known).click();
+  await expect(cardHeading(page, 2)).toBeFocused();
+  for (let x = 2; x <= CARD_COUNT; x++) await markCard(page, x, true);
+  await expect(questionHeading(page)).toBeFocused();
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  expect(await axeBlocking(page)).toEqual([]);
+});
+
+test("while a mark saves, both marks are aria-disabled and focus stays; one answer is stored", async ({ page }) => {
+  await startRound(page);
+  await button(page, MSG.reveal).click();
+  await holdRoundPuts(page);
+  await button(page, MSG.known).click();
+  await expect(button(page, MSG.known)).toHaveAttribute("aria-disabled", "true");
+  await expect(button(page, MSG.unknown)).toHaveAttribute("aria-disabled", "true");
+  await expect(button(page, MSG.known)).toBeFocused();
+  // Playwright will not click an aria-disabled button, so press it from the keyboard: it is ignored.
+  await page.keyboard.press("Enter");
+  await releaseRoundPuts(page);
+  await expect(cardHeading(page, 2)).toBeFocused();
+  const [round] = await readStore(page, "rounds");
+  expect(round.answers).toHaveLength(1);
+});
+
+test("a mark pressed twice quickly stores one answer", async ({ page }) => {
+  await startRound(page);
+  await button(page, MSG.reveal).click();
+  await button(page, MSG.known).dblclick();
+  await expect(cardHeading(page, 2)).toBeFocused();
+  const [round] = await readStore(page, "rounds");
+  expect(round.answers).toHaveLength(1);
+});
+
+test("mark write fails: the card stays revealed with err.generation, nothing stored, the marks work again", async ({ page }) => {
+  await startRound(page);
+  await button(page, MSG.reveal).click();
+  await page.evaluate(() => {
+    const w = window as unknown as { e2eFail: boolean };
+    w.e2eFail = true;
+    const put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (this: IDBObjectStore, ...args: Parameters<IDBObjectStore["put"]>) {
+      if (this.name === "rounds" && w.e2eFail) throw new DOMException("e2e", "DataError");
+      return put.apply(this, args);
+    };
+  });
+  await button(page, MSG.unknown).click();
+  const alert = cardRegion(page).locator('[role="alert"]');
+  await expect(alert).toHaveText(MSG.error);
+  await expect(button(page, MSG.unknown)).toHaveAttribute("aria-describedby", "mark-error");
+  await expect(answer(page)).toBeVisible();
+  const [round] = await readStore(page, "rounds");
+  expect(round.answers).toEqual([]);
+  const progress = await readStore(page, "conceptProgress");
+  expect(progress.every((p) => p.state === "new")).toBe(true);
+  expect(await axeBlocking(page)).toEqual([]);
+
+  await page.evaluate(() => {
+    (window as unknown as { e2eFail: boolean }).e2eFail = false;
+  });
+  await button(page, MSG.unknown).click();
+  await expect(cardHeading(page, 2)).toBeFocused();
+  await expect(page.locator('main [role="alert"]')).toHaveCount(0);
+});
+
+test("a Round without Quiz Questions: the last mark completes it and returns to Notatoversikt", async ({ page }) => {
+  await startRound(page, { quiz: false });
+  for (let x = 1; x < CARD_COUNT; x++) await markCard(page, x, true);
+  const roundPage = page.url();
+  await button(page, MSG.reveal).click();
+  await button(page, MSG.unknown).click();
+  await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  const [round] = await readStore(page, "rounds");
+  expect(round).toMatchObject({ status: "complete" });
+  const answers = round.answers as { answeredAt: string }[];
+  expect(answers).toHaveLength(CARD_COUNT);
+  expect(round.completedAt).toBe(answers[CARD_COUNT - 1].answeredAt);
+  // A complete Round is never shown again.
+  await page.goto(roundPage);
+  await expect(page.getByRole("heading", { level: 1, name: MSG.missing })).toBeFocused();
 });
