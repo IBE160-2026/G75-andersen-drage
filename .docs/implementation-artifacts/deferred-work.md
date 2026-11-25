@@ -16,10 +16,6 @@
   summary: MAX_OUTPUT_TOKENS = 16 000 may not fit in the 40 s attempt timeout, so a long valid Study Set could time out (504) instead of finishing.
   evidence: Review pass 1 BH2 (maybe-false). Not settled in Story 1.13 (epic-1 retro A6); now an AC of Story 5.1. Settle it there by measuring real output tokens and tokens per second on the reference notes, then size MAX_OUTPUT_TOKENS and the prompt's field lengths to finish well inside 40 s (NFR-4).
 
-- source_spec: `.docs/implementation-artifacts/spec-1-9-generate-study-set.md`
-  summary: Re-uploading a stored Note overwrites its record with defaults (`archived`, `importanceLevel`, `lastPractisedAt`) and, when model or prompt version changed, leaves the old `studySets` record orphaned.
-  evidence: Review pass 1 BH1/EC3. `saveGeneratedNote` uses `put` as the 1.9 matrix decides; harmless now (no UI sets those fields yet), but AD-21 requires keeping user fields, deleting the old set and pruning `conceptProgress` in one transaction. Target (epic-1 retro item 5, moved by spec-2-1 on 2026-11-25): its own fix PR right after Story 2.1, before Story 2.2.
-
 - source_spec: `.docs/implementation-artifacts/spec-1-10-generation-errors-retry-and-interrupted-generation.md`
   summary: FR-4: when the browser Study Set cache lookup lands, 'Prøv igjen' must skip it and send a fresh POST.
   evidence: Story 1.10 has no browser cache, so 'Prøv igjen' (`web/components/Generating/Generating.tsx`, `attempt`) simply re-runs `requestStudySet`. The FR-4 cache-hit story in Epic 3 must add a bypass for the retry path (epic-1-context › Minimums).
