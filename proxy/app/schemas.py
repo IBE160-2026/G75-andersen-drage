@@ -59,11 +59,14 @@ class Passage(ContractModel):
 class StudySetRequest(ContractModel):
     mode: Literal["live", "demo"]
     note_hash: Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
-    passages: list[Passage] = Field(min_length=1, max_length=MAX_PASSAGES)
+    # Demo Mode sends `[]` (D-21): the Fixture is found by Note Hash, so no Note text leaves the browser.
+    passages: list[Passage] = Field(max_length=MAX_PASSAGES)
 
     @model_validator(mode="after")
-    def _total_length(self) -> "StudySetRequest":
+    def _check_passages(self) -> "StudySetRequest":
         # Fixed messages: the 400 handler never echoes them anyway.
+        if self.mode == "live" and not self.passages:
+            raise ValueError("live needs passages")
         if sum(len(p.text) for p in self.passages) > MAX_TOTAL_CHARS:
             raise ValueError("passages too long")
         if len({p.id for p in self.passages}) != len(self.passages):

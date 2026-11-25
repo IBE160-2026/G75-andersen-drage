@@ -277,7 +277,20 @@ describe("Demo Mode (Story 1.14, FR-23, AD-20)", () => {
       studySet: STUDY_SET,
       mode: "demo",
     });
-    expect(JSON.parse(String(fetchImpl.mock.calls[0][1]?.body))).toEqual({ mode: "demo", noteHash, passages: PASSAGES });
+    expect(JSON.parse(String(fetchImpl.mock.calls[0][1]?.body))).toEqual({ mode: "demo", noteHash, passages: [] });
+  });
+
+  it("declined Consent in Demo Mode: the Note's text never leaves the browser (epic-1 retro R1)", async () => {
+    settings = { schemaVersion: 1, consent: "declined", demoMode: true };
+    const noteHash = hash();
+    const fetchImpl = vi.fn<typeof fetch>(async () => json({ code: "err.demoOnly" }, 404));
+    expect(await requestStudySet({ noteHash, passages: PASSAGES, status: null, fetchImpl })).toEqual({
+      ok: false,
+      code: "err.demoOnly",
+    });
+    const sent = String(fetchImpl.mock.calls[0][1]?.body);
+    expect(JSON.parse(sent)).toEqual({ mode: "demo", noteHash, passages: [] });
+    expect(sent).not.toContain(PASSAGES[0].text);
   });
 
   it("demo passes the gate with no Consent decision, declined Consent and no key", async () => {

@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: '11-25-2026 15:40'
+last_updated: '11-25-2026 17:00'
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -151,7 +151,7 @@ action_items:
       local Proxy without Consent; if not, send empty passages in demo mode or check
       the manifest first"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
   - id: "epic-1-retro-item-10-decide-whether-to-log-hours-against-the"
     epic: 1

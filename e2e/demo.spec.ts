@@ -32,7 +32,7 @@ const routeFor = (noteHash: string) => new RegExp(`/notat/demo(:|%3A)${noteHash}
 
 /** Every POST /api/study-set body the page sends. */
 function recordStudySetBodies(page: Page) {
-  const bodies: { mode: string; noteHash: string }[] = [];
+  const bodies: { mode: string; noteHash: string; passages: unknown[] }[] = [];
   page.on("request", (req) => {
     if (req.method() === "POST" && new URL(req.url()).pathname === "/api/study-set") bodies.push(req.postDataJSON());
   });
@@ -78,7 +78,7 @@ test("examiner path: decline → Demovelger → Norwegian sample → Notatoversi
   await ref.click();
   await expect(page.locator("mark")).toHaveCount(1);
 
-  expect(bodies.map((b) => [b.mode, b.noteHash])).toEqual([["demo", scrum.noteHash]]);
+  expect(bodies.map((b) => [b.mode, b.noteHash, b.passages])).toEqual([["demo", scrum.noteHash, []]]);
   expect(await stored(page)).toEqual({ schemaVersion: 1, consent: "declined", demoMode: true });
 });
 
@@ -184,7 +184,8 @@ test("own upload in Demo Mode: validated first, then err.demoOnly inline at the 
   await expect(alert).toBeFocused();
   await expect(page.getByRole("heading", { level: 1, name: MSG.startH1 })).toBeVisible();
   await expect(page.getByRole("status")).toContainText("eget.txt");
-  expect(bodies.map((b) => b.mode)).toEqual(["demo"]);
+  // Consent declined: the own Note's text never leaves the browser (epic-1 retro R1, D-21).
+  expect(bodies.map((b) => [b.mode, b.passages])).toEqual([["demo", []]]);
 });
 
 test("Demo off again with Consent accepted and no key: err.noKey on Start, nothing sent", async ({ page }) => {
