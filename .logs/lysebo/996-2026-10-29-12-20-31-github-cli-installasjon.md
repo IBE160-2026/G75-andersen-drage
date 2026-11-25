@@ -33,3 +33,20 @@ PR #17 kunne ikke opprettes med `gh`, fordi kommandoen manglet. Tor ba meg finne
 
 ### Åpne punkter
 - Kjør `gh auth login` (interaktivt, må gjøres av Tor).
+
+## 2026-11-25 kl. 07:27 — lysebo
+
+### Oppgave
+Tor ba meg logge inn med `gh auth login`.
+
+### Plan
+- `gh auth login` må svares på underveis, og det går ikke i Claudes skall. Derfor ga jeg Tor kommandoen med full sti, `--hostname github.com --git-protocol https --web`, og forklarte hvor engangskoden står.
+- Tor logget inn i sin egen terminal og godkjente i nettleseren.
+
+### Resultat
+- `gh auth status`: innlogget på github.com som `lysebo`, token lagret i keyring, Git bruker https, scopes `gist`, `read:org`, `repo`, `workflow`.
+- Claude-skallet finner fortsatt ikke `gh` før VS Code startes på nytt, men full sti (`C:\Program Files\GitHub CLI\gh.exe`) virker.
+- Lukket punktet «kjør `gh auth login`» i issues.md.
+
+### Åpne punkter
+Ingen.
