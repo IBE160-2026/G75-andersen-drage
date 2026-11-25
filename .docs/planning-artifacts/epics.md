@@ -220,7 +220,7 @@ The plan fits only without Epic 4 and at mid-range estimates; there is no slack 
 - **M3 — 2026-12-08:** Epic 3 done (in its build order; cut items recorded).
 - **Feature freeze — 2026-12-09:** after this date only Epic 5 and bug fixes; Epic 5 runs 2026-12-09 to 2026-12-11, final fresh-clone log by 2026-12-12 (DR-9).
 - **Cut order (whenever behind):** Epic 4 → 3.6 → 3.4 → Story 1.13 reduced to one model → Story 1.5 PDF header/footer removal simplified. Core stories (Epic 1–2) and Epic 5 are never cut.
-- **Re-plan rule:** at each milestone, compare done stories and hours spent with the budget; if behind, cut in the stated order and record each cut in `.docs/deviations.md` (DR-4, DR-9).
+- **Re-plan rule:** at each milestone, compare done stories with the milestone date; if behind, cut in the stated order and record each cut in `.docs/deviations.md` (DR-4, DR-9). Hours are not logged: the budget table above is the pre-mortem's estimate, kept to explain the milestone dates and the cut order, not a ledger to compare against (decided by Tor 2026-11-25, D-17).
 
 **Definition of done (every story):** acceptance criteria met; tests added and green in CI; README updated wherever the story changes setup, commands, configuration or behaviour the README describes; PR reviewed (DR-8).
 
