@@ -120,3 +120,4 @@
 - [ ] 2026-11-25 [retro-tiltak-7-og-8](966-2026-11-25-07-06-34-retro-tiltak-7-og-8.md) — utsatt: CI-sjekk mot nye waitForTimeout i e2e (krever at de fem eksisterende fjernes eller unntas)
 - [x] 2026-11-25 [github-cli-installasjon](996-2026-10-29-12-20-31-github-cli-installasjon.md) — kjør `gh auth login` etter reinstallasjonen av gh 2.105.0 (løst 2026-11-25: innlogget som lysebo)
 - [ ] 2026-11-25 [retro-tiltak-1-microcopy](965-2026-11-25-07-53-33-retro-tiltak-1-microcopy.md) — mockups/key-quiz.html og key-quiz.png viser gammel quiz.wrong-tekst; oppdater hvis de skal vises i README/rapport
+- [x] 2026-11-25 [retro-tiltak-2-manuell-runde](964-2026-11-25-08-19-45-retro-tiltak-2-manuell-runde.md) — kjør runden i .docs/qa/epic-1-manual-pass.md, fyll inn P/F og funn, sett epic-1-retro-item-2 til done (løst 2026-11-25: alle 28 rader P, ingen funn)

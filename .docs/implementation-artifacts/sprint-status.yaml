@@ -99,7 +99,7 @@ action_items:
       view, Notatoversikt, reference jump and Demovelger/Innstillinger before Epic
       2"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
   - id: "epic-1-retro-item-3-make-a-manual-checks-section-required-in"
     epic: 1
