@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: '11-25-2026 00:07'
+last_updated: '11-25-2026 09:00'
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -135,14 +135,14 @@ action_items:
     action: "Add pitfalls to project context: tool layer rewrites backslash-u escapes
       (build with chr(92), verify bytes); no waitForTimeout in e2e"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
   - id: "epic-1-retro-item-8-readme-restart-the-proxy-and-build-for-c"
     epic: 1
     action: "README: restart the Proxy (and --build for code changes) after changing
       OPENROUTER_API_KEY or OPENROUTER_MODEL"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
   - id: "epic-1-retro-item-9-decide-whether-demo-mode-may-send-a-non"
     epic: 1
