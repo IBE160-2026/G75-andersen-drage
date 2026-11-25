@@ -127,3 +127,4 @@
 - [ ] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — les gjennom D-18 (agent-skrevet tekst om abandoned, fremdriftslinje over fanene, roundId-reserve)
 - [ ] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — utsatt: komponenttest for Screen-fokuseffekten krever DOM-miljø i Vitest (deferred-work.md)
 - [ ] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — utsatt til 2.3: runde med bare quizspørsmål gir tomt studiepanel, ikke testet (deferred-work.md)
+- [ ] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — PR #23 (https://github.com/IBE160-2026/G75-andersen-drage/pull/23): grønn CI og merge; sett 2.1 til done når manuelle sjekker er godkjent
