@@ -157,5 +157,5 @@ action_items:
     action: "Decide whether to log hours against the milestone budget or drop that
       part of the re-plan rule"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
