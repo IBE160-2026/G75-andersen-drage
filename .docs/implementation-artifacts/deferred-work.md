@@ -14,7 +14,7 @@
 
 - source_spec: `.docs/implementation-artifacts/spec-1-6-proxy-study-set.md`
   summary: MAX_OUTPUT_TOKENS = 16 000 may not fit in the 40 s attempt timeout, so a long valid Study Set could time out (504) instead of finishing.
-  evidence: Review pass 1 BH2 (maybe-false). Settle it in Story 1.13 by measuring real output tokens and tokens per second on the reference notes, then size MAX_OUTPUT_TOKENS and the prompt's field lengths to finish well inside 40 s (NFR-4).
+  evidence: Review pass 1 BH2 (maybe-false). Not settled in Story 1.13 (epic-1 retro A6); now an AC of Story 5.1. Settle it there by measuring real output tokens and tokens per second on the reference notes, then size MAX_OUTPUT_TOKENS and the prompt's field lengths to finish well inside 40 s (NFR-4).
 
 - source_spec: `.docs/implementation-artifacts/spec-1-9-generate-study-set.md`
   summary: Re-uploading a stored Note overwrites its record with defaults (`archived`, `importanceLevel`, `lastPractisedAt`) and, when model or prompt version changed, leaves the old `studySets` record orphaned.

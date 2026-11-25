@@ -1326,6 +1326,10 @@ So that the examiner can see that the Study Sets are good, not only well-formed.
 **When** I act on it
 **Then** I follow the PRD order (tune the prompt, then try another model), re-record Fixtures and bump `PROMPT_VERSION` per Story 1.13, and re-measure; thresholds, Normalization and minimum Quote length are never loosened without a PRD update (SM-C2)
 
+**Given** the three checks deferred from Story 1.13 (epic-1 retro A6, item 6; `deferred-work.md` › spec-1-6, `issues.md` story-1-6)
+**When** I measure with the chosen model and every model tried after a missed metric
+**Then** `.docs/quality/report.md` records: (1) real output tokens and generation time per reference note against `MAX_OUTPUT_TOKENS` (16 000, `proxy/app/config.py`) and the 40 s attempt timeout (NFR-4), resizing the cap or the prompt's field lengths if a Study Set does not finish well inside 40 s; (2) whether the model supports JSON-schema output (a model without it fails with 502 and no retry); (3) a live run on `reference-notes/edge-cases/nb-injeksjon.md` whose Study Set does not contain `KODE-RØD-4471`
+
 **Given** SM-6
 **When** I compare preparing one note with the app against by hand
 **Then** a short qualitative self-test log is saved in `.logs/`, with no pass threshold
