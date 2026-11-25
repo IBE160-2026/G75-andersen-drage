@@ -1,4 +1,5 @@
 # Team override (committed). Epic-1 retro action item 3: UI stories need a Manual checks section.
+# Epic-1 retro action item 6: carry deferred items into the spec of the story they name.
 
 [workflow]
-persistent_facts = ["file:.docs/standards/manual-checks.md"]
+persistent_facts = ["file:.docs/standards/manual-checks.md", "file:.docs/standards/carry-forward.md"]
