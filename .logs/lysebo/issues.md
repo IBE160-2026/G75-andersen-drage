@@ -121,3 +121,4 @@
 - [x] 2026-11-25 [github-cli-installasjon](996-2026-10-29-12-20-31-github-cli-installasjon.md) — kjør `gh auth login` etter reinstallasjonen av gh 2.105.0 (løst 2026-11-25: innlogget som lysebo)
 - [ ] 2026-11-25 [retro-tiltak-1-microcopy](965-2026-11-25-07-53-33-retro-tiltak-1-microcopy.md) — mockups/key-quiz.html og key-quiz.png viser gammel quiz.wrong-tekst; oppdater hvis de skal vises i README/rapport
 - [x] 2026-11-25 [retro-tiltak-2-manuell-runde](964-2026-11-25-08-19-45-retro-tiltak-2-manuell-runde.md) — kjør runden i .docs/qa/epic-1-manual-pass.md, fyll inn P/F og funn, sett epic-1-retro-item-2 til done (løst 2026-11-25: alle 28 rader P, ingen funn)
+- [ ] 2026-11-25 [retro-tiltak-3-manual-checks](963-2026-11-25-10-22-32-retro-tiltak-3-manual-checks.md) — PR #20 for docs/retro-item-3-manual-checks (https://github.com/IBE160-2026/G75-andersen-drage/pull/20): grønn CI og merge; sett deretter epic-1-retro-item-3 til done i sprint-status.yaml
