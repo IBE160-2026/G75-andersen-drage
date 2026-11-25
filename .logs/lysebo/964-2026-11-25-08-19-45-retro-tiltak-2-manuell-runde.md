@@ -15,7 +15,7 @@ Epic 1-retro-tiltak 2 (funn A8): fullfør og logg en manuell runde med tastatur 
 - `err.noKey` og `err.tooFewItems` er utelatt fra runden, fordi `e2e/generate.spec.ts` dekker dem.
 - **Runden:** Tor kjørte den 2026-11-25 i Chromium 158.0.8127.37 mot commit 897a121. Alle 28 rader er P på desktop og 320 px, og det er ingen funn.
 - **Oppfølging:** `epic-1-retro-item-2` er satt til `done` i sprint-status, og punktet i issues.md er lukket.
-- **Git:** sjekklista er commit eb75945, resultatene er committet på `docs/retro-item-2-manual-pass`, og PR er opprettet.
+- **Git:** sjekklista er commit eb75945, resultatene er committet på `docs/retro-item-2-manual-pass`, og [PR #19](https://github.com/IBE160-2026/G75-andersen-drage/pull/19) er merget til main som 61417a2 etter grønn CI. Grenen er slettet.
 
 ### Åpne punkter
 Ingen.
