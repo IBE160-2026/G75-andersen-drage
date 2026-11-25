@@ -1,0 +1,4 @@
+# Team override (committed). Epic-1 retro action item 3: UI stories need a Manual checks section.
+
+[workflow]
+persistent_facts = ["file:.docs/standards/manual-checks.md"]
