@@ -20,3 +20,18 @@ Gjennomføre retro-tiltak 6 fra Epic 1-retroen (funn A6): når en story-spec skr
 
 ### Åpne punkter
 Ingen nye. Retro-punktet i `issues.md` («hent inn punkter fra deferred-work.md/issues.md …») lukkes etter merge.
+
+## 2026-11-25 kl. 10:36 — lysebo
+
+### Oppgave
+Pushe, opprette PR og sjekke merge; deretter markere tiltaket som ferdig.
+
+### Plan
+- Push branchen og opprett PR, sjekk at den er merget, oppdater sprint-status og issues på main.
+
+### Resultat
+- PR #21 ble merget 2026-11-25 (merge-commit `3eb78ae`).
+- `epic-1-retro-item-6` er satt til `done` i `sprint-status.yaml`, og retro-punktet i `issues.md` er lukket.
+
+### Åpne punkter
+Ingen.
