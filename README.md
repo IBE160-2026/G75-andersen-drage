@@ -44,6 +44,8 @@ Kopier `.env.example` til `.env` (filen er git-ignorert) og fyll inn det du tren
 
 Opprett nøkkelen med en kredittgrense i OpenRouter.
 
+Proxy-en leser `.env` bare når containeren lages. Endrer du `OPENROUTER_API_KEY` eller `OPENROUTER_MODEL`, må den lages på nytt med `docker compose up -d --force-recreate proxy` (i utviklingsmodus: `docker compose --profile dev up -d --force-recreate proxy-dev`). `docker compose restart` er ikke nok, fordi den gjenbruker det gamle miljøet. Har du også endret kode, legger du til `--build`.
+
 ## Mappeoversikt
 
 ```text
