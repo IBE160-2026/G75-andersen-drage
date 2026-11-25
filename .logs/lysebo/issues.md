@@ -142,3 +142,5 @@
 - [ ] 2026-11-25 [story-2-3-quiz](956-2026-11-25-18-43-51-story-2-3-quiz.md) — sjekk på mobil om quiz-svaret leses opp igjen etter hopp til «Kilde»-fanen og tilbake
 - [ ] 2026-11-25 [story-2-3-quiz](956-2026-11-25-18-43-51-story-2-3-quiz.md) — les gjennom D-22 (agent-skrevet: nøkkelnavn, svarform, ✓/✗ uten skjult tekst)
 - [x] 2026-11-25 [story-2-3-quiz](956-2026-11-25-18-43-51-story-2-3-quiz.md) — PR #28 (https://github.com/IBE160-2026/G75-andersen-drage/pull/28): grønn CI og merge (løst 2026-11-25: merget 0a48734)
+- [ ] 2026-11-25 [story-2-4-resultat](955-2026-11-25-20-06-02-story-2-4-resultat.md) — kjør og logg de manuelle sjekkene i spec 2.4 (Resultat ved 1280 px med tastatur og skjermleser, kildehopp og retur, 320 px, merkene på oversikten); storyen er ikke done før det
+- [ ] 2026-11-25 [story-2-4-resultat](955-2026-11-25-20-06-02-story-2-4-resultat.md) — les gjennom D-23 (agent-skrevet: nøkkelnavn, h1-avvik, ekstra nøkkel result.row, rute og vilkår)
