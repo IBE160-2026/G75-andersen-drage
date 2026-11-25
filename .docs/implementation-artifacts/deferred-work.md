@@ -32,10 +32,6 @@
   summary: A Round whose concepts have only Quiz Questions (no Flashcards) shows the Round screen with no `h2` and an empty study panel; untested. Target: Story 2.3.
   evidence: Review pass 1 BH9/VG4. `verifyStudySet.ts:82` marks a concept covered with quizzes only; `RoundScreen` (`web/components/Round/Round.tsx`) guards `current === null` but no Vitest or e2e test renders that case. Story 2.3 adds Quiz Items to this screen and must cover it.
 
-- source_spec: `.docs/implementation-artifacts/spec-2-1-start-a-round-from-notatoversikt.md`
-  summary: Add a component test that `Screen` reruns its title/focus effect only when the title text changes (a new but equal `{ key, vars }` object must not refocus the `h1`; a changed value updates `document.title`).
-  evidence: Review pass 1 VG3. `web/components/Screen/Screen.tsx` depends on `[docTitle]`; reverting to `[title, note]` refocuses `h1` on every `RoundScreen` render and no test fails. Vitest runs `environment: "node"`, so the test needs a DOM environment (e.g. `happy-dom`), a new dev dependency; deferred by Tor 2026-11-25. Add when a story first needs effect-running component tests (likely 2.2).
-
 - source_spec: `.docs/implementation-artifacts/spec-2-2-review-flashcards-and-mark-them.md`
   summary: Test the Round progress bar fill (`web/components/Round/Round.tsx`, `fill`) in the card part and the Quiz part (for example "Spørsmål 1 av y" gives 100/y %), and settle whether the bar runs per part or over the whole Round. Target: Story 2.3.
   evidence: Review pass 1 VG2 and BH. No test reads the bar's width; replacing `position.total` with `cards.length` passes every test. The bar is `aria-hidden` and the Quiz part is a shell until Story 2.3, which builds the Quiz progress.
