@@ -76,4 +76,4 @@ Mark each row **P** (pass) or **F** (fail). Note every F under *Findings*.
 
 - [X] Every row has P or F
 - [X] Every F is fixed or has an issue linked above
-- Done 2026-11-25 (date) → set `epic-1-retro-item-2` to `done` in `sprint-status.yaml`
+- Done 2026-11-25 → set `epic-1-retro-item-2` to `done` in `sprint-status.yaml`
