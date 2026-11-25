@@ -85,18 +85,18 @@ The app speaks like a teacher sitting beside the student: informal bokmål, addr
 
 | Do | Don't |
 |---|---|
-| "Det var nok feil, rett svar er …" followed by the correct answer and the Quote | "Oops! Feil svar 😕" |
+| "Feil. Rett svar er …" followed by the correct answer and the Quote | "Oops! Feil svar 😕" |
 | "Du har en uferdig runde (3 av 8 besvart)" | "Velkommen tilbake! Klar for mer læring?" |
 | "Skannede PDF-er støttes ikke" — say what is wrong, then what to do | Raw provider errors or HTTP codes (FR-24) |
 | "Demomodus støtter bare eksempelnotatene" | Blaming the student |
 | "Klar for eksamen 63 %" + "2 begreper uten verifiserte elementer" | A score without its gap note (FR-19) |
-| "Progresjon lagres ikke" | Silent data loss |
+| "Fremgangen din lagres ikke" | Silent data loss |
 
 Correct-answer feedback phrasing: Microcopy (`quiz.correct`, `quiz.wrong`).
 
 ## Microcopy (bokmål)
 
-The UI strings for every state. **Status:** all strings are drafts by Claude in the teacher voice, awaiting Tor's approval `[ASSUMPTION]`. Exceptions: rows marked *(approved)* were approved by Tor (memlog 2026-11-12; Global and `start.empty` on 2026-11-22); rows marked *(decided)* were fixed by a memlog decision. `{…}` = variable. Strings marked (AT) are for assistive technology only (accessible names, visually hidden text, live-region announcements). Rows are grouped by surface in flow order.
+The UI strings for every state. **Status:** all strings are drafts by Claude in the teacher voice, awaiting Tor's approval `[ASSUMPTION]`. Exceptions: rows marked *(approved)* were approved by Tor (memlog 2026-11-12; Global and `start.empty` on 2026-11-22; every remaining draft on 2026-11-25, Epic 1 retro action 1); rows marked *(decided)* were fixed by a memlog decision. `{…}` = variable. Strings marked (AT) are for assistive technology only (accessible names, visually hidden text, live-region announcements). Rows are grouped by surface in flow order.
 
 | Key | State / place | Norwegian string |
 |---|---|---|
@@ -122,7 +122,7 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | start.dropzone | Drop zone, first line *(approved)* (2026-11-23) | "Slipp en fil her eller [velg fil]" ([…] = link-styled part) |
 | start.dropzone.types | Drop zone, accepted types line *(approved)* (2026-11-23) | ".txt .md .docx .pdf · maks 10 MB" |
 | note.meta | Start, Note meta after extraction (`role="status"`) *(approved)* (2026-11-23) | "{filnavn} · {ord} ord · {avsnitt} avsnitt" |
-| start.paste.submit | Text area button | "Lag kort og quiz" |
+| start.paste.submit | Text area button *(approved)* (2026-11-25) | "Lag kort og quiz" |
 | err.type | Unsupported file type *(approved)* (2026-11-23) | "Denne filtypen støttes ikke. Bruk .txt, .md, .docx eller .pdf." |
 | err.size | > 10 MB *(approved)* (2026-11-23) | "Filen er større enn 10 MB. Velg en mindre fil." |
 | err.noText | No readable text *(approved)* (2026-11-23) | "Fant ingen tekst i filen. Prøv en annen fil, eller lim inn teksten." |
@@ -131,58 +131,73 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | err.tooShort | < 150 words *(approved)* (2026-11-23) | "Notatet er for kort. Det trengs minst 150 ord." |
 | err.tooLong | > 15 000 words *(approved)* (2026-11-23) | "Notatet er for langt. Grensen er 15 000 ord; del det opp." |
 | warn.encoding | Encoding fallback *(approved)* (2026-11-23) | "Æ, ø og å kan vises feil i dette notatet." |
-| err.demoOnly | Own file or text in Demo Mode | "Demomodus støtter bare eksempelnotatene." |
-| err.noKey | No API key | "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env." |
+| err.demoOnly | Own file or text in Demo Mode *(approved)* (2026-11-25) | "Demomodus støtter bare eksempelnotatene." |
+| err.noKey | No API key *(approved)* (2026-11-25) |
+| start.demo | Start, link to Demovelger *(approved)* (2026-11-25) | 'Prøv demomodus' |
+| title.demo / demo.h1 | Demovelger, page title and `h1` *(approved)* (2026-11-25) | "Velg et eksempelnotat" |
+| demo.lang.nb / demo.lang.en | Demovelger, each sample's language under its title *(approved)* (2026-11-25) | "Norsk" / "Engelsk" | "Ingen API-nøkkel er satt opp. Bruk demomodus, eller legg inn en nøkkel i .env." |
 | **Genererer** | | |
-| gen.status | Genererer | "Finner nøkkelbegreper …" · "Lager kort …" · "Sjekker kildene …" `[ASSUMPTION]` steps |
-| err.generation | Timeout / 429 / 5xx / network / schema | "Det gikk ikke å lage kort og quiz nå." + 'Prøv igjen' + 'Tilbake til start' (`gen.back`) |
+| title.generating | Genererer, page title and `h1` *(approved)* (2026-11-25) | "Lager kort og quiz" |
+| gen.status.concepts / .cards / .sources | Genererer, one `role="status"` text per step (D-11) *(approved)* (2026-11-25) | "Finner nøkkelbegreper …" · "Lager kort …" · "Sjekker kildene …" |
+| gen.progress | Progress bar, accessible name (AT) *(approved)* (2026-11-25) | "Fremdrift" |
+| err.generation | Timeout / 429 / 5xx / network / schema *(approved)* (2026-11-25) | "Det gikk ikke å lage kort og quiz nå." + 'Prøv igjen' + 'Tilbake til start' (`gen.back`) |
+| gen.retry | Genererer failure, primary action (D-12) *(approved)* (2026-11-25) | 'Prøv igjen' |
 | gen.back | Genererer failure, second action *(decided)* | 'Tilbake til start' |
-| err.tooFewItems | < 5 Flashcards or Quiz Questions | "For få kort eller spørsmål kunne knyttes til notatet ditt." + 'Prøv igjen' |
+| err.tooFewItems | < 5 Flashcards or Quiz Questions *(approved)* (2026-11-25) | "For få kort eller spørsmål kunne knyttes til notatet ditt." + 'Prøv igjen' |
 | **Notatoversikt** | | |
-| err.noConcepts | No eligible concepts | "Fant ingen nøkkelbegreper med verifisert kilde, så runden kan ikke starte." + 'Prøv igjen' |
-| readiness | Readiness Score + gap | "Klar for eksamen {n} %" · "{k} begreper uten verifiserte elementer" (before the first Round {n} = 0; hidden only with zero eligible concepts) |
+| note.missing | Notatoversikt `h1` when the Note is not stored *(approved)* (2026-11-25) | "Fant ikke notatet" |
+| overview.summary / overview.concepts | Notatoversikt, section headings *(approved)* (2026-11-25) | "Sammendrag" / "Nøkkelbegreper" |
+| overview.notCovered | Concept with no verified Items *(approved)* (2026-11-25) | "ingen verifiserte elementer" |
+| mastery.new | Concept mastery before any Round *(approved)* (2026-11-25) | "ny" |
+| source.ref | Source reference link *(approved)* (2026-11-25) | "Kilde: {id}" |
+| source.label / source.aria | Source panel label / `aside` and scroll region name (AT) *(approved)* (2026-11-25) | "Kilde · {filnavn}" / "Kilde: {filnavn}" |
+| tabs.study / tabs.source | Mobile tabs *(approved)* (2026-11-25) | "Studier" / "Kilde" |
+| err.noConcepts | No eligible concepts *(approved)* (2026-11-25) | "Fant ingen nøkkelbegreper med verifisert kilde, så runden kan ikke starte." + 'Prøv igjen' |
+| readiness | Readiness Score + gap *(approved)* (2026-11-25) | "Klar for eksamen {n} %" · "{k} begreper uten verifiserte elementer" (before the first Round {n} = 0; hidden only with zero eligible concepts) |
 | readiness.gapOne | Gap note, singular *(approved)* | "1 begrep uten verifiserte elementer" |
-| overview.start | Notatoversikt | 'Start runde' · hint "Usikre begreper kommer først." |
-| banner.interrupted | Notatoversikt | "Du har en uferdig runde ({n} av {m} besvart)." · 'Fortsett' / 'Ny runde' |
+| overview.start | Notatoversikt *(approved)* (2026-11-25) | 'Start runde' · hint "Usikre begreper kommer først." |
+| banner.interrupted | Notatoversikt *(approved)* (2026-11-25) | "Du har en uferdig runde ({n} av {m} besvart)." · 'Fortsett' / 'Ny runde' |
 | **Round** | | |
-| round.review | All concepts known | "Du kan alle nøkkelbegrepene. Dette er en repetisjonsrunde." |
-| card.reveal / marks | Flashcard | 'Snu kortet' · 'Kunne det ikke' · 'Kunne det' |
+| round.review | All concepts known *(approved)* (2026-11-25) | "Du kan alle nøkkelbegrepene. Dette er en repetisjonsrunde." |
+| card.reveal / marks | Flashcard *(approved)* (2026-11-25) | 'Snu kortet' · 'Kunne det ikke' · 'Kunne det' |
 | kbd.space | Keyboard hint for Space *(decided)* | 'Mellomrom' |
-| quiz.correct | Correct answer | "Riktig." + Quote |
-| quiz.wrong | Wrong answer | "Det var nok feil, rett svar er {svar}." + Quote |
-| quiz.next | Advance control | 'Neste spørsmål' (last: 'Se resultatet') |
-| simpler.button / fail | Explain Simpler | 'Forklar enklere' · "Fant ingen enklere forklaring med verifisert kilde. Her er sitatet fra notatet ditt." |
+| quiz.correct | Correct answer *(approved)* (2026-11-25) | "Riktig." + Quote |
+| quiz.wrong | Wrong answer *(approved)* (2026-11-25) | "Feil. Rett svar er {svar}." + Quote |
+| quiz.next | Advance control *(approved)* (2026-11-25) | 'Neste spørsmål' (last: 'Se resultatet') |
+| simpler.button / fail | Explain Simpler *(approved)* (2026-11-25) | 'Forklar enklere' · "Fant ingen enklere forklaring med verifisert kilde. Her er sitatet fra notatet ditt." |
 | **Kildepanel** | | |
-| quote.start / end | Around the highlighted Quote (AT) | "Sitat start" / "Sitat slutt" |
-| return.label | Return control | "Viser {Pn} fra {kort x / spørsmål x / resultatet}" · 'Tilbake til kortet' / 'Tilbake til spørsmålet' / 'Tilbake til resultatet' |
-| return.hint | Description on the target Passage (AT) | "Trykk Esc for å gå tilbake." |
+| quote.start / end | Around the highlighted Quote (AT) *(approved)* (2026-11-25) | "Sitat start" / "Sitat slutt" |
+| return.label | Return control *(approved)* (2026-11-25) | "Viser {Pn} fra {kort x / spørsmål x / resultatet}" · 'Tilbake til kortet' / 'Tilbake til spørsmålet' / 'Tilbake til resultatet' |
+| return.hint | Description on the target Passage (AT) *(approved)* (2026-11-25) |
+| return.from.summary / return.summary | Return control, Notatoversikt context (D-14) *(approved)* (2026-11-25) | "sammendraget" / 'Tilbake til sammendraget' | "Trykk Esc for å gå tilbake." |
 | **Resultat** | | |
-| result.score | Resultat | "{n} av {m} riktige" · 'Tilbake til oversikten' |
+| result.score | Resultat *(approved)* (2026-11-25) | "{n} av {m} riktige" · 'Tilbake til oversikten' |
 | result.yours / result.correct | Resultat row *(approved)* | "Ditt svar:" / "Rett svar:" (correct answer line only on missed questions) |
 | **Note rows and Arkiv** | | |
 | row.lastPractised | Note row meta *(approved)* | "Sist øvd i dag" / "Sist øvd i går" / "Sist øvd for {n} dager siden" · "Ikke øvd ennå" |
-| importance.name | Importance select, accessible name (AT) | "Viktighet for {tittel}: {n} (1 er viktigst)" |
-| importance.changed | After a change, polite live region (AT) | "{tittel}: viktighet {n}, nå nummer {p} i listen." |
-| archive.button | 'Arkiver' icon button, accessible name (AT) | "Arkiver {tittel}" |
-| archive.toast | Toast after archiving | "{tittel} er arkivert." · 'Angre' · 'Vis arkiv' |
-| archive.done / restore.done / delete.done | After the action, polite status | "{tittel} er arkivert." · "{tittel} er gjenopprettet." · "{tittel} er slettet." |
-| archive.empty | Arkiv empty | "Arkivet er tomt. Notater du arkiverer, havner her." |
-| archive.restore / delete | Arkiv row actions | 'Gjenopprett' · 'Slett for godt' |
-| delete.confirm | Permanent delete dialog | "Slette {tittel} for godt? Notatet og fremgangen din blir borte." · 'Ikke spør igjen' · 'Avbryt' / 'Slett' |
+| importance.name | Importance select, accessible name (AT) *(approved)* (2026-11-25) | "Viktighet for {tittel}: {n} (1 er viktigst)" |
+| importance.changed | After a change, polite live region (AT) *(approved)* (2026-11-25) | "{tittel}: viktighet {n}, nå nummer {p} i listen." |
+| archive.button | 'Arkiver' icon button, accessible name (AT) *(approved)* (2026-11-25) | "Arkiver {tittel}" |
+| archive.toast | Toast after archiving *(approved)* (2026-11-25) | "{tittel} er arkivert." · 'Angre' · 'Vis arkiv' |
+| archive.done / restore.done / delete.done | After the action, polite status *(approved)* (2026-11-25) | "{tittel} er arkivert." · "{tittel} er gjenopprettet." · "{tittel} er slettet." |
+| archive.empty | Arkiv empty *(approved)* (2026-11-25) | "Arkivet er tomt. Notater du arkiverer, havner her." |
+| archive.restore / delete | Arkiv row actions *(approved)* (2026-11-25) | 'Gjenopprett' · 'Slett for godt' |
+| delete.confirm | Permanent delete dialog *(approved)* (2026-11-25) | "Slette {tittel} for godt? Notatet og fremgangen din blir borte." · 'Ikke spør igjen' · 'Avbryt' / 'Slett' |
 | **Innstillinger** | | |
 | settings.consent.h2 | Innstillinger › Samtykke, section heading *(approved)* (2026-11-23) | "Samtykke" |
 | settings.consent.on | Innstillinger › Samtykke *(approved)* (2026-11-23) | "Notatene dine sendes til {leverandør} når du lager kort og quiz." · 'Trekk tilbake samtykke' |
 | settings.consent.off | Innstillinger › Samtykke *(approved)* (2026-11-23) | "Notatene dine sendes ikke til {leverandør}. Du kan bruke eksempelnotatene." · 'Godta at notater sendes' |
 | settings.consent.withdrawn | After withdrawing, polite status *(approved)* (2026-11-23) | "Samtykket er trukket tilbake." |
-| settings.demo | Innstillinger › Studier | 'Demomodus' · "Bruk bare eksempelnotatene, uten kall til {leverandør}." |
-| settings.shortcuts | Innstillinger › Studier | 'Hurtigtaster' · "Mellomrom snur kortet, 1 og 2 merker det, 1–4 velger svar i quizen." |
-| settings.deleteWarning | Innstillinger › Sletting | 'Spør før notater slettes for godt' |
-| toggle.state | Toggle state text | 'På' / 'Av' |
-| import.invalid | Innstillinger | "Filen kunne ikke importeres. Fremgangen din er ikke endret." |
+| settings.studies.h2 | Innstillinger › Studier, section heading *(approved)* (2026-11-25) | "Studier" |
+| settings.demo / settings.demo.desc | Innstillinger › Studier, label / description (D-16) *(approved)* (2026-11-25) | 'Demomodus' · "Bruk bare eksempelnotatene, uten kall til {leverandør}." |
+| settings.shortcuts | Innstillinger › Studier *(approved)* (2026-11-25) | 'Hurtigtaster' · "Mellomrom snur kortet, 1 og 2 merker det, 1–4 velger svar i quizen." |
+| settings.deleteWarning | Innstillinger › Sletting *(approved)* (2026-11-25) | 'Spør før notater slettes for godt' |
+| toggle.on / toggle.off | Toggle state text (D-16) *(approved)* (2026-11-25) | 'På' / 'Av' |
+| import.invalid | Innstillinger *(approved)* (2026-11-25) | "Filen kunne ikke importeres. Fremgangen din er ikke endret." |
 | **Storage** | | |
-| storage.warning | First-time notice | "Noen nettlesere sletter lagrede data etter en tid, eller når et privat vindu lukkes. Eksporter fremgangen din hvis du vil være sikker." |
-| storage.unavailable | Storage full/unavailable | "Progresjon lagres ikke." |
-| storage.reset | Corrupt data | "Lagrede data kunne ikke leses og er tilbakestilt." |
+| storage.warning | First-time notice *(approved)* (2026-11-25) | "Noen nettlesere sletter lagrede data etter en tid, eller når et privat vindu lukkes. Eksporter fremgangen din hvis du vil være sikker." |
+| storage.unavailable | Storage full/unavailable *(approved)* (2026-11-25) | "Fremgangen din lagres ikke." |
+| storage.reset | Corrupt data *(approved)* (2026-11-25) | "Lagrede data kunne ikke leses og er tilbakestilt." |
 
 ## Component Patterns
 
@@ -306,7 +321,7 @@ Sara, second-year student, one evening left, laptop, first visit. Wireframes: [`
 4. Genererer: "Finner nøkkelbegreper …", "forelesning-7.pdf · 3 120 ord · 24 avsnitt", under a minute. (mockup: [key-generating](mockups/key-generating.html), [PNG](mockups/key-generating.png), frame a)
 5. Notatoversikt: source panel left (P1 …), right: "Klar for eksamen 0 %" with its gap note, summary with Quotes, 8 Key Concepts all 'ny', 'Start runde'.
 6. Runde: Flashcard front "Hva skiller 3NF fra 2NF?" + "Kilde: P4". Space reveals the back: answer, Quote, "Kilde: P4". She presses 1 or 2 per card; focus lands on each new card's heading. On one card she presses 'Forklar enklere'. (mockup: [key-flashcards](mockups/key-flashcards.html), [PNG](mockups/key-flashcards.png))
-7. Runde: quiz, "Spørsmål 4 av 8", reference "Kilde: P7" under the stem. She answers with 1–4; on a miss: `quiz.wrong` ("Det var nok feil, rett svar er C.") + Quote. (mockup: [key-quiz](mockups/key-quiz.html), [PNG](mockups/key-quiz.png))
+7. Runde: quiz, "Spørsmål 4 av 8", reference "Kilde: P7" under the stem. She answers with 1–4; on a miss: `quiz.wrong` ("Feil. Rett svar er C.") + Quote. (mockup: [key-quiz](mockups/key-quiz.html), [PNG](mockups/key-quiz.png))
 8. **Climax — Resultat:** "5 av 8 riktige". On the question she missed she clicks "Kilde: P7"; the source panel scrolls to P7 and rings the exact sentence the question was built from. She sees it is in her own Note, then presses 'Tilbake til resultatet'. (mockup: [key-result](mockups/key-result.html), [PNG](mockups/key-result.png))
 9. 'Tilbake til oversikten' → Notatoversikt: "Klar for eksamen 63 %", three concepts 'usikker', 'Start runde' ("Usikre begreper kommer først.").
 
@@ -398,7 +413,7 @@ Responsive web only; no native app. Keyboard hints hidden on touch-only devices 
 
 The PRD Update run of 2026-11-12 adopted items 1–7 (FR-12, FR-25, FR-26, FR-27, FR-5 and UJ-1, product name, NFR-7 at 320px); the PRD and this spine agree on them.
 
-**[OPEN]**: provider name in Consent; Note-language `lang` attribute; where Consent is stored (UJ-2 failure path); qualities liked in 'Logically' / 'Open notebook'. Labels, error strings and empty copy are drafted in Microcopy (awaiting approval).
+**[OPEN]**: provider name in Consent; Note-language `lang` attribute; where Consent is stored (UJ-2 failure path); qualities liked in 'Logically' / 'Open notebook'. Labels, error strings and empty copy are in Microcopy, approved by Tor 2026-11-25.
 
 **[ASSUMPTION] carried from memlog:** student may open the source reference before reveal/answer (confirmed by Tor 2026-11-22); "du" form; no exclamation marks; ties broken by last practiced; stakes (graded IBE160, examiner looks for wireframes) not yet confirmed by Tor.
 
