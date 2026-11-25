@@ -807,7 +807,7 @@ So that I test myself and learn from my mistakes immediately.
 
 **Given** an unanswered Quiz Question
 **When** I select an option
-**Then** it is answered at once: the answer is stored in one transaction with the Mastery update (`updateMastery`), the correct option shows ✓ in known colours, a wrong chosen option shows ✗ in shaky colours, and `quiz.correct` or `quiz.wrong` ("Det var nok feil, rett svar er {svar}.") is announced via `aria-live="polite"`, followed by the Quote block
+**Then** it is answered at once: the answer is stored in one transaction with the Mastery update (`updateMastery`), the correct option shows ✓ in known colours, a wrong chosen option shows ✗ in shaky colours, and `quiz.correct` or `quiz.wrong` ("Feil. Rett svar er {svar}.") is announced via `aria-live="polite"`, followed by the Quote block
 **And** the other options become `aria-disabled` with full ink contrast and a muted border, and focus stays on the chosen option
 
 **Given** an answered Quiz Question

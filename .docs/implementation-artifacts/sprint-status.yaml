@@ -91,7 +91,7 @@ action_items:
     action: "Approve or edit the draft Microcopy keys of D-11 to D-16 (and older EXPERIENCE.md
       drafts) in one pass; mark them approved in EXPERIENCE.md before Epic 2"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
   - id: "epic-1-retro-item-2-finish-and-log-a-manual-keyboard-and-320"
     epic: 1
