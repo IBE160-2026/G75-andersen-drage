@@ -94,10 +94,18 @@ export const messages = {
   "source.aria": "Kilde: {filnavn}",
   "tabs.study": "Studier",
   "tabs.source": "Kilde",
-  // 'Start runde' stays aria-disabled with this hint until Story 2.1 (decided by Tor 2026-11-24).
+  // 'Start runde' starts a Round (Story 2.1); the hint says how Rounds are composed (decided by Tor 2026-11-24).
   "overview.start": "Start runde",
   "overview.start.hint": "Usikre begreper kommer først.",
   "err.noConcepts": "Fant ingen nøkkelbegreper med verifisert kilde, så runden kan ikke starte.",
+
+  // Runde (Story 2.1, D-18; approved by Tor 2026-11-25). round.title is the h1 and the page-title segment;
+  // round.review ships with its EXPERIENCE.md text. mastery.* label the Mastery chip (text, never colour alone).
+  "round.title": "Runde {n}",
+  "round.item.card": "Kort {x} av {y}",
+  "round.review": "Du kan alle nøkkelbegrepene. Dette er en repetisjonsrunde.",
+  "mastery.shaky": "usikker",
+  "mastery.known": "kan",
 
   // Reference jump (Story 1.12, D-14). quote.* bracket the <mark> for screen readers; {id} is "P4" and
   // {kilde} names where the student came from. Notatoversikt's context decided by Tor 2026-11-24.
@@ -135,11 +143,15 @@ export function format(key: MessageKey, vars: Record<string, string>): string {
   return t(key).replace(/\{([^{}]+)\}/g, (match, name: string) => (Object.hasOwn(vars, name) ? vars[name] : match));
 }
 
+/** A message key with its placeholder values, for a formatted page-title segment ("Runde {n}"). */
+export type FormattedMessage = { key: MessageKey; vars: Record<string, string> };
+
 /**
  * EXPERIENCE.md › Page structure: "{side} · Torsas læringsassistent", with an optional Note segment:
- * "{side} · {notat} · …" (Genererer) or "{notat} · …" (a Note's own screens, titled by the Note).
- * `note` is the Note's name as the student gave it, not a message key.
+ * "{side} · {notat} · …" (Genererer, Runde) or "{notat} · …" (a Note's own screens, titled by the Note).
+ * `side` is a key, or a key with values (Story 2.1); `note` is the Note's name as the student gave it.
  */
-export function pageTitle(side?: MessageKey, note?: string): string {
-  return [side ? t(side) : null, note || null, t("app.brand")].filter((part) => part !== null).join(" · ");
+export function pageTitle(side?: MessageKey | FormattedMessage, note?: string): string {
+  const sideText = side === undefined ? null : typeof side === "string" ? t(side) : format(side.key, side.vars);
+  return [sideText, note || null, t("app.brand")].filter((part) => part !== null).join(" · ");
 }

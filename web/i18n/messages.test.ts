@@ -29,4 +29,10 @@ describe("pageTitle", () => {
     );
     expect(pageTitle(undefined, "forelesning-7")).toBe("forelesning-7 · Torsas læringsassistent");
   });
+
+  it("takes a formatted segment: 'Runde {n} · {notat} · …' (Story 2.1)", () => {
+    expect(pageTitle({ key: "round.title", vars: { n: "3" } }, "forelesning-7")).toBe(
+      "Runde 3 · forelesning-7 · Torsas læringsassistent",
+    );
+  });
 });

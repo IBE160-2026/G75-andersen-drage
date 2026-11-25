@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { pageTitle, type MessageKey } from "../../i18n/messages";
+import { pageTitle, type FormattedMessage, type MessageKey } from "../../i18n/messages";
 import { SKIP_LINK_ID } from "../AppShell/ids";
 import styles from "./Screen.module.css";
 
@@ -16,12 +16,22 @@ import styles from "./Screen.module.css";
  *
  * `title` is a message key; `note` adds the Note's name as a page-title segment (spec 1.9):
  * both give "{side} · {notat} · …" (Genererer), `note` alone gives "{notat} · …" (Notatoversikt).
+ * `title` may carry values ("Runde {n} · {notat} · …", Story 2.1); the effect reruns only when the text changes.
  */
-export function Screen({ title, note, children }: { title?: MessageKey; note?: string; children: ReactNode }) {
+export function Screen({
+  title,
+  note,
+  children,
+}: {
+  title?: MessageKey | FormattedMessage;
+  note?: string;
+  children: ReactNode;
+}) {
   const ref = useRef<HTMLDivElement>(null);
+  const docTitle = pageTitle(title, note);
 
   useEffect(() => {
-    document.title = pageTitle(title, note);
+    document.title = docTitle;
     const heading = ref.current?.querySelector<HTMLElement>("h1");
     if (!heading) return;
     const dialogOpen = () => !!document.querySelector('[role="dialog"]');
@@ -41,7 +51,7 @@ export function Screen({ title, note, children }: { title?: MessageKey; note?: s
     }
     document.addEventListener("keydown", onKeyDown, true);
     return () => document.removeEventListener("keydown", onKeyDown, true);
-  }, [title, note]);
+  }, [docTitle]);
 
   return (
     <div ref={ref} className={styles.screen}>

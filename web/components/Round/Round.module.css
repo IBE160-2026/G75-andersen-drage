@@ -1,0 +1,66 @@
+/* Round screen (DESIGN.md › Components: Round progress, Flashcard front). The split / tabs are
+   StudyLayout.module.css; the Mastery chip is MasteryChip.module.css. */
+
+/* One line: "Runde n · Kort x av y" in ink-muted, then the bar filling the rest, then the chip. Wraps at 320 px. */
+.progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--colors-ink-muted);
+}
+
+.progress .h1,
+.progress .h2 {
+  font-family: var(--typography-body-font-family);
+  font-size: var(--typography-body-font-size);
+  font-weight: 600;
+  line-height: var(--typography-body-line-height);
+  color: var(--colors-ink-muted);
+}
+
+.separator {
+  flex: none;
+}
+
+.bar {
+  flex: 1 1 6rem;
+  min-width: 4rem;
+  height: var(--spacing-progress-height);
+  overflow: hidden;
+  border-radius: var(--rounded-track);
+  background: var(--colors-line);
+}
+
+.fill {
+  height: 100%;
+  background: var(--colors-accent);
+}
+
+.review {
+  color: var(--colors-ink);
+}
+
+/* Flashcard: surface-card, 1 px line, rounded-md, spacing-5 padding. Front: question + reference only. */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  background: var(--colors-surface-card);
+  border: 1px solid var(--colors-line);
+  border-radius: var(--rounded-md);
+}
+
+.front {
+  font-family: var(--typography-card-front-font-family);
+  font-size: var(--typography-card-front-font-size);
+  font-weight: var(--typography-card-front-font-weight);
+  line-height: var(--typography-card-front-line-height);
+  color: var(--colors-ink);
+}
+
+.ref {
+  color: var(--colors-ink-muted);
+  font-size: var(--typography-reference-font-size);
+}

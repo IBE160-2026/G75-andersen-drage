@@ -181,9 +181,9 @@ test("desktop: title, study panel and source panel side by side, source on the l
   await expect(concepts.filter({ hasText: "Denormalisering" }).getByText("ny", { exact: true })).toHaveCount(0);
   await expect(main.getByText("ny", { exact: true })).toHaveCount(4);
 
-  // 'Start runde' at the end, aria-disabled, with its hint.
+  // 'Start runde' at the end, enabled since Story 2.1 (round.spec.ts), with its hint.
   const start = page.getByRole("button", { name: MSG.start });
-  await expect(start).toHaveAttribute("aria-disabled", "true");
+  await expect(start).not.toHaveAttribute("aria-disabled");
   await expect(start).toHaveAccessibleDescription(MSG.startHint);
 
   // Generated content and Passage text carry the Study Set language; UI text stays bokmål.

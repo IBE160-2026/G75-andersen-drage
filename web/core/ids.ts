@@ -42,3 +42,17 @@ export function demoKey(key: string): string {
 export function bareNoteHash(noteKey: string): string {
   return noteKey.startsWith(DEMO_PREFIX) ? noteKey.slice(DEMO_PREFIX.length) : noteKey;
 }
+
+/**
+ * Story 2.1: a version 4 UUID from 16 random bytes (RFC 9562), for `roundId` where `crypto.randomUUID`
+ * is missing: browsers expose it only in a secure context, and the app may be opened over plain http
+ * on another host name (the e2e run uses http://web-test:3000). Does not mutate `bytes`.
+ */
+export function uuidFromBytes(bytes: Uint8Array): string {
+  if (bytes.length !== 16) throw new RangeError("uuidFromBytes needs 16 bytes");
+  const b = Uint8Array.from(bytes);
+  b[6] = (b[6] & 0x0f) | 0x40;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const hex = [...b].map((x) => x.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
