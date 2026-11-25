@@ -19,3 +19,19 @@ Pushe forrige logg-commit, og gjennomføre retro-tiltak 3 fra epic-1-retroen (fu
 
 ### Åpne punkter
 - PR #20: grønn CI og merge; sett deretter epic-1-retro-item-3 til done i sprint-status.yaml.
+
+## 2026-11-25 kl. 10:27 — lysebo
+
+### Oppgave
+Pushe loggen og merge PR #20.
+
+### Plan
+- Push logg-commit 437542b, vent på CI, merge PR #20, sett item-3 til done.
+
+### Resultat
+- 437542b pushet. CI (`test`) grønn på PR #20 (2m52s); merget som b36b68b, branchen slettet.
+- `sprint-status.yaml`: epic-1-retro-item-3 → done, last_updated oppdatert (b401ebe).
+- Punktet om PR #20 i `issues.md` er lukket.
+
+### Åpne punkter
+Ingen.
