@@ -128,7 +128,7 @@ action_items:
       carry the three open 1.13 checks (MAX_OUTPUT_TOKENS vs 40 s, JSON-schema support,
       live injection check) into Story 5.1"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
   - id: "epic-1-retro-item-7-add-pitfalls-to-project-context-tool-lay"
     epic: 1
