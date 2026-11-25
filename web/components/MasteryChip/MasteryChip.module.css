@@ -1,0 +1,26 @@
+/* DESIGN.md › Mastery chip (moved from NoteOverview.module.css in Story 2.1, which adds shaky / known). */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--spacing-2);
+  border-radius: var(--rounded-full);
+  font-family: var(--typography-chip-font-family);
+  font-size: var(--typography-chip-font-size);
+  font-weight: var(--typography-chip-font-weight);
+  line-height: var(--typography-body-line-height);
+}
+
+.new {
+  background: var(--colors-mastery-new-bg);
+  color: var(--colors-mastery-new-fg);
+}
+
+.shaky {
+  background: var(--colors-mastery-shaky-bg);
+  color: var(--colors-mastery-shaky-fg);
+}
+
+.known {
+  background: var(--colors-mastery-known-bg);
+  color: var(--colors-mastery-known-fg);
+}

@@ -2,29 +2,15 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ButtonLink } from "../../../components/Button/Button";
-import { EmptyState } from "../../../components/EmptyState/EmptyState";
 import { Generating } from "../../../components/Generating/Generating";
 import { NoteOverview } from "../../../components/NoteOverview/NoteOverview";
 import { useNoteSession } from "../../../components/NoteSession/NoteSession";
-import { Screen } from "../../../components/Screen/Screen";
+import { useWide } from "../../../components/StudyLayout/StudyLayout";
 import { bareNoteHash } from "../../../core/ids";
 import { extractedFromNote } from "../../../core/overview";
-import { format, t } from "../../../i18n/messages";
+import { format } from "../../../i18n/messages";
 import { readNote, readStudySet, type NoteRecord, type StudySetRecord } from "../../../storage/db";
-
-/** The same breakpoint as the CSS (EXPERIENCE.md › Responsive & Platform). */
-const WIDE_QUERY = "(min-width: 768px)";
-
-/** A malformed escape (for example `/notat/%E0`) gives "", which reads as a missing Note. */
-function decodeParam(value: unknown): string {
-  if (typeof value !== "string") return "";
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return "";
-  }
-}
+import { decodeParam, NoteMissing } from "../shared";
 
 type State =
   | { kind: "loading" }
@@ -39,18 +25,6 @@ async function loadRecords(noteHash: string): Promise<{ note: NoteRecord; studyS
   return studySet.ok ? { note: note.value, studySet: studySet.value } : null;
 }
 
-function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
-  useEffect(() => {
-    const list = window.matchMedia(query);
-    const update = () => setMatches(list.matches);
-    update();
-    list.addEventListener("change", update);
-    return () => list.removeEventListener("change", update);
-  }, [query]);
-  return matches;
-}
-
 const number = new Intl.NumberFormat("nb-NO");
 
 // Notatoversikt (Story 1.11): the stored Note and its Study Set, both validated, in the NoteSession
@@ -61,7 +35,7 @@ export default function NoteOverviewPage() {
   const noteHash = decodeParam(params?.noteHash);
   const router = useRouter();
   const { setSession } = useNoteSession();
-  const wide = useMediaQuery(WIDE_QUERY);
+  const wide = useWide();
   const [loaded, setLoaded] = useState<State>({ kind: "loading" });
   const [regenerating, setRegenerating] = useState(false);
   const [reload, setReload] = useState(0);
@@ -90,21 +64,7 @@ export default function NoteOverviewPage() {
   useEffect(() => () => setSession(null), [setSession]);
 
   if (state.kind === "loading") return null;
-  if (state.kind === "missing") {
-    return (
-      <Screen title="note.missing">
-        <EmptyState
-          heading={t("note.missing")}
-          next={t("start.empty.next")}
-          actions={
-            <ButtonLink href="/" variant="primary">
-              {t("gen.back")}
-            </ButtonLink>
-          }
-        />
-      </Screen>
-    );
-  }
+  if (state.kind === "missing") return <NoteMissing />;
   if (regenerating) {
     const extracted = extractedFromNote(state.note);
     return (

@@ -1,41 +1,41 @@
 "use client";
 
-import { useCallback, useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
-import { Tabs } from "radix-ui";
-import { contentLang, hasCoveredConcept, noteFileName, passageLabel, sortConcepts } from "../../core/overview";
-import { format, t } from "../../i18n/messages";
-import type { NoteRecord, StudySetRecord } from "../../storage/db";
-import { useAsideSlot } from "../AppShell/asideSlot";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import { uuidFromBytes } from "../../core/ids";
+import { contentLang, hasCoveredConcept, sortConcepts } from "../../core/overview";
+import { composeRound } from "../../core/round";
+import { t } from "../../i18n/messages";
+import { readConceptProgress, startRound, type NoteRecord, type StudySetRecord } from "../../storage/db";
 import { Button } from "../Button/Button";
-import {
-  HighlightedText,
-  passageActiveClass,
-  passageElementId,
-  ReferenceJumpProvider,
-  ReturnControl,
-  SourceRef,
-  useActivePassage,
-  useSourceEscape,
-  type ReturnContext,
-} from "../ReferenceJump/ReferenceJump";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
+import { MasteryChip } from "../MasteryChip/MasteryChip";
+import { SourceRef, type ReturnContext } from "../ReferenceJump/ReferenceJump";
 import { Screen, ScreenHeading } from "../Screen/Screen";
+import { StudyLayout } from "../StudyLayout/StudyLayout";
 import styles from "./NoteOverview.module.css";
 
 const START_HINT_ID = "start-hint";
+const START_ERROR_ID = "start-error";
 const NO_CONCEPTS_ID = "no-concepts-error";
-const SOURCE_LABEL_ID = "source-label";
-type Tab = "study" | "source";
+
+/** The Round screen's route; Note keys keep their `demo:` prefix, as on `/notat/{noteHash}`. */
+export function roundPath(noteHash: string, roundId: string): string {
+  return `/notat/${noteHash}/runde/${roundId}`;
+}
+
+/** `crypto.randomUUID()`, which exists only in a secure context; elsewhere a v4 UUID from getRandomValues. */
+function newRoundId(): string {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  return uuidFromBytes(crypto.getRandomValues(new Uint8Array(16)));
+}
 
 /**
- * Notatoversikt (FR-6, FR-12, UX-DR6–9). The study panel is the content of `main`; the source panel is an
- * `<aside>` portalled into the shell's aside slot, so it follows `main` in the DOM and the AppShell grid
- * places it on the left from 768 px. Below 768 px (`wide` false) the panels become manual-activation Tabs
- * 'Studier' / 'Kilde'; the 'Kilde' Tabs.Content renders inside the aside, and the aside is hidden while
- * 'Studier' is active. Generated content and Passage text carry `lang` from `StudySet.language`.
- * Story 1.12: both panels sit in one ReferenceJumpProvider; on mobile a jump switches to 'Kilde' and the
- * return switches back to 'Studier'.
+ * Notatoversikt (FR-6, FR-12, UX-DR6–9): summary, Key Concepts and 'Start runde' in the study panel,
+ * in the shared StudyLayout (split from 768 px, tabs below). Generated content carries `lang` from
+ * `StudySet.language`. Story 2.1: 'Start runde' reads the progress rows, composes the Round in core/
+ * (Round ID and time from here) and stores it in one transaction, then opens the Round screen. While it
+ * runs the button is pending; a failure keeps the student here with `err.generation` inline.
  */
 export function NoteOverview({
   note,
@@ -49,59 +49,69 @@ export function NoteOverview({
   /** 'Prøv igjen' after `err.noConcepts`. */
   onRetry: () => void;
 }) {
-  const slot = useAsideSlot();
-  const [tab, setTab] = useState<Tab>("study");
-  const fileName = noteFileName(note);
+  const router = useRouter();
   const lang = contentLang(studySet.language);
-  const asideLabel = format("source.aria", { filnavn: fileName });
-  const showSource = useCallback(() => setTab("source"), []);
-  const showStudy = useCallback(() => setTab("study"), []);
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
+  // A second press before the pending state has rendered must not start a second Round.
+  const starting = useRef(false);
 
-  const study = <StudyPanel studySet={studySet} lang={lang} onRetry={onRetry} />;
-  const source = <SourcePanel note={note} fileName={fileName} lang={lang} />;
-  const aside = (children: ReactNode, hidden = false) =>
-    slot
-      ? createPortal(
-          <aside aria-label={asideLabel} className={styles.aside} hidden={hidden}>
-            {children}
-          </aside>,
-          slot,
-        )
-      : null;
+  async function start() {
+    if (starting.current) return;
+    starting.current = true;
+    setPending(true);
+    setFailed(false);
+    const roundId = await begin();
+    if (roundId) {
+      // Stays pending until the Round screen replaces this one.
+      router.push(roundPath(note.noteHash, roundId));
+      return;
+    }
+    starting.current = false;
+    setPending(false);
+    setFailed(true);
+  }
 
-  // One provider at the same tree position for both widths, so a jump survives crossing 768 px.
+  /** The new Round's ID, or null when it could not be stored. Never throws. */
+  async function begin(): Promise<string | null> {
+    try {
+      const progress = await readConceptProgress(note.noteHash);
+      if (!progress.ok) return null;
+      const composition = composeRound({
+        roundId: newRoundId(),
+        noteHash: note.noteHash,
+        cacheKey: studySet.cacheKey,
+        now: new Date().toISOString(),
+        random: Math.random,
+        concepts: studySet.concepts,
+        progress: progress.value,
+      });
+      if (!composition) return null;
+      const saved = await startRound(composition);
+      return saved.ok ? saved.value.roundId : null;
+    } catch {
+      return null;
+    }
+  }
+
   return (
     <Screen note={note.title}>
       <ScreenHeading>{note.title}</ScreenHeading>
-      <ReferenceJumpProvider onShowSource={wide ? undefined : showSource} onShowStudy={wide ? undefined : showStudy}>
-        {wide ? (
-          <>
-            {study}
-            {aside(source)}
-          </>
-        ) : (
-          <Tabs.Root value={tab} onValueChange={(value) => setTab(value as Tab)} activationMode="manual">
-            <Tabs.List className={styles.tabList}>
-              <Tabs.Trigger value="study" className={styles.tab}>
-                {t("tabs.study")}
-              </Tabs.Trigger>
-              <Tabs.Trigger value="source" className={styles.tab}>
-                {t("tabs.source")}
-              </Tabs.Trigger>
-            </Tabs.List>
-            <Tabs.Content value="study" tabIndex={-1} className={styles.tabPanel}>
-              <p className={styles.statusStrip}>{note.title}</p>
-              {study}
-            </Tabs.Content>
-            {aside(
-              <Tabs.Content value="source" tabIndex={-1} className={styles.tabPanel}>
-                {source}
-              </Tabs.Content>,
-              tab !== "source",
-            )}
-          </Tabs.Root>
-        )}
-      </ReferenceJumpProvider>
+      <StudyLayout
+        note={note}
+        lang={lang}
+        wide={wide}
+        study={
+          <StudyPanel
+            studySet={studySet}
+            lang={lang}
+            onRetry={onRetry}
+            onStart={() => void start()}
+            pending={pending}
+            failed={failed}
+          />
+        }
+      />
     </Screen>
   );
 }
@@ -111,7 +121,21 @@ function summaryReturn(): ReturnContext {
   return { from: t("return.from.summary"), action: t("return.summary") };
 }
 
-function StudyPanel({ studySet, lang, onRetry }: { studySet: StudySetRecord; lang: string; onRetry: () => void }) {
+function StudyPanel({
+  studySet,
+  lang,
+  onRetry,
+  onStart,
+  pending,
+  failed,
+}: {
+  studySet: StudySetRecord;
+  lang: string;
+  onRetry: () => void;
+  onStart: () => void;
+  pending: boolean;
+  failed: boolean;
+}) {
   const concepts = sortConcepts(studySet.concepts);
   return (
     <div className={styles.studyPanel}>
@@ -151,8 +175,9 @@ function StudyPanel({ studySet, lang, onRetry }: { studySet: StudySetRecord; lan
           {concepts.map((concept) => (
             <li key={concept.id} className={styles.concept}>
               <span lang={lang}>{concept.name}</span>
+              {/* Chips from conceptProgress arrive in Story 2.4. */}
               {concept.covered ? (
-                <span className={styles.chip}>{t("mastery.new")}</span>
+                <MasteryChip state="new" />
               ) : (
                 <span className={styles.notCovered}>{t("overview.notCovered")}</span>
               )}
@@ -163,12 +188,18 @@ function StudyPanel({ studySet, lang, onRetry }: { studySet: StudySetRecord; lan
 
       {hasCoveredConcept(studySet.concepts) ? (
         <div className={styles.start}>
-          <Button variant="primary" pending aria-describedby={START_HINT_ID}>
+          <Button
+            variant="primary"
+            pending={pending}
+            aria-describedby={failed ? `${START_HINT_ID} ${START_ERROR_ID}` : START_HINT_ID}
+            onClick={onStart}
+          >
             {t("overview.start")}
           </Button>
           <p id={START_HINT_ID} className={styles.hint}>
             {t("overview.start.hint")}
           </p>
+          {failed ? <ErrorMessage id={START_ERROR_ID} text={t("err.generation")} /> : null}
         </div>
       ) : (
         <ErrorMessage
@@ -182,42 +213,5 @@ function StudyPanel({ studySet, lang, onRetry }: { studySet: StudySetRecord; lan
         />
       )}
     </div>
-  );
-}
-
-function SourcePanel({ note, fileName, lang }: { note: NoteRecord; fileName: string; lang: string }) {
-  const escape = useSourceEscape();
-  return (
-    <div className={styles.sourcePanel} {...escape}>
-      <p id={SOURCE_LABEL_ID} className={styles.panelLabel}>
-        {format("source.label", { filnavn: fileName })}
-      </p>
-      <ReturnControl />
-      <div role="region" tabIndex={0} aria-labelledby={SOURCE_LABEL_ID} className={styles.region}>
-        <ol className={styles.passages}>
-          {note.passages.map((passage) => (
-            <Passage key={passage.id} id={passage.id} text={passage.text} lang={lang} />
-          ))}
-        </ol>
-      </div>
-    </div>
-  );
-}
-
-function Passage({ id, text, lang }: { id: string; text: string; lang: string }) {
-  const { active, describedBy, quote } = useActivePassage(id);
-  return (
-    <li
-      id={passageElementId(id)}
-      tabIndex={-1}
-      aria-describedby={describedBy}
-      data-active={active || undefined}
-      className={active ? `${styles.passage} ${passageActiveClass}` : styles.passage}
-    >
-      <span className={styles.passageId}>{passageLabel(id)}</span>
-      <p lang={lang} className={styles.passageText}>
-        <HighlightedText text={text} quote={quote} />
-      </p>
-    </li>
   );
 }
