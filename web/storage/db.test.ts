@@ -1,4 +1,5 @@
 // Story 1.9: IndexedDB records (AD-21) on fake-indexeddb. A fresh factory per test. Story 2.1: Round start.
+// Story 2.2: Flashcard marks. Story 2.3: Quiz answers.
 import "fake-indexeddb/auto";
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -13,11 +14,13 @@ import {
   readRound,
   readStudySet,
   recordFlashcardMark,
+  recordQuizAnswer,
   saveGeneratedNote,
   startRound,
   STORES,
   type ConceptProgressRecord,
   type FlashcardMark,
+  type QuizAnswerInput,
   type RoundRecord,
 } from "./db";
 
@@ -767,5 +770,162 @@ describe("recordFlashcardMark (Story 2.2)", () => {
   it("without IndexedDB: not ok, no throw", async () => {
     globalThis.indexedDB = undefined as unknown as IDBFactory;
     expect(await recordFlashcardMark(mark("k-a.fc1", true))).toEqual({ ok: false, code: "err.generation" });
+  });
+});
+
+describe("recordQuizAnswer (Story 2.3)", () => {
+  const T3 = "2026-11-25T12:00:00.000Z";
+  const T4 = "2026-11-25T12:05:00.000Z";
+  const answer = (itemId: string, choice: number, state: QuizAnswerInput["state"] = "known"): QuizAnswerInput => ({
+    roundId: "r-1",
+    itemId,
+    keyConceptId: itemId.split(".")[0],
+    choice,
+    state,
+    answeredAt: T4,
+  });
+  const started = async () => {
+    const saved = await startRound(await compose("r-1", T1));
+    if (!saved.ok) throw new Error("start failed");
+  };
+  /** A started Round with every Flashcard marked: next Item k-a.qq1, then k-b.qq1 (the last). */
+  const inQuiz = async (knew = true) => {
+    await started();
+    for (const itemId of ["k-a.fc1", "k-b.fc1", "k-c.fc1"]) {
+      const marked = await recordFlashcardMark({
+        roundId: "r-1",
+        itemId,
+        keyConceptId: itemId.split(".")[0],
+        knew,
+        state: knew ? "known" : "shaky",
+        answeredAt: T3,
+      });
+      if (!marked.ok) throw new Error("mark failed");
+    }
+    const read = await readRound("r-1");
+    if (!read.ok) throw new Error("read failed");
+    expect(read.value.itemIds.slice(3)).toEqual(["k-a.qq1", "k-b.qq1"]);
+    return read.value;
+  };
+  const stateOf = async (keyConceptId: string) => (await all()).progress.find((p) => p.keyConceptId === keyConceptId)?.state;
+
+  it("a right answer appends {itemId, choice, answeredAt} and puts the state in one go; the other fields stay", async () => {
+    const round = await inQuiz(false);
+    const saved = await recordQuizAnswer(answer("k-a.qq1", 0, "known"));
+    expect(saved.ok).toBe(true);
+    const { progress, rounds } = await all();
+    const row = progress.find((p) => p.keyConceptId === "k-a");
+    expect(row).toEqual({
+      schemaVersion: 1,
+      noteHash: DEMO_HASH,
+      keyConceptId: "k-a",
+      state: "known",
+      lastShownAt: T1,
+      lastUsedQuizQuestionId: "k-a.qq1",
+    });
+    expect(rounds[0]).toEqual({ ...round, answers: [...round.answers, { itemId: "k-a.qq1", choice: 0, answeredAt: T4 }] });
+    expect(saved.ok && saved.value).toEqual({ round: rounds[0], progress: row });
+  });
+
+  it("a wrong answer stores shaky; opposite signals (card known, question wrong): the latest wins", async () => {
+    await inQuiz(true);
+    expect(await stateOf("k-a")).toBe("known");
+    expect((await recordQuizAnswer(answer("k-a.qq1", 2, "shaky"))).ok).toBe(true);
+    expect(await stateOf("k-a")).toBe("shaky");
+    expect(await stateOf("k-b")).toBe("known");
+  });
+
+  it("the same Item twice (double press): one answer, the second call resolves to the stored records", async () => {
+    await inQuiz();
+    const first = await recordQuizAnswer(answer("k-a.qq1", 1, "shaky"));
+    const second = await recordQuizAnswer(answer("k-a.qq1", 0, "known"));
+    expect(second).toEqual(first);
+    const { rounds } = await all();
+    expect(rounds[0].answers.filter((a) => a.itemId === "k-a.qq1")).toHaveLength(1);
+    expect(await stateOf("k-a")).toBe("shaky");
+  });
+
+  it("rejects a question before the Flashcards are marked, writing nothing", async () => {
+    await started();
+    const before = await all();
+    expect(await recordQuizAnswer(answer("k-a.qq1", 0))).toEqual({ ok: false, code: "err.generation" });
+    expect(await all()).toEqual(before);
+  });
+
+  it("rejects, writing nothing: out of order, a Flashcard ID, another concept, an unknown Round", async () => {
+    await inQuiz();
+    const before = await all();
+    expect((await recordQuizAnswer(answer("k-b.qq1", 0))).ok).toBe(false);
+    expect((await recordQuizAnswer(answer("k-a.fc1", 0))).ok).toBe(false);
+    expect((await recordQuizAnswer({ ...answer("k-a.qq1", 0), keyConceptId: "k-b" })).ok).toBe(false);
+    expect((await recordQuizAnswer({ ...answer("k-a.qq1", 0), roundId: "nope" })).ok).toBe(false);
+    expect(await all()).toEqual(before);
+  });
+
+  it.each([4, -1, 1.5, Number.NaN])("rejects choice %s, writing nothing", async (choice) => {
+    await inQuiz();
+    const before = await all();
+    expect(await recordQuizAnswer(answer("k-a.qq1", choice))).toEqual({ ok: false, code: "err.generation" });
+    expect(await all()).toEqual(before);
+  });
+
+  it("rejects a question without an optionOrder entry", async () => {
+    const round = await inQuiz();
+    const db = await openDb();
+    await db.put("rounds", { ...round, optionOrder: {} });
+    db.close();
+    const before = await all();
+    expect((await recordQuizAnswer(answer("k-a.qq1", 0))).ok).toBe(false);
+    expect(await all()).toEqual(before);
+  });
+
+  it("rejects an answer on an abandoned Round, also a repeat of its last answer", async () => {
+    await inQuiz();
+    await recordQuizAnswer(answer("k-a.qq1", 0));
+    await startRound(await compose("r-2", T2));
+    const before = await all();
+    expect((await recordQuizAnswer(answer("k-b.qq1", 0))).ok).toBe(false);
+    expect((await recordQuizAnswer(answer("k-a.qq1", 0))).ok).toBe(false);
+    expect(await all()).toEqual(before);
+  });
+
+  it("the answer to the last question completes the Round in the same transaction; a repeat resolves ok", async () => {
+    await inQuiz();
+    const first = await recordQuizAnswer(answer("k-a.qq1", 0));
+    expect(first.ok && first.value.round).toMatchObject({ status: "active", completedAt: null });
+    const last = await recordQuizAnswer(answer("k-b.qq1", 3, "shaky"));
+    expect(last.ok && last.value.round).toMatchObject({ status: "complete", completedAt: T4 });
+    expect(await recordQuizAnswer(answer("k-b.qq1", 3, "shaky"))).toEqual(last);
+    const read = await readRound("r-1");
+    expect(read.ok && read.value).toMatchObject({ status: "complete", completedAt: T4 });
+    expect(read.ok && read.value.answers.slice(3)).toEqual([
+      { itemId: "k-a.qq1", choice: 0, answeredAt: T4 },
+      { itemId: "k-b.qq1", choice: 3, answeredAt: T4 },
+    ]);
+  });
+
+  it("write fails (a value that cannot be cloned): nothing changes", async () => {
+    await inQuiz();
+    const before = await all();
+    const broken = { ...answer("k-a.qq1", 0), answeredAt: (() => 1) as unknown as string };
+    expect((await recordQuizAnswer(broken)).ok).toBe(false);
+    expect(await all()).toEqual(before);
+  });
+
+  it("saveGeneratedNote abandons an active Round with Quiz answers (the schema reads both answer kinds)", async () => {
+    const note = { ...NOTE, noteHash: DEMO_HASH };
+    const set = { ...SET, cacheKey: `${DEMO_HASH}:2:m` };
+    await saveGeneratedNote(note, set);
+    await inQuiz();
+    await recordQuizAnswer(answer("k-a.qq1", 1, "shaky"));
+    expect((await saveGeneratedNote(note, set)).ok).toBe(true);
+    const read = await readRound("r-1");
+    expect(read.ok && read.value.status).toBe("abandoned");
+    expect(read.ok && read.value.answers).toHaveLength(4);
+  });
+
+  it("without IndexedDB: not ok, no throw", async () => {
+    globalThis.indexedDB = undefined as unknown as IDBFactory;
+    expect(await recordQuizAnswer(answer("k-a.qq1", 0))).toEqual({ ok: false, code: "err.generation" });
   });
 });

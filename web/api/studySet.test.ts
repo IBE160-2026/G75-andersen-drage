@@ -168,6 +168,25 @@ describe("request and response", () => {
     });
   });
 
+  const withQuestion = (patch: Record<string, unknown>) => ({
+    ...STUDY_SET,
+    concepts: [{ ...STUDY_SET.concepts[0], quizQuestions: [{ ...STUDY_SET.concepts[0].quizQuestions[0], ...patch }] }],
+  });
+  it.each([
+    ["centralityRank 1.5", { ...STUDY_SET, concepts: [{ ...STUDY_SET.concepts[0], centralityRank: 1.5 }] }],
+    ["3 options", withQuestion({ options: ["a", "b", "c"] })],
+    ["5 options", withQuestion({ options: ["a", "b", "c", "d", "e"] })],
+    ["correctIndex 4", withQuestion({ correctIndex: 4 })],
+    ["correctIndex -1", withQuestion({ correctIndex: -1 })],
+    ["correctIndex 0.5", withQuestion({ correctIndex: 0.5 })],
+  ])("the guard matches the Proxy contract (epic-1 retro R3): %s is err.generation", async (_name, body) => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => json(body));
+    expect(await requestStudySet({ noteHash: hash(), passages: PASSAGES, status: STATUS, fetchImpl })).toEqual({
+      ok: false,
+      code: "err.generation",
+    });
+  });
+
   it("drops unknown response fields", async () => {
     const fetchImpl = vi.fn<typeof fetch>(async () => json({ ...STUDY_SET, extra: 1 }));
     const result = await requestStudySet({ noteHash: hash(), passages: PASSAGES, status: STATUS, fetchImpl });

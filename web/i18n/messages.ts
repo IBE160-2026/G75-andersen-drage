@@ -114,6 +114,17 @@ export const messages = {
   "round.item.question": "Spørsmål {x} av {y}",
   "return.from.card": "kort {x}",
   "return.card": "Tilbake til kortet",
+  // Quiz (Story 2.3, D-22): texts approved in EXPERIENCE.md › Microcopy 2026-11-25. round.title.quiz is the
+  // Quiz part's page-title segment; round.h1.quiz is visually hidden after the h1 "Runde {n}"; {svar} in
+  // quiz.wrong is the correct option's letter; quiz.result replaces quiz.next on the last question.
+  "round.title.quiz": "Runde {n}, quiz",
+  "round.h1.quiz": ": quiz",
+  "quiz.correct": "Riktig.",
+  "quiz.wrong": "Feil. Rett svar er {svar}.",
+  "quiz.next": "Neste spørsmål",
+  "quiz.result": "Se resultatet",
+  "return.from.question": "spørsmål {x}",
+  "return.question": "Tilbake til spørsmålet",
 
   // Reference jump (Story 1.12, D-14). quote.* bracket the <mark> for screen readers; {id} is "P4" and
   // {kilde} names where the student came from. Notatoversikt's context decided by Tor 2026-11-24.

@@ -3,12 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { updateMastery } from "../../core/mastery";
-import { contentLang, passageLabel } from "../../core/overview";
-import type { MasteryState } from "../../core/round";
+import { contentLang } from "../../core/overview";
+import { isQuizAnswer, type MasteryState } from "../../core/round";
 import type { VerifiedFlashcard, VerifiedQuizQuestion } from "../../core/types";
 import { format, t } from "../../i18n/messages";
 import {
   recordFlashcardMark,
+  recordQuizAnswer,
   type ConceptProgressRecord,
   type NoteRecord,
   type RoundRecord,
@@ -16,6 +17,7 @@ import {
 } from "../../storage/db";
 import { Flashcard } from "../Flashcard/Flashcard";
 import { MasteryChip } from "../MasteryChip/MasteryChip";
+import { displayOrder, QuizQuestion } from "../QuizQuestion/QuizQuestion";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import { StudyLayout } from "../StudyLayout/StudyLayout";
 import styles from "./Round.module.css";
@@ -75,16 +77,22 @@ export function itemsResolve(round: Pick<RoundRecord, "itemIds">, studySet: Pick
 }
 
 /**
- * Round screen (Stories 2.1, 2.2; UX-DR7, UX-DR8, UX-DR13, UX-DR15): rendered from the stored Round, never
- * recomposed. The progress line is the focused `h1` "Runde {n}" and the Item `h2` ("Kort {x} av {y}", or
- * "Spørsmål {x} av {y}" in the Quiz part) set inline, then the 6 px `aria-hidden` bar and the current
- * concept's Mastery chip; a review Round shows `round.review`. Below, in the Notatoversikt split / tabs
- * (reset to 'Studier' per Item): the current Flashcard, or after the last card the Quiz part's shell (the
- * first unanswered stem as plain text; options arrive in Story 2.3).
+ * Round screen (Stories 2.1–2.3; UX-DR7, UX-DR8, UX-DR13–UX-DR15): rendered from the stored Round, never
+ * recomposed. The progress line is the focused `h1` "Runde {n}" (": quiz" visually hidden in the Quiz
+ * part) and the Item `h2` ("Kort {x} av {y}", or "Spørsmål {x} av {y}") set inline, then the 6 px
+ * `aria-hidden` bar (filled per part: x / y) and the current concept's Mastery chip; a review Round shows
+ * `round.review`. Below, in the Notatoversikt split / tabs (reset to 'Studier' per Item): the current
+ * Flashcard or Quiz Question.
  *
- * A mark runs `updateMastery` and `recordFlashcardMark` (one transaction); on success the stored Round
- * and row replace the local ones, the next Item shows and focus moves to its `h2`. When the mark
- * completes the Round (no Quiz Questions), the screen goes back to Notatoversikt (Resultat is Story 2.4).
+ * The shown Item is local state (`shown`, an index into `itemIds`), not the answer count: an answered
+ * Quiz Question stays on screen until `quiz.next`. It starts at the first unanswered Item. Focus moves to
+ * the Item `h2` when the shown Item changes, never on an answer.
+ *
+ * A mark or an answer runs `updateMastery` and `recordFlashcardMark` / `recordQuizAnswer` (one
+ * transaction); on success the stored Round and row replace the local ones. A mark shows the next Item
+ * at once; an answer shows its feedback, and `quiz.next` the next question. When a mark completes the
+ * Round (no Quiz Questions), the screen goes back to Notatoversikt; after the answer that completes it,
+ * the control reads `quiz.result` and goes there too (Resultat is Story 2.4).
  */
 export function RoundScreen({
   note,
@@ -102,40 +110,50 @@ export function RoundScreen({
   const router = useRouter();
   const [round, setRound] = useState(initialRound);
   const [progress, setProgress] = useState(initialProgress);
+  const [shown, setShown] = useState(initialRound.answers.length);
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
   // The revealed card's Item ID: a new card starts on its front.
   const [revealedId, setRevealedId] = useState<string | null>(null);
   const pendingRef = useRef(false);
-  const answered = round.answers.length;
-  const shownAnswered = useRef(answered);
+  const lastShown = useRef(shown);
 
   // Item change → focus the new Item's h2. On mount the h1 has focus (from Screen); comparing with the
-  // last count, not a first-run flag, keeps that true when Strict Mode runs the effect twice.
+  // last shown Item, not a first-run flag, keeps that true when Strict Mode runs the effect twice.
   useEffect(() => {
-    if (shownAnswered.current === answered) return;
-    shownAnswered.current = answered;
+    if (lastShown.current === shown) return;
+    lastShown.current = shown;
     document.getElementById(ITEM_HEADING_ID)?.focus();
-  }, [answered]);
+  }, [shown]);
 
   const lang = contentLang(studySet.language);
   const n = String(round.number);
   const cards = roundFlashcards(round, studySet);
   const questions = roundQuizQuestions(round, studySet);
-  const position = roundPosition(answered, cards.length, questions.length);
+  const position = roundPosition(shown, cards.length, questions.length);
   const card = position.part === "cards" ? cards[position.index] : null;
   const question = position.part === "quiz" ? questions[position.index] : null;
   const conceptId = card?.conceptId ?? question?.conceptId ?? round.conceptIds[0];
   const state: MasteryState = progress.find((p) => p.keyConceptId === conceptId)?.state ?? "new";
   const conceptName = studySet.concepts.find((c) => c.id === conceptId)?.name ?? "";
   const itemId = card?.card.id ?? question?.question.id ?? "done";
-  const fill = position.part === "done" ? 100 : ((position.index + 1) / position.total) * 100;
+  /** 1-based "x" of the shown "Kort/Spørsmål x av y". */
+  const x = position.part === "done" ? 0 : position.index + 1;
+  const fill = position.part === "done" ? 100 : (x / position.total) * 100;
+  const quizPart = position.part === "quiz";
   const heading =
     position.part === "cards"
       ? format("round.item.card", { x: String(position.index + 1), y: String(position.total) })
       : position.part === "quiz"
         ? format("round.item.question", { x: String(position.index + 1), y: String(position.total) })
         : null;
+  const stored = question ? round.answers.find((a) => a.itemId === question.question.id) : undefined;
+  const choice = stored && isQuizAnswer(stored) ? stored.choice : null;
+
+  function keep(next: RoundRecord, row: ConceptProgressRecord) {
+    setRound(next);
+    setProgress((rows) => [...rows.filter((p) => p.keyConceptId !== row.keyConceptId), row]);
+  }
 
   async function mark(knew: boolean) {
     if (!card || pendingRef.current) return;
@@ -161,15 +179,50 @@ export function RoundScreen({
       setFailed(true);
       return;
     }
-    const { round: stored, progress: row } = saved.value;
-    setRound(stored);
-    setProgress((rows) => [...rows.filter((p) => p.keyConceptId !== row.keyConceptId), row]);
+    keep(saved.value.round, saved.value.progress);
+    setShown(saved.value.round.answers.length);
+  }
+
+  async function answer(original: number) {
+    if (!question || choice !== null || pendingRef.current) return;
+    pendingRef.current = true;
+    setPending(true);
+    setFailed(false);
+    const correct = original === question.question.correctIndex;
+    const saved = await recordQuizAnswer({
+      roundId: round.roundId,
+      itemId: question.question.id,
+      keyConceptId: question.conceptId,
+      choice: original,
+      state: updateMastery(state, correct ? "correct" : "wrong"),
+      answeredAt: new Date().toISOString(),
+    });
+    pendingRef.current = false;
+    setPending(false);
+    if (!saved.ok) {
+      setFailed(true);
+      return;
+    }
+    // The question stays shown with its feedback; focus stays on the chosen option.
+    keep(saved.value.round, saved.value.progress);
+  }
+
+  function next() {
+    if (round.status === "complete") {
+      router.push(`/notat/${note.noteHash}`);
+      return;
+    }
+    setFailed(false);
+    setShown(round.answers.length);
   }
 
   return (
-    <Screen title={{ key: "round.title", vars: { n } }} note={note.title}>
+    <Screen title={{ key: quizPart ? "round.title.quiz" : "round.title", vars: { n } }} note={note.title}>
       <div className={styles.progress}>
-        <ScreenHeading className={styles.h1}>{format("round.title", { n })}</ScreenHeading>
+        <ScreenHeading className={styles.h1}>
+          {format("round.title", { n })}
+          {quizPart ? <span className="visually-hidden">{t("round.h1.quiz")}</span> : null}
+        </ScreenHeading>
         {heading ? (
           <>
             <span aria-hidden="true" className={styles.separator}>
@@ -197,7 +250,7 @@ export function RoundScreen({
               key={card.card.id}
               card={card.card}
               conceptName={conceptName}
-              position={answered + 1}
+              position={x}
               headingId={ITEM_HEADING_ID}
               lang={lang}
               revealed={revealedId === card.card.id}
@@ -207,12 +260,21 @@ export function RoundScreen({
               onMark={(knew) => void mark(knew)}
             />
           ) : question ? (
-            <section aria-labelledby={ITEM_HEADING_ID} className={styles.card}>
-              <p lang={lang} className={styles.stem}>
-                {question.question.question}
-              </p>
-              <p className={styles.ref}>{format("source.ref", { id: passageLabel(question.question.passageId) })}</p>
-            </section>
+            <QuizQuestion
+              key={question.question.id}
+              question={question.question}
+              conceptName={conceptName}
+              position={x}
+              headingId={ITEM_HEADING_ID}
+              lang={lang}
+              order={displayOrder(round.optionOrder[question.question.id], question.question.options.length)}
+              choice={choice}
+              pending={pending}
+              failed={failed}
+              onAnswer={(original) => void answer(original)}
+              nextLabel={round.status === "complete" ? t("quiz.result") : t("quiz.next")}
+              onNext={next}
+            />
           ) : null
         }
       />
