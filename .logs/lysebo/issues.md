@@ -118,3 +118,4 @@
 - [ ] 2026-11-24 [fiks-gate-venter-pa-status](967-2026-11-24-23-57-06-fiks-gate-venter-pa-status.md) — utsatt: flere tester for statusventingen (waitForStatus-enhetstest, status svarer aldri, demo venter ikke, andre slipp under ventingen); deferred-work.md
 - [ ] 2026-11-25 [retro-tiltak-7-og-8](966-2026-11-25-07-06-34-retro-tiltak-7-og-8.md) — PR #17 for docs/retro-items-7-8 (https://github.com/IBE160-2026/G75-andersen-drage/pull/17, opprettet 2026-11-25): grønn CI og merge; sett deretter epic-1-retro-item-7 og -8 til done i sprint-status.yaml
 - [ ] 2026-11-25 [retro-tiltak-7-og-8](966-2026-11-25-07-06-34-retro-tiltak-7-og-8.md) — utsatt: CI-sjekk mot nye waitForTimeout i e2e (krever at de fem eksisterende fjernes eller unntas)
+- [ ] 2026-11-25 [github-cli-installasjon](996-2026-10-29-12-20-31-github-cli-installasjon.md) — kjør `gh auth login` etter reinstallasjonen av gh 2.105.0
