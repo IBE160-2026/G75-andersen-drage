@@ -19,3 +19,18 @@ Gjennomføre retro-tiltak 10 fra Epic 1-retroen (funn P2): avgjøre om timer ska
 
 ### Åpne punkter
 Ingen.
+
+## 2026-11-25 kl. 10:47 — lysebo
+
+### Oppgave
+Markere tiltaket som ferdig etter at PR #22 er merget.
+
+### Plan
+- Sjekk at PR-en er merget, og sett item 10 til `done` i `sprint-status.yaml` på main.
+
+### Resultat
+- PR #22 ble merget 2026-11-25 (merge-commit `225ccff`). Ved første forespørsel sto den fortsatt som åpen, så sprint-status ble ikke endret før mergen var bekreftet.
+- `epic-1-retro-item-10` er satt til `done` i `sprint-status.yaml` (commit `fe90d1a` på main). Punktet i `issues.md` ble lukket allerede i PR-en.
+
+### Åpne punkter
+Ingen.
