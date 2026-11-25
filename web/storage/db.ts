@@ -153,19 +153,55 @@ async function withDb<T>(run: (db: IDBPDatabase<TorsaDb>) => Promise<StorageResu
 }
 
 /**
- * Writes the Note and its Study Set in one `readwrite` transaction (AD-21). Both are replaced (`put`)
- * when the Note is already stored. If either write fails, the transaction is aborted: nothing is written.
+ * Writes the Note and its Study Set in one `readwrite` transaction (AD-21). A first save writes both as
+ * given. When a valid Note is already stored under the same key, the Study Set is replaced (AD-21 ›
+ * "Replacing a Study Set"): the stored `title`, `archived`, `importanceLevel` and `lastPractisedAt` are
+ * kept and everything else comes from `note`; every other `studySets` record of the Note (the old set
+ * when the cache key changed, and any earlier orphan) is deleted; the Note's `conceptProgress` rows for
+ * concept IDs not in `set` are deleted (the others stay unchanged); and every valid `active` Round of the
+ * Note becomes `abandoned` (answers kept), same cache key or not, since the replaced Items may be gone.
+ * A stored Note that fails validation is treated as missing: it is overwritten and nothing is deleted.
+ * If any request fails, the transaction is aborted: nothing changes.
  */
 export function saveGeneratedNote(note: Note, set: VerifiedStudySet): Promise<StorageResult<void>> {
-  const noteRecord: NoteRecord = { ...note, schemaVersion: RECORD_SCHEMA_VERSION };
+  const fresh: NoteRecord = { ...note, schemaVersion: RECORD_SCHEMA_VERSION };
   const setRecord: StudySetRecord = { ...set, schemaVersion: RECORD_SCHEMA_VERSION, noteHash: note.noteHash };
   return withDb(async (db) => {
-    const tx = db.transaction(["notes", "studySets"], "readwrite");
+    const tx = db.transaction(["notes", "studySets", "conceptProgress", "rounds"], "readwrite");
     const done = tx.done;
     const writes: Promise<unknown>[] = [];
     try {
-      writes.push(tx.objectStore("notes").put(noteRecord));
-      writes.push(tx.objectStore("studySets").put(setRecord));
+      const noteStore = tx.objectStore("notes");
+      const setStore = tx.objectStore("studySets");
+      const progressStore = tx.objectStore("conceptProgress");
+      const roundStore = tx.objectStore("rounds");
+      const parsed = NoteRecordSchema.safeParse(await noteStore.get(note.noteHash));
+
+      if (!parsed.success) {
+        writes.push(noteStore.put(fresh));
+      } else {
+        const { title, archived, importanceLevel, lastPractisedAt } = parsed.data;
+        const [setKeys, progressKeys, noteRounds] = await Promise.all([
+          setStore.index("noteHash").getAllKeys(note.noteHash),
+          progressStore.index("noteHash").getAllKeys(note.noteHash),
+          roundStore.index("noteHash").getAll(note.noteHash),
+        ]);
+        writes.push(noteStore.put({ ...fresh, title, archived, importanceLevel, lastPractisedAt }));
+        for (const key of setKeys) {
+          if (key !== set.cacheKey) writes.push(setStore.delete(key));
+        }
+        const conceptIds = new Set(set.concepts.map((c) => c.id));
+        for (const key of progressKeys) {
+          if (!conceptIds.has(key[1])) writes.push(progressStore.delete(key));
+        }
+        for (const row of noteRounds) {
+          const round = RoundRecordSchema.safeParse(row);
+          if (round.success && round.data.status === "active") {
+            writes.push(roundStore.put({ ...round.data, status: "abandoned" }));
+          }
+        }
+      }
+      writes.push(setStore.put(setRecord));
       await Promise.all([...writes, done]);
       return { ok: true, value: undefined };
     } catch {

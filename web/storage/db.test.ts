@@ -1,7 +1,7 @@
 // Story 1.9: IndexedDB records (AD-21) on fake-indexeddb. A fresh factory per test. Story 2.1: Round start.
 import "fake-indexeddb/auto";
 import { IDBFactory } from "fake-indexeddb";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { composeRound, type RoundComposition } from "../core/round";
 import type { Note, VerifiedStudySet } from "../core/types";
 import {
@@ -100,13 +100,14 @@ describe("saveGeneratedNote", () => {
     expect(await readStudySet(SET.cacheKey)).toEqual({ ok: true, value: { ...SET, schemaVersion: 1, noteHash: HASH } });
   });
 
-  it("the same Note again replaces both records (put)", async () => {
+  it("the same Note again: the Note is merged (stored title kept) and the set replaced", async () => {
     await saveGeneratedNote(NOTE, SET);
     const next = { ...SET, language: "en" };
-    expect((await saveGeneratedNote({ ...NOTE, wordCount: 7 }, next)).ok).toBe(true);
+    expect((await saveGeneratedNote({ ...NOTE, wordCount: 7, title: "Ny tittel" }, next)).ok).toBe(true);
     expect(await counts()).toEqual({ notes: 1, studySets: 1 });
     const note = await readNote(HASH);
     expect(note.ok && note.value.wordCount).toBe(7);
+    expect(note.ok && note.value.title).toBe("Scrum");
     const set = await readStudySet(SET.cacheKey);
     expect(set.ok && set.value.language).toBe("en");
   });
@@ -360,6 +361,265 @@ describe("readRound / readConceptProgress", () => {
       state: "new",
       lastShownAt: T1,
       lastUsedQuizQuestionId: null,
+    });
+  });
+});
+
+// ---- AD-21 › "Replacing a Study Set": saveGeneratedNote on a stored Note ----
+
+describe("saveGeneratedNote on a stored Note (AD-21)", () => {
+  const KEY_A = `${HASH}:2:model-a`;
+  const KEY_B = `${HASH}:2:model-b`;
+  const DEMO_KEY_A = `demo:${KEY_A}`;
+
+  function setWith(cacheKey: string, ids: string[]): VerifiedStudySet {
+    return { ...SET, cacheKey, concepts: ids.map((id, i) => ({ ...SET.concepts[0], id, name: id, centralityRank: i + 1 })) };
+  }
+
+  const STORED: Note = {
+    ...NOTE,
+    title: "A",
+    currentCacheKey: KEY_A,
+    archived: true,
+    importanceLevel: 3,
+    lastPractisedAt: T1,
+  };
+
+  function progressRow(noteHash: string, keyConceptId: string): ConceptProgressRecord {
+    return { schemaVersion: 1, noteHash, keyConceptId, state: "shaky", lastShownAt: T1, lastUsedQuizQuestionId: `${keyConceptId}.qq1` };
+  }
+
+  function roundRow(roundId: string, noteHash: string, cacheKey: string, status: "active" | "complete" | "abandoned" = "active") {
+    return {
+      schemaVersion: 1 as const,
+      roundId,
+      noteHash,
+      cacheKey,
+      number: 1,
+      review: false,
+      conceptIds: ["k-a"],
+      itemIds: ["k-a.qq1"],
+      optionOrder: { "k-a.qq1": [0, 1, 2, 3] },
+      answers: [{ itemId: "k-a.qq1", choice: 0 }],
+      status,
+      startedAt: T1,
+      completedAt: null,
+    };
+  }
+
+  /** A stored live Note on KEY_A with user fields, progress rows for k-a and k-x, an active Round, and its `demo:` twin. */
+  async function seed() {
+    expect((await saveGeneratedNote(STORED, setWith(KEY_A, ["k-a", "k-x"]))).ok).toBe(true);
+    const demoNote = { ...STORED, noteHash: DEMO_HASH, currentCacheKey: DEMO_KEY_A };
+    expect((await saveGeneratedNote(demoNote, setWith(DEMO_KEY_A, ["k-a", "k-x"]))).ok).toBe(true);
+    const db = await openDb();
+    for (const h of [HASH, DEMO_HASH]) {
+      await db.put("conceptProgress", progressRow(h, "k-a"));
+      await db.put("conceptProgress", progressRow(h, "k-x"));
+    }
+    await db.put("rounds", roundRow("live-old", HASH, KEY_A));
+    await db.put("rounds", roundRow("demo-old", DEMO_HASH, DEMO_KEY_A));
+    db.close();
+  }
+
+  async function snapshot() {
+    const db = await openDb();
+    try {
+      return {
+        notes: await db.getAll("notes"),
+        studySets: await db.getAll("studySets"),
+        progress: await db.getAll("conceptProgress"),
+        rounds: await db.getAll("rounds"),
+      };
+    } finally {
+      db.close();
+    }
+  }
+
+  const NEW_FILE: Note = { ...NOTE, title: "Fra ny fil", wordCount: 9, sourceType: "pdf", currentCacheKey: KEY_B };
+
+  it("first save: Note and set written as given", async () => {
+    expect((await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a"]))).ok).toBe(true);
+    expect(await readNote(HASH)).toEqual({ ok: true, value: { ...NEW_FILE, schemaVersion: 1 } });
+    expect((await readStudySet(KEY_B)).ok).toBe(true);
+  });
+
+  it("same cache key: user fields and title kept, set replaced, no set deleted, the active Round abandoned, the row pruned", async () => {
+    await seed();
+    const next = { ...setWith(KEY_A, ["k-a", "k-b"]), language: "en" };
+    expect((await saveGeneratedNote({ ...NEW_FILE, currentCacheKey: KEY_A }, next)).ok).toBe(true);
+    const note = await readNote(HASH);
+    expect(note.ok && note.value).toMatchObject({ title: "A", archived: true, importanceLevel: 3, lastPractisedAt: T1, wordCount: 9 });
+    const set = await readStudySet(KEY_A);
+    expect(set.ok && set.value.language).toBe("en");
+    expect((await snapshot()).studySets).toHaveLength(2);
+    const live = await readRound("live-old");
+    expect(live.ok && live.value).toEqual({ ...roundRow("live-old", HASH, KEY_A), status: "abandoned" });
+    const progress = await readConceptProgress(HASH);
+    expect(progress.ok && progress.value).toEqual([progressRow(HASH, "k-a")]);
+  });
+
+  it("new cache key: old set deleted, new set written, currentCacheKey updated", async () => {
+    await seed();
+    expect((await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]))).ok).toBe(true);
+    expect((await readStudySet(KEY_A)).ok).toBe(false);
+    expect((await readStudySet(KEY_B)).ok).toBe(true);
+    const note = await readNote(HASH);
+    expect(note.ok && note.value.currentCacheKey).toBe(KEY_B);
+  });
+
+  it("new cache key: an earlier orphaned set of the Note is deleted too; other Notes' sets stay", async () => {
+    await seed();
+    const KEY_C = `${HASH}:1:model-c`;
+    const db = await openDb();
+    await db.put("studySets", { ...setWith(KEY_C, ["k-a"]), schemaVersion: 1, noteHash: HASH });
+    db.close();
+    expect((await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]))).ok).toBe(true);
+    const keys = (await snapshot()).studySets.map((s) => s.cacheKey).sort();
+    expect(keys).toEqual([KEY_B, DEMO_KEY_A].sort());
+  });
+
+  it("user fields: archived, importanceLevel, lastPractisedAt and title kept; the new title is ignored", async () => {
+    await seed();
+    await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]));
+    const note = await readNote(HASH);
+    expect(note.ok && note.value).toEqual({
+      ...NEW_FILE,
+      schemaVersion: 1,
+      title: "A",
+      archived: true,
+      importanceLevel: 3,
+      lastPractisedAt: T1,
+    });
+  });
+
+  it("prune: the row for a vanished concept is deleted, the others unchanged, none created", async () => {
+    await seed();
+    await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]));
+    const progress = await readConceptProgress(HASH);
+    expect(progress.ok && progress.value).toEqual([progressRow(HASH, "k-a")]);
+  });
+
+  it("prune: an invalid row for a vanished concept is deleted; an invalid row for a kept concept is left as is", async () => {
+    await seed();
+    const badKept = { schemaVersion: 1, noteHash: HASH, keyConceptId: "k-a", state: "great" };
+    const badGone = { schemaVersion: 1, noteHash: HASH, keyConceptId: "k-x", state: "great" };
+    const db = await openDb();
+    await db.put("conceptProgress", badKept as never);
+    await db.put("conceptProgress", badGone as never);
+    db.close();
+    expect((await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]))).ok).toBe(true);
+    const after = await openDb();
+    expect(await after.get("conceptProgress", [HASH, "k-a"])).toEqual(badKept);
+    expect(await after.get("conceptProgress", [HASH, "k-x"])).toBeUndefined();
+    after.close();
+  });
+
+  it("active Round on the old cache key: abandoned, answers kept", async () => {
+    await seed();
+    await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]));
+    const round = await readRound("live-old");
+    expect(round.ok && round.value).toEqual({ ...roundRow("live-old", HASH, KEY_A), status: "abandoned" });
+  });
+
+  it("active Round on the new cache key (an earlier set on that key): abandoned too", async () => {
+    await seed();
+    const db = await openDb();
+    await db.put("rounds", roundRow("live-new", HASH, KEY_B));
+    db.close();
+    await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]));
+    const round = await readRound("live-new");
+    expect(round.ok && round.value).toEqual({ ...roundRow("live-new", HASH, KEY_B), status: "abandoned" });
+  });
+
+  it("other Rounds: a complete and an abandoned Round of the Note, and the demo: twin's records stay untouched", async () => {
+    await seed();
+    const db = await openDb();
+    await db.put("rounds", roundRow("live-new", HASH, KEY_B, "abandoned"));
+    await db.put("rounds", roundRow("live-done", HASH, KEY_A, "complete"));
+    db.close();
+    const before = await snapshot();
+    await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]));
+    const after = await snapshot();
+    const demoOnly = <T extends { noteHash: string }>(rows: T[]) => rows.filter((r) => r.noteHash === DEMO_HASH);
+    expect(demoOnly(after.notes)).toEqual(demoOnly(before.notes));
+    expect(demoOnly(after.studySets)).toEqual(demoOnly(before.studySets));
+    expect(demoOnly(after.progress)).toEqual(demoOnly(before.progress));
+    expect(demoOnly(after.rounds)).toEqual(demoOnly(before.rounds));
+    for (const id of ["live-new", "live-done"]) {
+      const round = await readRound(id);
+      expect(round.ok && round.value).toEqual(before.rounds.find((r) => r.roundId === id));
+    }
+  });
+
+  it("invalid stored Note: written fresh, nothing deleted", async () => {
+    await seed();
+    const db = await openDb();
+    const stored = await db.get("notes", HASH);
+    await db.put("notes", { ...stored!, importanceLevel: "high" } as never);
+    db.close();
+    expect((await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]))).ok).toBe(true);
+    expect(await readNote(HASH)).toEqual({ ok: true, value: { ...NEW_FILE, schemaVersion: 1 } });
+    expect((await readStudySet(KEY_A)).ok).toBe(true);
+    const progress = await readConceptProgress(HASH);
+    expect(progress.ok && progress.value.map((p) => p.keyConceptId).sort()).toEqual(["k-a", "k-x"]);
+    const round = await readRound("live-old");
+    expect(round.ok && round.value.status).toBe("active");
+  });
+
+  it("write fails: the transaction aborts; Note, set, rows and Rounds unchanged", async () => {
+    await seed();
+    const before = await snapshot();
+    // The set's put is queued last, after the Note put, the deletes and the abandon; it cannot be cloned.
+    const broken = { ...setWith(KEY_B, ["k-a", "k-b"]), extra: () => 1 } as unknown as VerifiedStudySet;
+    expect(await saveGeneratedNote(NEW_FILE, broken)).toEqual({ ok: false, code: "err.generation" });
+    expect(await snapshot()).toEqual(before);
+  });
+
+  it("an invalid Round row of the Note is left as is", async () => {
+    await seed();
+    const bad = { ...roundRow("live-bad", HASH, KEY_A), startedAt: "i går" };
+    const db = await openDb();
+    await db.put("rounds", bad as never);
+    db.close();
+    expect((await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]))).ok).toBe(true);
+    const after = await openDb();
+    expect(await after.get("rounds", "live-bad")).toEqual(bad);
+    after.close();
+    const live = await readRound("live-old");
+    expect(live.ok && live.value.status).toBe("abandoned");
+  });
+
+  it("an earlier request rejects asynchronously (the old-set delete): everything rolls back", async () => {
+    await seed();
+    const before = await snapshot();
+    const original = IDBObjectStore.prototype.delete;
+    // The old-set delete becomes an `add` of an existing key: that request fails later with ConstraintError,
+    // after the Note put, the prune, the abandon and the set put have all been queued.
+    const spy = vi.spyOn(IDBObjectStore.prototype, "delete").mockImplementation(function (this: IDBObjectStore, key) {
+      if (this.name === "studySets") return this.add({ cacheKey: key, noteHash: HASH }) as unknown as IDBRequest<undefined>;
+      return original.call(this, key);
+    });
+    try {
+      expect(await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]))).toEqual({ ok: false, code: "err.generation" });
+      expect(spy).toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
+    expect(await snapshot()).toEqual(before);
+  });
+
+  it("one call on a new cache key: every outcome at once, and readNote returns the merged Note", async () => {
+    await seed();
+    expect(await saveGeneratedNote(NEW_FILE, setWith(KEY_B, ["k-a", "k-b"]))).toEqual({ ok: true, value: undefined });
+    const after = await snapshot();
+    const live = <T extends { noteHash: string }>(rows: T[]) => rows.filter((r) => r.noteHash === HASH);
+    expect(live(after.studySets).map((s) => s.cacheKey)).toEqual([KEY_B]);
+    expect(live(after.progress)).toEqual([progressRow(HASH, "k-a")]);
+    expect(live(after.rounds).map((r) => [r.roundId, r.status])).toEqual([["live-old", "abandoned"]]);
+    expect(await readNote(HASH)).toEqual({
+      ok: true,
+      value: { ...NEW_FILE, schemaVersion: 1, title: "A", archived: true, importanceLevel: 3, lastPractisedAt: T1 },
     });
   });
 });
