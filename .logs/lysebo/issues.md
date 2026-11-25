@@ -131,3 +131,9 @@
 - [ ] 2026-11-25 [story-2-1-start-runde](960-2026-11-25-11-57-09-story-2-1-start-runde.md) — sett 2.1 til done i sprint-status.yaml når de manuelle sjekkene er godkjent
 - [x] 2026-11-25 [regenereringsfiks](959-2026-11-25-13-10-00-regenereringsfiks.md) — PR #24 (https://github.com/IBE160-2026/G75-andersen-drage/pull/24): grønn CI og merge; deretter epic-1-retro-item-5 done i sprint-status.yaml og kryss av story-1-9-, story-1-11-, epic-1-retro- (R2) og story-2-1-punktene om regenerering (løst 2026-11-25: PR #24, merget 9070884)
 - [ ] 2026-11-25 [regenereringsfiks](959-2026-11-25-13-10-00-regenereringsfiks.md) — vurder AGENTS.md-fallgruve: docker compose --profile test build før docker compose run --rm test (ellers testes utdatert image)
+- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — kjør manuelle sjekker for 2.2 (tastatur forside/bakside, 320 px, reload, quiz-skall) og logg P/F; storyen er ikke done før det
+- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — når 2.2 er godkjent: lukk VG3 (Screen-komponenttest, lagt til i 2.2) i deferred-work.md og her, og sett 2-2 til done i sprint-status.yaml
+- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — utsatt til 2.3: test av fremdriftslinjens fyll (kort- og quizdel), per del eller hele runden (deferred-work.md)
+- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — Story 2.3: utvid RoundAnswer og answers-skjemaet med quizsvaret samtidig, ellers avbrytes ikke aktive runder ved regenerering
+- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — les gjennom D-20 (agent-skrevet: nøkkelnavn, svarform, quiz-skall)
+- [ ] 2026-11-25 [story-2-2-flashcards](958-2026-11-25-14-24-24-story-2-2-flashcards.md) — PR for feat/story-2-2-flashcards: grønn CI og merge
