@@ -46,3 +46,22 @@ Pushe grenen og opprette PR for fiksen.
 
 ### Åpne punkter
 - PR #16: grønn CI og merge. Sett deretter `epic-1-retro-item-4` til `done` i `sprint-status.yaml` (se issues.md).
+
+## 2026-11-25 kl. 00:07 — lysebo
+
+### Oppgave
+Sjekke PR #16, og sette tiltak 4 til `done` når den er merget.
+
+### Plan
+- Sjekke PR-status og CI (check runs) via GitHub-API-et.
+- Kjøre `sprint_status.py update --set-action-status` for `epic-1-retro-item-4`.
+
+### Resultat
+- PR #16 er merget: merge-commit `9a2d9c9`, 2026-11-24 23:05 UTC. CI-jobben `test` var grønn på PR-grenen (`37c3531` og `93f1d86`) før merge. CI på merge-commiten kjørte fortsatt da dette ble skrevet.
+- Lokal `main` er oppdatert til `9a2d9c9`, og den lokale grenen `fix/gate-waits-for-status` er slettet.
+- `sprint-status.yaml`: `epic-1-retro-item-4-fix-err-nokey-shown-before-api-status-an` er satt fra `open` til `done` (commit `71cd27b`), bekreftet av Tor.
+- Lukket issues-punktet om PR #16.
+- Ikke pushet.
+
+### Åpne punkter
+Ingen nye. CI på `main` for `9a2d9c9` er ikke sjekket ferdig.
