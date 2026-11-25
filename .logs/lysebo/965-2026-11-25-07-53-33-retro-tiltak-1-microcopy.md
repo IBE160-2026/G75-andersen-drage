@@ -19,7 +19,7 @@ Ta Epic 1-retro-tiltak 1: godkjenn eller endre alle Microcopy-utkast i EXPERIENC
 - **issues.md:** seks Microcopy-punkter er lukket (2026-11-12 ux-design og stories 1.9, 1.10, 1.11, 1.12, 1.14).
 - **sprint-status:** `epic-1-retro-item-1` står som `done`.
 - **`web/i18n/messages.ts`:** uendret, fordi ingen av de endrede nøklene er bygd ennå.
-- **Git:** commit 7975c70 på `docs/retro-item-1-microcopy`, [PR #18](https://github.com/IBE160-2026/G75-andersen-drage/pull/18).
+- **Git:** commit 7975c70 på `docs/retro-item-1-microcopy`, [PR #18](https://github.com/IBE160-2026/G75-andersen-drage/pull/18), merget til main som 5918af1 etter grønn CI. Grenen er slettet.
 
 ### Åpne punkter
 - `mockups/key-quiz.html` og `key-quiz.png` viser fortsatt den gamle `quiz.wrong`-teksten («Det var nok feil, rett svar er C.»). De er ikke oppdatert fordi de er historiske designfiler. Oppdater dem hvis de skal vises i README eller rapporten.
