@@ -125,6 +125,19 @@ export const messages = {
   "quiz.result": "Se resultatet",
   "return.from.question": "spørsmål {x}",
   "return.question": "Tilbake til spørsmålet",
+  // Resultat (Story 2.4, D-23): texts approved in EXPERIENCE.md › Microcopy 2026-11-25. result.title is the
+  // h1 and the page-title segment; result.score ({n} right of {m} questions) and result.back split the
+  // result.score row; result.yours / result.correct label the row's answer lines; return.from.result
+  // ("Viser {id} fra resultatet") and return.result split the return.label row as D-20 did for the card;
+  // result.row is the row h2 from EXPERIENCE.md › Page structure (Resultat).
+  "result.title": "Resultat",
+  "result.score": "{n} av {m} riktige",
+  "result.row": "Spørsmål {x}",
+  "result.back": "Tilbake til oversikten",
+  "result.yours": "Ditt svar:",
+  "result.correct": "Rett svar:",
+  "return.from.result": "resultatet",
+  "return.result": "Tilbake til resultatet",
 
   // Reference jump (Story 1.12, D-14). quote.* bracket the <mark> for screen readers; {id} is "P4" and
   // {kilde} names where the student came from. Notatoversikt's context decided by Tor 2026-11-24.

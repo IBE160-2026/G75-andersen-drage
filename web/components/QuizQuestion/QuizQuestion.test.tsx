@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // Story 2.3: the Quiz region on the Round screen (UX-DR14): options in optionOrder, an answer keeps focus
 // on the chosen option and fills the polite live line, 'Neste spørsmål' focuses the next h2, the last
-// answer turns the control into 'Se resultatet'. Storage and the router are stubbed; db.test.ts covers
+// answer turns the control into 'Se resultatet', which opens Resultat (Story 2.4). Storage and the router are stubbed; db.test.ts covers
 // the transaction itself.
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
@@ -11,7 +11,8 @@ import type { ConceptProgressRecord, NoteRecord, QuizAnswerInput, RoundRecord, S
 import { displayOrder } from "./QuizQuestion";
 
 const push = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+const replace = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push, replace }) }));
 
 const recordQuizAnswer = vi.fn();
 vi.mock("../../storage/db", () => ({
@@ -196,7 +197,7 @@ describe("Quiz region, answering", () => {
     expect(container.querySelector("blockquote")).toBeNull();
   });
 
-  it("the answer that completes the Round: the control reads 'Se resultatet' and goes to Notatoversikt", async () => {
+  it("the answer that completes the Round: the control reads 'Se resultatet' and opens Resultat (Story 2.4)", async () => {
     render(withAnswer("k-a.qq1", 0));
     expect(container.textContent).toContain("Spørsmål B?");
     recordQuizAnswer.mockResolvedValue(
@@ -208,7 +209,8 @@ describe("Quiz region, answering", () => {
     await choose("B");
     expect(button(t("quiz.next"))).toBeUndefined();
     await act(async () => button(t("quiz.result"))!.click());
-    expect(push).toHaveBeenCalledWith("/notat/h");
+    expect(replace).toHaveBeenCalledWith("/notat/h/runde/r-1/resultat");
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("while it saves every option is aria-disabled and a second choice is ignored", async () => {

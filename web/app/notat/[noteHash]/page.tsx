@@ -9,20 +9,30 @@ import { useWide } from "../../../components/StudyLayout/StudyLayout";
 import { bareNoteHash } from "../../../core/ids";
 import { extractedFromNote } from "../../../core/overview";
 import { format } from "../../../i18n/messages";
-import { readNote, readStudySet, type NoteRecord, type StudySetRecord } from "../../../storage/db";
+import {
+  readConceptProgress,
+  readNote,
+  readStudySet,
+  type ConceptProgressRecord,
+  type NoteRecord,
+  type StudySetRecord,
+} from "../../../storage/db";
 import { decodeParam, NoteMissing } from "../shared";
 
-type State =
-  | { kind: "loading" }
-  | { kind: "found"; note: NoteRecord; studySet: StudySetRecord }
-  | { kind: "missing" };
+type Records = { note: NoteRecord; studySet: StudySetRecord; progress: ConceptProgressRecord[] };
+type State = { kind: "loading" } | ({ kind: "found" } & Records) | { kind: "missing" };
 
-/** Both validated records, or null if either is missing or invalid. */
-async function loadRecords(noteHash: string): Promise<{ note: NoteRecord; studySet: StudySetRecord } | null> {
+/**
+ * Both validated records, or null if either is missing or invalid, plus the Note's progress rows for the
+ * Mastery chips (Story 2.4). A failed progress read is never an error: every chip then reads 'ny'.
+ */
+async function loadRecords(noteHash: string): Promise<Records | null> {
   const note = await readNote(noteHash);
   if (!note.ok) return null;
   const studySet = await readStudySet(note.value.currentCacheKey);
-  return studySet.ok ? { note: note.value, studySet: studySet.value } : null;
+  if (!studySet.ok) return null;
+  const progress = await readConceptProgress(noteHash).catch(() => null);
+  return { note: note.value, studySet: studySet.value, progress: progress?.ok ? progress.value : [] };
 }
 
 const number = new Intl.NumberFormat("nb-NO");
@@ -90,6 +100,7 @@ export default function NoteOverviewPage() {
       key={state.studySet.cacheKey + reload}
       note={state.note}
       studySet={state.studySet}
+      progress={state.progress}
       wide={wide}
       onRetry={() => setRegenerating(true)}
     />

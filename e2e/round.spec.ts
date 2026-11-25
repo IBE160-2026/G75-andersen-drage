@@ -1,6 +1,7 @@
 // Story 2.1: start a Round from Notatoversikt (FR-18, AD-3, AD-11, AD-21, NFR-6, NFR-7, UX-DR7, UX-DR8,
 // UX-DR15, UX-DR19). Story 2.2: review Flashcards and mark them (FR-13, FR-17, UX-DR11, UX-DR13, UX-DR21).
 // Story 2.3: answer Quiz Questions (FR-12, FR-14, FR-17, AD-11, AD-21, NFR-6, UX-DR11, UX-DR12, UX-DR14, UX-DR15).
+// Story 2.4: Resultat with score and sources (FR-12, FR-14, AD-3, AD-21, NFR-6, UX-DR11, UX-DR17, UX-DR19).
 // Records are seeded straight into IndexedDB; nothing is POSTed, so nothing reaches
 // the provider.
 import { createHash } from "node:crypto";
@@ -35,6 +36,11 @@ const MSG = {
   next: "Neste spørsmål",
   result: "Se resultatet",
   correct: "Riktig.",
+  resultH1: "Resultat",
+  backToOverview: "Tilbake til oversikten",
+  backToResult: "Tilbake til resultatet",
+  yours: "Ditt svar:",
+  right: "Rett svar:",
 };
 
 const PASSAGES: SeedPassage[] = [
@@ -456,6 +462,45 @@ async function answerQuestion(page: Page, x: number, right: boolean, cards = CAR
   return letter;
 }
 
+// ---- Story 2.4: Resultat ----
+
+const resultUrl = (noteKey: string, roundId: string) => new RegExp(`/notat/${noteKey}/runde/${roundId}/resultat$`);
+const resultH1 = (page: Page) => page.getByRole("heading", { level: 1, name: MSG.resultH1, exact: true });
+/** The score paragraph right after the h1. */
+const scoreLine = (page: Page) => page.locator("main h1 + p");
+const resultRow = (page: Page, x: number) => page.getByRole("region", { name: `Spørsmål ${x}`, exact: true });
+/** Notatoversikt's Mastery chips (Radix tabs carry data-state too, so match the chip states only). */
+const masteryChips = (page: Page) => page.locator('main [data-state="new"], main [data-state="shaky"], main [data-state="known"]');
+const resultRef = (page: Page, x: number) => resultRow(page, x).locator("figcaption").getByRole("button");
+
+/**
+ * One row per Quiz Question in Round order: its question, "✓/✗ Ditt svar: {letter}. {option}", on a
+ * miss "✓ Rett svar: …" (letters from the stored optionOrder), then the Quote; no Flashcard rows.
+ */
+async function expectResultRows(page: Page, round: Record<string, unknown>) {
+  const ids = (round.itemIds as string[]).filter((id) => id.includes(".qq"));
+  const order = round.optionOrder as Record<string, number[]>;
+  const choices = new Map((round.answers as { itemId: string; choice?: number }[]).map((a) => [a.itemId, a.choice]));
+  await expect(page.locator("main section")).toHaveCount(ids.length);
+  for (const [i, id] of ids.entries()) {
+    const conceptId = id.split(".")[0];
+    const choice = choices.get(id)!;
+    const letter = (o: number) => "ABCD"[order[id].indexOf(o)];
+    const right = choice === CORRECT;
+    const row = resultRow(page, i + 1);
+    await expect(row.getByRole("heading", { level: 2 })).toHaveText(`Spørsmål ${i + 1}`);
+    const passage = PASSAGES[CONCEPTS.find((c) => c.id === conceptId)!.passage];
+    await expect(row.locator("p")).toHaveText([
+      stem(conceptId),
+      `${right ? "✓" : "✗"} ${MSG.yours} ${letter(choice)}. ${OPTIONS[choice]}`,
+      ...(right ? [] : [`✓ ${MSG.right} ${letter(CORRECT)}. ${OPTIONS[CORRECT]}`]),
+      quote(passage),
+    ]);
+    await expect(row.locator('[aria-hidden="true"]')).toHaveCount(right ? 1 : 2);
+    await expect(row.locator("figcaption").getByRole("button")).toHaveText(`Kilde: P${passage.id.slice(1)}`);
+  }
+}
+
 /** Mark every card 'Kunne det' with the mouse; ends with focus on "Spørsmål 1 av y". */
 async function markAllCards(page: Page) {
   for (let x = 1; x <= CARD_COUNT; x++) await markCard(page, x, true);
@@ -585,13 +630,62 @@ test("keyboard only: reveal and mark every card (Tab / Enter / Space), states st
     "k-funksjonell": "known",
   });
 
-  // 'Se resultatet' → Notatoversikt until Resultat (Story 2.4); the complete Round's URL shows note.missing.
+  // ---- Story 2.4: 'Se resultatet' → Resultat, by keyboard ----
   const roundPage = page.url();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(resultUrl(BARE_HASH, String(done.roundId)));
+  await expect(resultH1(page)).toBeFocused();
+  await expect(page).toHaveTitle(`Resultat · ${TITLE} · ${BRAND}`);
+  await expect(scoreLine(page)).toHaveText("3 av 4 riktige");
+  await expectResultRows(page, done);
+  expect(await axeBlocking(page)).toEqual([]);
+  // 'Se resultatet' replaced the Round URL: Back goes to Notatoversikt, then forward to Resultat again.
+  await page.goBack();
+  await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  await page.goForward();
+  await expect(page).toHaveURL(resultUrl(BARE_HASH, String(done.roundId)));
+  await expect(resultH1(page)).toBeFocused();
+
+  // Tab: 'Tilbake til oversikten', then each row's 'Kilde: Pn'.
+  await button(page, MSG.backToOverview).focus();
+  for (let x = 1; x <= QUIZ_COUNT; x++) {
+    await page.keyboard.press("Tab");
+    await expect(resultRef(page, x)).toBeFocused();
+  }
+  // The miss (question 2, Første normalform, P2): Enter jumps, Esc returns; then the return control.
+  await resultRef(page, 2).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#passage-p2")).toBeFocused();
+  await expect(page.getByText("Viser P2 fra resultatet")).toBeVisible();
+  await expect(page.locator("#passage-p2 mark")).toHaveCount(1);
+  expect(await axeBlocking(page)).toEqual([]);
+  await page.keyboard.press("Escape");
+  await expect(resultRef(page, 2)).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#passage-p2")).toBeFocused();
+  await page.getByRole("button", { name: MSG.backToResult }).focus();
+  await page.keyboard.press("Enter");
+  await expect(resultRef(page, 2)).toBeFocused();
+
+  // Reload shows the same Resultat; the complete Round's URL is replaced by Resultat's.
+  await page.reload();
+  await expect(resultH1(page)).toBeFocused();
+  await expect(scoreLine(page)).toHaveText("3 av 4 riktige");
+  await page.goto(roundPage);
+  await expect(page).toHaveURL(resultUrl(BARE_HASH, String(done.roundId)));
+  await expect(resultH1(page)).toBeFocused();
+
+  // 'Tilbake til oversikten' → Notatoversikt with the stored states; the Round stays complete.
+  await button(page, MSG.backToOverview).focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
   await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
-  await page.goto(roundPage);
-  await expect(page.getByRole("heading", { level: 1, name: MSG.missing })).toBeFocused();
+  // Rank order: Normalisering, Første, Tredje, (Denormalisering: not covered), Funksjonell.
+  await expect(masteryChips(page)).toHaveText(["kan", "usikker", "kan", "kan"]);
+  await expect(page.getByText("ingen verifiserte elementer")).toHaveCount(1);
+  const [after] = await readStore(page, "rounds");
+  expect(after).toMatchObject({ status: "complete", completedAt: done.completedAt });
 });
 
 test("reload mid-Round: the first unanswered card, front side, with the stored chip", async ({ page }) => {
@@ -878,7 +972,7 @@ test("answer write fails: no feedback, err.generation, nothing stored, the optio
   await expect(page.locator('main [role="alert"]')).toHaveCount(0);
 });
 
-test("a quiz-only Round starts on 'Spørsmål 1 av 4'; the last answer completes it; 'Se resultatet' → Notatoversikt", async ({ page }) => {
+test("a quiz-only Round starts on 'Spørsmål 1 av 4'; the last answer completes it; 'Se resultatet' → Resultat, 2 av 4", async ({ page }) => {
   await startRound(page, { cards: false });
   await expect(page).toHaveTitle(`Runde 1, quiz · ${TITLE} · ${BRAND}`);
   await expect(questionHeading(page)).toBeVisible();
@@ -905,6 +999,84 @@ test("a quiz-only Round starts on 'Spørsmål 1 av 4'; the last answer completes
     "k-funksjonell": "shaky",
   });
   await button(page, MSG.result).click();
-  await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
+  await expect(page).toHaveURL(resultUrl(BARE_HASH, String(round.roundId)));
+  await expect(resultH1(page)).toBeFocused();
+  await expect(scoreLine(page)).toHaveText("2 av 4 riktige");
+  await expectResultRows(page, round);
+  // "Rett svar:" only on the 2 misses.
+  await expect(page.locator("main").getByText(MSG.right)).toHaveCount(2);
+});
+
+test("320 px Resultat: no horizontal scroll, axe clean on both tabs; the row's jump switches tabs, Esc and the return control come back", async ({ page }) => {
+  await startRound(page, { width: 320, cards: false, longOption: true });
+  for (let x = 1; x <= QUIZ_COUNT; x++) {
+    await answerQuestion(page, x, x % 2 === 1, 0);
+    await button(page, x < QUIZ_COUNT ? MSG.next : MSG.result).click();
+    if (x < QUIZ_COUNT) await expect(questionHeading(page, x + 1)).toBeFocused();
+  }
+  await expect(resultH1(page)).toBeFocused();
+  await expect(scoreLine(page)).toHaveText("2 av 4 riktige");
+  const [round] = await readStore(page, "rounds");
+  await expectResultRows(page, round);
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  expect(await axeBlocking(page)).toEqual([]);
+
+  // Question 2 (Første normalform, P2) is a miss.
+  const ref = resultRef(page, 2);
+  await ref.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("tab", { name: MSG.source })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("#passage-p2")).toBeFocused();
+  await expect(page.getByText("Viser P2 fra resultatet")).toBeVisible();
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  expect(await axeBlocking(page)).toEqual([]);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
+  await expect(ref).toBeFocused();
+
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#passage-p2")).toBeFocused();
+  await page.getByRole("button", { name: MSG.backToResult }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
+  await expect(ref).toBeFocused();
+
+  await button(page, MSG.backToOverview).focus();
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  await expect(masteryChips(page)).toHaveText(["kan", "usikker", "kan", "usikker"]);
+});
+
+test("Resultat bad URL: an active or an abandoned Round shows note.missing", async ({ page }) => {
+  await startRound(page);
+  const roundId = page.url().split("/runde/")[1];
+  await page.goto(`/notat/${BARE_HASH}/runde/${roundId}/resultat`);
+  await expect(page.getByRole("heading", { level: 1, name: MSG.missing })).toBeFocused();
+
+  // A second start abandons the first Round.
+  await page.goto(`/notat/${BARE_HASH}`);
+  await startButton(page).click();
+  await expect(roundH1(page, 2)).toBeFocused();
+  await page.goto(`/notat/${BARE_HASH}/runde/${roundId}/resultat`);
+  await expect(page.getByRole("heading", { level: 1, name: MSG.missing })).toBeFocused();
+});
+
+test("Notatoversikt: a failed progress read shows every chip 'ny', never an error", async ({ page }) => {
+  await openOverview(page, {
+    progress: [{ keyConceptId: "k-forste", state: "shaky", lastShownAt: "2026-11-20T08:00:00.000Z", lastUsedQuizQuestionId: null }],
+  });
+  await expect(masteryChips(page)).toHaveText(["ny", "usikker", "ny", "ny"]);
+  // From the next load on, reading conceptProgress by its noteHash index throws.
+  await page.addInitScript(() => {
+    const getAll = IDBIndex.prototype.getAll;
+    IDBIndex.prototype.getAll = function (this: IDBIndex, ...args: Parameters<IDBIndex["getAll"]>) {
+      if (this.objectStore.name === "conceptProgress") throw new DOMException("e2e", "DataError");
+      return getAll.apply(this, args);
+    };
+  });
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  await expect(masteryChips(page)).toHaveText(["ny", "ny", "ny", "ny"]);
+  await expect(page.locator('main [role="alert"]')).toHaveCount(0);
 });

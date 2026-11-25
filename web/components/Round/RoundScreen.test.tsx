@@ -150,7 +150,7 @@ describe("RoundScreen Flashcards", () => {
     expect(container.textContent).toContain("Svar 1");
   });
 
-  it("the mark that completes the Round goes back to Notatoversikt", async () => {
+  it("the mark that completes a Round without Quiz Questions goes back to Notatoversikt, not Resultat", async () => {
     recordFlashcardMark.mockResolvedValue({
       ok: true,
       value: { round: { ...ROUND, status: "complete", completedAt: T, answers: [] }, progress: ROW },

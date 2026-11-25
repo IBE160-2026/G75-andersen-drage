@@ -35,4 +35,14 @@ describe("pageTitle", () => {
       "Runde 3 · forelesning-7 · Torsas læringsassistent",
     );
   });
+
+  it("Resultat: 'Resultat · {notat} · …' (Story 2.4)", () => {
+    expect(pageTitle("result.title", "forelesning-7")).toBe("Resultat · forelesning-7 · Torsas læringsassistent");
+  });
+});
+
+describe("Resultat keys (Story 2.4)", () => {
+  it("fills result.score", () => {
+    expect(format("result.score", { n: "2", m: "4" })).toBe("2 av 4 riktige");
+  });
 });
