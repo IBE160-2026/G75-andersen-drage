@@ -1,7 +1,7 @@
 // POST /api/study-set (AD-6, AD-7, AD-11, AD-20). Never throws, never retries.
 // Order: mode and send gate from freshly read settings → single-flight per mode and Note Hash → POST with a
 // 90 s browser timeout merged with the caller's signal → guarded parse of the StudySet.
-// Story 1.14: `demoMode` in the settings makes the POST `mode: "demo"` (the Proxy serves a Fixture).
+// Story 1.14: `demoMode` in the settings makes the POST `mode: "demo"` with `passages: []` (the Proxy serves a Fixture).
 import { z } from "zod";
 import { canSend, type GateResult, type SendMode } from "../core/gate";
 import { readSettings, type Settings } from "../storage/settings";
@@ -78,7 +78,8 @@ type RequestOptions = {
 const pending = new Map<string, Promise<StudySetResult>>();
 
 /**
- * One generation, live or demo by the current settings. A second call for the same mode and Note Hash
+ * One generation, live or demo by the current settings. In Demo Mode `passages` is not sent (the body
+ * carries `passages: []`; the Proxy serves the Fixture by Note Hash). A second call for the same mode and Note Hash
  * while one is in flight returns the pending promise (no second request). Aborting the caller's signal aborts the request, frees the
  * Note Hash at once and resolves to `err.generation`; every network, timeout or parse failure and
  * every non-2xx is `err.generation` too, except a 503 `{code: "err.noKey"}`, which stays `err.noKey`, and a
@@ -113,7 +114,10 @@ export function requestStudySet({
   };
   signal?.addEventListener("abort", onAbort, { once: true });
 
-  const body: StudySetRequest = { mode, noteHash, passages: passages.map((p) => ({ id: p.id, text: p.text })) };
+  // Demo Mode sends no Passages: the Proxy serves a Fixture by Note Hash alone, and Demo needs no Consent,
+  // so an own Note's text must never leave the browser in Demo Mode (epic-1 retro R1, D-21).
+  const sent = mode === "demo" ? [] : passages.map((p) => ({ id: p.id, text: p.text }));
+  const body: StudySetRequest = { mode, noteHash, passages: sent };
   const promise: Promise<StudySetResult> = post(fetchImpl, body, controller.signal).finally(() => {
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);

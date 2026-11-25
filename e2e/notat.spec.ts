@@ -333,7 +333,7 @@ test("demo Note, none covered: 'Prøv igjen' sends the bare Note Hash as mode de
   await expect(page).toHaveURL(new RegExp(`/notat/demo(:|%3A)${NOTE_HASH}$`));
   await expect(alert).toHaveCount(0);
   expect(posts).toHaveLength(1);
-  expect(posts[0]).toMatchObject({ mode: "demo", noteHash: NOTE_HASH, passages: PASSAGES });
+  expect(posts[0]).toEqual({ mode: "demo", noteHash: NOTE_HASH, passages: [] });
   expect(NOTE_HASH).toMatch(/^[0-9a-f]{64}$/);
 });
 

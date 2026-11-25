@@ -64,6 +64,21 @@ def test_every_fixture_is_served_validated_with_no_key(client, path):
     assert_no_model_built()
 
 
+def test_empty_passages_serve_the_fixture(client):
+    """The browser sends `passages: []` in Demo Mode (D-21): the Note Hash alone finds the Fixture."""
+    path = _fixture_files()[0]
+    res = client.post("/api/study-set", json=request_body(mode="demo", noteHash=path.stem, passages=[]))
+    assert res.status_code == 200
+    assert res.json()["concepts"]
+    assert_no_model_built()
+
+
+def test_empty_passages_unknown_hash_is_404_demo_only(client):
+    res = client.post("/api/study-set", json=request_body(mode="demo", noteHash=NOTE_HASH, passages=[]))
+    assert res.status_code == 404
+    assert res.json() == {"code": "err.demoOnly"}
+
+
 def test_served_with_a_key_too_and_still_no_model(client, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test-not-real")
     res = demo(client, _fixture_files()[0].stem)
