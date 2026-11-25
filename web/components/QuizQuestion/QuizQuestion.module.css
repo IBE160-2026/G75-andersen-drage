@@ -1,0 +1,121 @@
+/* DESIGN.md › Components: Quiz Question, tokens `quiz-option` (mockups/key-quiz.html). No card container:
+   the question sits directly in the study panel. The Quote block is QuoteBlock.module.css; the button base
+   is Button.module.css (secondary). */
+
+.region {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Concept chip (as on the Flashcard): pill, surface with a line border, the Key Concept name. */
+.conceptChip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0 var(--spacing-2);
+  background: var(--colors-surface);
+  color: var(--colors-ink);
+  border: 1px solid var(--colors-line);
+  border-radius: var(--rounded-full);
+  font-family: var(--typography-chip-font-family);
+  font-size: var(--typography-chip-font-size);
+  font-weight: var(--typography-chip-font-weight);
+  line-height: var(--typography-body-line-height);
+  overflow-wrap: anywhere;
+}
+
+.stem {
+  font-family: var(--typography-card-front-font-family);
+  font-size: var(--typography-card-front-font-size);
+  font-weight: var(--typography-card-front-font-weight);
+  line-height: var(--typography-card-front-line-height);
+  color: var(--colors-ink);
+  overflow-wrap: anywhere;
+}
+
+.ref {
+  font-size: var(--typography-reference-font-size);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* quiz-option: full width, left-aligned, letter + text, the mark at the end. Long texts wrap. */
+.option {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.letter {
+  flex: none;
+  min-width: 1.4em;
+  font-weight: 600;
+}
+
+.text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.glyph {
+  flex: none;
+  margin-left: auto;
+  font-weight: 700;
+}
+
+/* Answered, neither chosen nor correct: aria-disabled but never the disabled style; full ink, only the
+   border muted (quiz-option.answered-foreground / answered-border). Beats .button[aria-disabled="true"]. */
+.option.answered[aria-disabled="true"],
+.option.answered[aria-disabled="true"]:hover {
+  background: var(--colors-surface);
+  color: var(--colors-ink);
+  border-color: var(--colors-line);
+  cursor: default;
+}
+
+/* Correct (mastery-known colours) and the wrong choice (mastery-shaky colours): only colours borrowed. */
+.option.answered.correct[aria-disabled="true"],
+.option.answered.correct[aria-disabled="true"]:hover {
+  background: var(--colors-mastery-known-bg);
+  color: var(--colors-mastery-known-fg);
+  border-color: var(--colors-line-strong);
+}
+
+.option.answered.wrong[aria-disabled="true"],
+.option.answered.wrong[aria-disabled="true"]:hover {
+  background: var(--colors-mastery-shaky-bg);
+  color: var(--colors-mastery-shaky-fg);
+  border-color: var(--colors-line-strong);
+}
+
+/* The live line stays in the DOM before answering (empty), so its first text is announced. */
+.feedback {
+  color: var(--colors-ink);
+}
+
+/* Empty: out of the flex flow (no extra gap), still in the accessibility tree; never display: none. */
+.feedback:empty {
+  position: absolute;
+}
+
+/* The advance control right-aligned, like the Flashcard marks. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--spacing-2);
+}

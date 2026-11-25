@@ -5,14 +5,17 @@
 import { act, StrictMode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { t } from "../../i18n/messages";
+import { pageTitle, t } from "../../i18n/messages";
 import type { ConceptProgressRecord, FlashcardMark, NoteRecord, RoundRecord, StudySetRecord } from "../../storage/db";
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
 const recordFlashcardMark = vi.fn();
-vi.mock("../../storage/db", () => ({ recordFlashcardMark: (mark: FlashcardMark) => recordFlashcardMark(mark) }));
+vi.mock("../../storage/db", () => ({
+  recordFlashcardMark: (mark: FlashcardMark) => recordFlashcardMark(mark),
+  recordQuizAnswer: vi.fn(),
+}));
 
 const { RoundScreen } = await import("./Round");
 
@@ -155,5 +158,37 @@ describe("RoundScreen Flashcards", () => {
     await click(t("card.reveal"));
     await click(t("card.known"));
     expect(push).toHaveBeenCalledWith("/notat/h");
+  });
+});
+
+describe("RoundScreen, last card to the Quiz part (Story 2.3)", () => {
+  it("the last mark shows the first question with focus on 'Spørsmål 1 av 1' and the page title 'Runde 1, quiz'", async () => {
+    const set: StudySetRecord = {
+      ...SET,
+      concepts: [
+        {
+          ...SET.concepts[0],
+          quizQuestions: [{ id: "k-a.qq1", question: "Stammen?", options: ["a", "b", "c", "d"], correctIndex: 0, ...ref }],
+        },
+      ],
+    };
+    const round: RoundRecord = {
+      ...ROUND,
+      itemIds: ["k-a.fc1", "k-a.fc2", "k-a.qq1"],
+      optionOrder: { "k-a.qq1": [0, 1, 2, 3] },
+      answers: [{ itemId: "k-a.fc1", knew: true, answeredAt: T }],
+    };
+    act(() => root.render(<RoundScreen note={NOTE} studySet={set} round={round} progress={[ROW]} wide />));
+    expect(document.title).toBe(pageTitle({ key: "round.title", vars: { n: "1" } }, "Notat"));
+    recordFlashcardMark.mockResolvedValue({
+      ok: true,
+      value: { round: { ...round, answers: [...round.answers, { itemId: "k-a.fc2", knew: false, answeredAt: T }] }, progress: ROW },
+    });
+    await click(t("card.reveal"));
+    await click(t("card.unknown"));
+    expect(document.activeElement?.tagName).toBe("H2");
+    expect(document.activeElement?.textContent).toBe("Spørsmål 1 av 1");
+    expect(document.title).toBe(pageTitle({ key: "round.title.quiz", vars: { n: "1" } }, "Notat"));
+    expect(container.textContent).toContain("Stammen?");
   });
 });

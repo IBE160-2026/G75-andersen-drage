@@ -2,7 +2,7 @@
 // browser storage. Every function here resolves to a result and never throws to React.
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 import { z } from "zod";
-import type { ConceptProgress, MasteryState, Round, RoundComposition } from "../core/round";
+import type { ConceptProgress, MasteryState, Round, RoundAnswer, RoundComposition } from "../core/round";
 import type { Note, VerifiedStudySet } from "../core/types";
 
 export const DB_NAME = "torsa";
@@ -89,7 +89,13 @@ export const RoundRecordSchema = z.looseObject({
   conceptIds: z.array(z.string()),
   itemIds: z.array(z.string()),
   optionOrder: z.record(z.string(), z.array(z.number().int().nonnegative())),
-  answers: z.array(z.looseObject({ itemId: z.string(), knew: z.boolean(), answeredAt: Timestamp })),
+  // A Flashcard mark (Story 2.2) or a Quiz answer (Story 2.3, `choice` = the original option index).
+  answers: z.array(
+    z.union([
+      z.looseObject({ itemId: z.string(), knew: z.boolean(), answeredAt: Timestamp }),
+      z.looseObject({ itemId: z.string(), choice: z.number().int().nonnegative(), answeredAt: Timestamp }),
+    ]),
+  ),
   status: z.enum(["active", "complete", "abandoned"]),
   startedAt: Timestamp,
   completedAt: Timestamp.nullable(),
@@ -336,19 +342,45 @@ export type FlashcardMark = {
   answeredAt: string;
 };
 
+export type QuizAnswerInput = {
+  roundId: string;
+  /** The Quiz Question's Item ID; must be the Round's next unanswered Item. */
+  itemId: string;
+  keyConceptId: string;
+  /** The chosen option's original index (into the Study Set's `options`, not the display order). */
+  choice: number;
+  /** The concept's new Mastery State (`core/mastery.ts` › `updateMastery`). */
+  state: MasteryState;
+  /** ISO 8601 UTC. */
+  answeredAt: string;
+};
+
 export type MarkResult = { round: RoundRecord; progress: ConceptProgressRecord };
 
+type AnswerWrite = {
+  roundId: string;
+  itemId: string;
+  keyConceptId: string;
+  state: MasteryState;
+  answeredAt: string;
+  /** `.fc` or `.qq`: the Item ID must be `{keyConceptId}{kind}{n}`. */
+  kind: ".fc" | ".qq";
+  answer: RoundAnswer;
+  /** Extra check against the stored Round (the Quiz `choice` range); false rejects. */
+  valid?: (round: RoundRecord) => boolean;
+};
+
 /**
- * Story 2.2 (AD-21 › Answering): stores one Flashcard mark in one `readwrite` transaction: appends
- * `{itemId, knew, answeredAt}` to the Round's `answers` and puts the concept's `conceptProgress` row with
- * `state` (its other fields kept; a missing or invalid row is created). When the mark answers the Round's
- * last Item, the Round becomes `complete` with `completedAt` = `answeredAt` in the same transaction.
- * Not ok, with nothing written, unless the Round is valid and `active`, `itemId` is its next unanswered
- * Item and a Flashcard (`{keyConceptId}.fc{n}`) of `keyConceptId`, an included concept. A repeat of the
- * last answered Item (a double press, also on the mark that just completed the Round) writes nothing and
- * resolves to the stored records; an abandoned Round never resolves ok.
+ * The shared answer transaction (AD-21 › Answering): appends `answer` to the Round's `answers` and puts
+ * the concept's `conceptProgress` row with `state` (its other fields kept; a missing or invalid row is
+ * created), in one `readwrite` transaction. When the answer is the Round's last Item, the Round becomes
+ * `complete` with `completedAt` = `answeredAt` in the same transaction. Not ok, with nothing written,
+ * unless the Round is valid and `active`, `itemId` is its next unanswered Item and an Item of `kind` of
+ * `keyConceptId`, an included concept, and `valid` holds. A repeat of the last answered Item (a double
+ * press, also on the answer that just completed the Round) writes nothing and resolves to the stored
+ * records; an abandoned Round never resolves ok.
  */
-export function recordFlashcardMark(mark: FlashcardMark): Promise<StorageResult<MarkResult>> {
+function recordAnswer(write: AnswerWrite): Promise<StorageResult<MarkResult>> {
   return withDb(async (db) => {
     const tx = db.transaction(["conceptProgress", "rounds"], "readwrite");
     const done = tx.done;
@@ -356,20 +388,21 @@ export function recordFlashcardMark(mark: FlashcardMark): Promise<StorageResult<
     try {
       const progressStore = tx.objectStore("conceptProgress");
       const roundStore = tx.objectStore("rounds");
-      const parsed = RoundRecordSchema.safeParse(await roundStore.get(mark.roundId));
+      const parsed = RoundRecordSchema.safeParse(await roundStore.get(write.roundId));
       if (!parsed.success) throw new Error("round");
       const round = parsed.data;
-      const key: [string, string] = [round.noteHash, mark.keyConceptId];
+      const key: [string, string] = [round.noteHash, write.keyConceptId];
       const storedRow = ConceptProgressRecordSchema.safeParse(await progressStore.get(key));
 
-      const owned = round.conceptIds.includes(mark.keyConceptId) && mark.itemId.startsWith(`${mark.keyConceptId}.fc`);
-      if (!owned || round.status === "abandoned") throw new Error("mark");
-      if (round.answers.at(-1)?.itemId === mark.itemId) {
+      const owned =
+        round.conceptIds.includes(write.keyConceptId) && write.itemId.startsWith(`${write.keyConceptId}${write.kind}`);
+      if (!owned || round.status === "abandoned" || (write.valid && !write.valid(round))) throw new Error("answer");
+      if (round.answers.at(-1)?.itemId === write.itemId) {
         await done;
         if (!storedRow.success) return FAILED;
         return { ok: true, value: { round, progress: storedRow.data } };
       }
-      if (round.status !== "active" || round.itemIds[round.answers.length] !== mark.itemId) throw new Error("mark");
+      if (round.status !== "active" || round.itemIds[round.answers.length] !== write.itemId) throw new Error("answer");
 
       const progress: ConceptProgressRecord = {
         ...(storedRow.success
@@ -377,18 +410,18 @@ export function recordFlashcardMark(mark: FlashcardMark): Promise<StorageResult<
           : {
               schemaVersion: RECORD_SCHEMA_VERSION,
               noteHash: round.noteHash,
-              keyConceptId: mark.keyConceptId,
+              keyConceptId: write.keyConceptId,
               lastShownAt: round.startedAt,
               lastUsedQuizQuestionId: null,
             }),
-        state: mark.state,
+        state: write.state,
       };
-      const answers = [...round.answers, { itemId: mark.itemId, knew: mark.knew, answeredAt: mark.answeredAt }];
+      const answers = [...round.answers, write.answer];
       const finished = answers.length === round.itemIds.length;
       const updated: RoundRecord = {
         ...round,
         answers,
-        ...(finished ? { status: "complete" as const, completedAt: mark.answeredAt } : {}),
+        ...(finished ? { status: "complete" as const, completedAt: write.answeredAt } : {}),
       };
       writes.push(progressStore.put(progress));
       writes.push(roundStore.put(updated));
@@ -398,5 +431,37 @@ export function recordFlashcardMark(mark: FlashcardMark): Promise<StorageResult<
       await abortQuietly(tx, [...writes, done]);
       return FAILED;
     }
+  });
+}
+
+/**
+ * Story 2.2: stores one Flashcard mark (`{itemId, knew, answeredAt}`) with the concept's Mastery State
+ * in one transaction (`recordAnswer`). `itemId` must be a Flashcard (`{keyConceptId}.fc{n}`).
+ */
+export function recordFlashcardMark(mark: FlashcardMark): Promise<StorageResult<MarkResult>> {
+  const { roundId, itemId, keyConceptId, knew, state, answeredAt } = mark;
+  return recordAnswer({ roundId, itemId, keyConceptId, state, answeredAt, kind: ".fc", answer: { itemId, knew, answeredAt } });
+}
+
+/**
+ * Story 2.3: stores one Quiz answer (`{itemId, choice, answeredAt}`) with the concept's Mastery State in
+ * one transaction (`recordAnswer`), with the same reject, repeat and complete-on-last rules as a mark.
+ * `itemId` must be a Quiz Question (`{keyConceptId}.qq{n}`) and `choice` an integer in
+ * `0 … optionOrder[itemId].length − 1`.
+ */
+export function recordQuizAnswer(input: QuizAnswerInput): Promise<StorageResult<MarkResult>> {
+  const { roundId, itemId, keyConceptId, choice, state, answeredAt } = input;
+  return recordAnswer({
+    roundId,
+    itemId,
+    keyConceptId,
+    state,
+    answeredAt,
+    kind: ".qq",
+    answer: { itemId, choice, answeredAt },
+    valid: (round) => {
+      const order = round.optionOrder[itemId];
+      return Number.isInteger(choice) && !!order && choice >= 0 && choice < order.length;
+    },
   });
 }

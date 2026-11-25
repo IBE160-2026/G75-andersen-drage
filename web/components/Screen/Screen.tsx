@@ -16,7 +16,9 @@ import styles from "./Screen.module.css";
  *
  * `title` is a message key; `note` adds the Note's name as a page-title segment (spec 1.9):
  * both give "{side} · {notat} · …" (Genererer), `note` alone gives "{notat} · …" (Notatoversikt).
- * `title` may carry values ("Runde {n} · {notat} · …", Story 2.1); the effect reruns only when the text changes.
+ * `title` may carry values ("Runde {n} · {notat} · …", Story 2.1). A later title change (the Round's
+ * Quiz part, "Runde {n}, quiz · …", Story 2.3) only updates document.title: focus stays where the screen
+ * put it (the Item `h2`), so only the mount focuses the h1.
  */
 export function Screen({
   title,
@@ -32,6 +34,9 @@ export function Screen({
 
   useEffect(() => {
     document.title = docTitle;
+  }, [docTitle]);
+
+  useEffect(() => {
     const heading = ref.current?.querySelector<HTMLElement>("h1");
     if (!heading) return;
     const dialogOpen = () => !!document.querySelector('[role="dialog"]');
@@ -51,7 +56,7 @@ export function Screen({
     }
     document.addEventListener("keydown", onKeyDown, true);
     return () => document.removeEventListener("keydown", onKeyDown, true);
-  }, [docTitle]);
+  }, []);
 
   return (
     <div ref={ref} className={styles.screen}>

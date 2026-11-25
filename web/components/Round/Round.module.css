@@ -1,5 +1,5 @@
-/* Round screen (DESIGN.md › Components: Round progress, Flashcard front). The split / tabs are
-   StudyLayout.module.css; the Mastery chip is MasteryChip.module.css. */
+/* Round screen (DESIGN.md › Components: Round progress). The split / tabs are StudyLayout.module.css,
+   the Mastery chip MasteryChip.module.css, the Items Flashcard / QuizQuestion.module.css. */
 
 /* One line: "Runde n · Kort x av y" in ink-muted, then the bar filling the rest, then the chip. Wraps at 320 px. */
 .progress {
@@ -39,28 +39,4 @@
 
 .review {
   color: var(--colors-ink);
-}
-
-/* Quiz part shell (Story 2.2; options in Story 2.3): the Flashcard card surface, the stem in card-front. */
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-  padding: var(--spacing-5);
-  background: var(--colors-surface-card);
-  border: 1px solid var(--colors-line);
-  border-radius: var(--rounded-md);
-}
-
-.stem {
-  font-family: var(--typography-card-front-font-family);
-  font-size: var(--typography-card-front-font-size);
-  font-weight: var(--typography-card-front-font-weight);
-  line-height: var(--typography-card-front-line-height);
-  color: var(--colors-ink);
-}
-
-.ref {
-  color: var(--colors-ink-muted);
-  font-size: var(--typography-reference-font-size);
 }

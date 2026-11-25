@@ -1,10 +1,12 @@
 // @vitest-environment happy-dom
 // Story 2.1 review VG3, carried into Story 2.2: Screen reruns its title/focus effect only when the title
-// text changes, so a re-render with a new but equal `{ key, vars }` object does not steal focus.
+// text changes, so a re-render with a new but equal `{ key, vars }` object does not steal focus. Story 2.3:
+// a changed title updates document.title without refocusing the h1.
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { pageTitle } from "../../i18n/messages";
+import { SKIP_LINK_ID } from "../AppShell/ids";
 import { Screen, ScreenHeading } from "./Screen";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -49,11 +51,28 @@ describe("Screen title/focus effect", () => {
     expect(document.activeElement).toBe(button);
   });
 
-  it("a changed title updates document.title and focuses the h1 again", () => {
+  it("a changed title updates document.title only: focus stays where it is (Story 2.3)", () => {
     render("1");
-    container.querySelector("button")!.focus();
+    const button = container.querySelector("button")!;
+    button.focus();
     render("2");
     expect(document.title).toBe(pageTitle({ key: "round.title", vars: { n: "2" } }, "Notat"));
-    expect(document.activeElement?.tagName).toBe("H1");
+    expect(document.activeElement).toBe(button);
+  });
+
+  it("a changed title keeps the first-Tab-to-skip-link rule of the mount", () => {
+    const skip = document.createElement("a");
+    skip.id = SKIP_LINK_ID;
+    skip.href = "#main";
+    document.body.prepend(skip);
+    try {
+      render("1");
+      render("2");
+      expect(document.activeElement?.tagName).toBe("H1");
+      document.activeElement!.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true }));
+      expect(document.activeElement).toBe(skip);
+    } finally {
+      skip.remove();
+    }
   });
 });

@@ -1,5 +1,6 @@
 // Story 2.1: start a Round from Notatoversikt (FR-18, AD-3, AD-11, AD-21, NFR-6, NFR-7, UX-DR7, UX-DR8,
 // UX-DR15, UX-DR19). Story 2.2: review Flashcards and mark them (FR-13, FR-17, UX-DR11, UX-DR13, UX-DR21).
+// Story 2.3: answer Quiz Questions (FR-12, FR-14, FR-17, AD-11, AD-21, NFR-6, UX-DR11, UX-DR12, UX-DR14, UX-DR15).
 // Records are seeded straight into IndexedDB; nothing is POSTed, so nothing reaches
 // the provider.
 import { createHash } from "node:crypto";
@@ -30,6 +31,10 @@ const MSG = {
   unknown: "Kunne det ikke",
   known: "Kunne det",
   back: "Tilbake til kortet",
+  backToQuestion: "Tilbake til spørsmålet",
+  next: "Neste spørsmål",
+  result: "Se resultatet",
+  correct: "Riktig.",
 };
 
 const PASSAGES: SeedPassage[] = [
@@ -58,7 +63,22 @@ const COVERED = CONCEPTS.filter((c) => c.cards > 0);
 const CARD_COUNT = COVERED.reduce((sum, c) => sum + c.cards, 0);
 const front = (id: string, n = 1) => `Hva sier notatet om ${id}, kort ${n}?`;
 
-function records(noteKey: string, { quiz = true } = {}) {
+/** Every Quiz Question's options; the right one is index CORRECT (the display order is random per Round). */
+const OPTIONS = ["Svar null", "Svar en", "Svar to", "Svar tre"];
+const CORRECT = 1;
+const stem = (id: string) => `Hva er riktig om ${id}?`;
+
+/** `cards: false`: the covered concepts have only Quiz Questions (a quiz-only Round). */
+/** A wrong option that must wrap at 320 px: a long sentence plus one long unbroken word. */
+const LONG_OPTION =
+  "Når alle tabellene i databasen er slått sammen til én stor tabell slik at ingen opplysninger lagres i mer enn én rad " +
+  "relasjonsdatabasenormaliseringsprosessgjennomgangsrapport";
+
+/**
+ * `cards: false`: the covered concepts have only Quiz Questions (a quiz-only Round). `longOption`: the
+ * first question (k-normalisering) gets LONG_OPTION as a wrong option.
+ */
+function records(noteKey: string, { quiz = true, cards = true, longOption = false } = {}) {
   const cacheKey = `${noteKey}:${PROMPT_VERSION}:${MODEL}`;
   const note: SeedNote = {
     noteHash: noteKey,
@@ -85,7 +105,7 @@ function records(noteKey: string, { quiz = true } = {}) {
         name: c.name,
         centralityRank: c.rank,
         covered: c.cards > 0,
-        flashcards: Array.from({ length: c.cards }, (_, i) => ({
+        flashcards: Array.from({ length: cards ? c.cards : 0 }, (_, i) => ({
           id: `${c.id}.fc${i + 1}`,
           front: front(c.id, i + 1),
           back: "Se kilden.",
@@ -94,7 +114,7 @@ function records(noteKey: string, { quiz = true } = {}) {
         })),
         quizQuestions:
           quiz && c.cards > 0
-            ? [{ id: `${c.id}.qq1`, question: "Hva?", options: ["A", "B", "C", "D"], correctIndex: 0, passageId: p.id, quote: quote(p) }]
+            ? [{ id: `${c.id}.qq1`, question: stem(c.id), options: longOption && c.id === "k-normalisering" ? [LONG_OPTION, ...OPTIONS.slice(1)] : OPTIONS, correctIndex: CORRECT, passageId: p.id, quote: quote(p) }]
             : [],
       };
     }),
@@ -111,13 +131,13 @@ async function axeBlocking(page: Page) {
 
 async function openOverview(
   page: Page,
-  { width = 1280, progress = [] as SeedConceptProgress[], noteKey = BARE_HASH, quiz = true } = {},
+  { width = 1280, progress = [] as SeedConceptProgress[], noteKey = BARE_HASH, quiz = true, cards = true, longOption = false } = {},
 ) {
   await page.setViewportSize({ width, height: 800 });
   await seedConsent(page, "accepted");
   await page.goto("/innstillinger");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  const { note, studySet } = records(noteKey, { quiz });
+  const { note, studySet } = records(noteKey, { quiz, cards, longOption });
   await seedNoteRecords(page, note, studySet, progress);
   await page.goto(`/notat/${noteKey}`);
   await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
@@ -407,6 +427,40 @@ const anyRef = (page: Page, x: number) => cardRegion(page, x).getByRole("button"
 const questionHeading = (page: Page, x = 1) =>
   page.getByRole("heading", { level: 2, name: `Spørsmål ${x} av ${QUIZ_COUNT}` });
 
+const questionRegion = (page: Page, x = 1, y = QUIZ_COUNT) => page.getByRole("region", { name: `Spørsmål ${x} av ${y}` });
+/** Option `letter` (display position A–D) of the shown question; its name is "A Svar to". */
+const optionButton = (page: Page, letter: string) =>
+  page.locator("main ul").getByRole("button", { name: new RegExp(`^${letter} `) });
+const feedback = (page: Page) => page.locator('main [aria-live="polite"]');
+/** The 6 px bar's fill (the bar is the only aria-hidden element with a div child in main). */
+const barFill = (page: Page) => page.locator('main [aria-hidden="true"] > div');
+
+/**
+ * The display letter of the right (or a wrong) option of question `x`, from the stored Round's
+ * `optionOrder` (random per Round), and the right option's letter.
+ */
+async function pick(page: Page, x: number, right: boolean, cards = CARD_COUNT) {
+  const rounds = await readStore(page, "rounds");
+  const round = rounds.find((r) => r.status === "active") ?? rounds[0];
+  const id = (round.itemIds as string[])[cards + x - 1];
+  const order = (round.optionOrder as Record<string, number[]>)[id];
+  const original = right ? CORRECT : order.find((o) => o !== CORRECT)!;
+  return { id, original, letter: "ABCD"[order.indexOf(original)], correctLetter: "ABCD"[order.indexOf(CORRECT)] };
+}
+
+/** Answer question `x` with the mouse; waits for the feedback. */
+async function answerQuestion(page: Page, x: number, right: boolean, cards = CARD_COUNT) {
+  const { letter } = await pick(page, x, right, cards);
+  await optionButton(page, letter).click();
+  await expect(feedback(page)).not.toHaveText("");
+  return letter;
+}
+
+/** Mark every card 'Kunne det' with the mouse; ends with focus on "Spørsmål 1 av y". */
+async function markAllCards(page: Page) {
+  for (let x = 1; x <= CARD_COUNT; x++) await markCard(page, x, true);
+}
+
 async function startRound(page: Page, options: Parameters<typeof openOverview>[1] = {}) {
   await openOverview(page, options);
   await startButton(page).click();
@@ -420,7 +474,7 @@ async function markCard(page: Page, x: number, knew: boolean) {
   await expect(x < CARD_COUNT ? cardHeading(page, x + 1) : questionHeading(page)).toBeFocused();
 }
 
-test("keyboard only: reveal and mark every card (Tab / Enter / Space), states stored, Quiz shell after the last", async ({ page }) => {
+test("keyboard only: reveal and mark every card (Tab / Enter / Space), states stored, the first question after the last", async ({ page }) => {
   await startRound(page);
   // Normalisering (two cards), Første, Tredje, Funksjonell.
   const marks = [true, false, true, false, true];
@@ -456,10 +510,11 @@ test("keyboard only: reveal and mark every card (Tab / Enter / Space), states st
 
   await expect(questionHeading(page)).toBeFocused();
   await expect(questionHeading(page)).toHaveAttribute("tabindex", "-1");
-  const region = page.getByRole("region", { name: `Spørsmål 1 av ${QUIZ_COUNT}` });
-  await expect(region).toContainText("Hva?");
-  await expect(region.getByRole("button")).toHaveCount(0);
-  expect(await axeBlocking(page)).toEqual([]);
+  const region = questionRegion(page);
+  await expect(region).toContainText(stem("k-normalisering"));
+  // "Kilde: P1" + options A–D; no Quote before answering.
+  await expect(region.getByRole("button")).toHaveCount(5);
+  await expect(region.locator("blockquote")).toHaveCount(0);
 
   const [round] = await readStore(page, "rounds");
   expect(round.status).toBe("active");
@@ -476,9 +531,67 @@ test("keyboard only: reveal and mark every card (Tab / Enter / Space), states st
     "k-funksjonell": "known",
   });
 
-  // Reload in the Quiz part: the same shell.
-  await page.reload();
-  await expect(questionHeading(page)).toBeVisible();
+  // ---- Story 2.3: every question by keyboard, right and wrong, then the last control ----
+  await expect(page).toHaveTitle(`Runde 1, quiz · ${TITLE} · ${BRAND}`);
+  await expect(roundH1(page)).toHaveText("Runde 1: quiz");
+  await expect(barFill(page)).toHaveAttribute("style", /width: 25%/);
+  expect(await axeBlocking(page)).toEqual([]);
+  // Normalisering right, Første wrong (after 'Kunne det': the latest wins), Tredje right, Funksjonell right.
+  const rights = [true, false, true, true];
+  for (const [i, right] of rights.entries()) {
+    const x = i + 1;
+    const { letter, correctLetter } = await pick(page, x, right);
+    await expect(questionHeading(page, x)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(questionRegion(page, x).getByRole("button", { name: /^Kilde: P\d+$/ })).toBeFocused();
+    for (const l of "ABCD".slice(0, "ABCD".indexOf(letter) + 1)) {
+      await page.keyboard.press("Tab");
+      await expect(optionButton(page, l)).toBeFocused();
+    }
+    await page.keyboard.press(x % 2 ? "Enter" : "Space");
+    await expect(feedback(page)).toHaveText(right ? MSG.correct : `Feil. Rett svar er ${correctLetter}.`);
+    await expect(optionButton(page, letter)).toBeFocused();
+    for (const l of "ABCD") await expect(optionButton(page, l)).toHaveAttribute("aria-disabled", "true");
+    await expect(questionRegion(page, x).locator("blockquote")).toHaveCount(1);
+    if (x === 2) expect(await axeBlocking(page)).toEqual([]);
+    // Tab: the remaining options, the Quote's reference, then the advance control.
+    for (const l of "ABCD".slice("ABCD".indexOf(letter) + 1)) {
+      await page.keyboard.press("Tab");
+      await expect(optionButton(page, l)).toBeFocused();
+    }
+    await page.keyboard.press("Tab");
+    await expect(questionRegion(page, x).locator("figcaption").getByRole("button")).toBeFocused();
+    await page.keyboard.press("Tab");
+    const control = button(page, x < QUIZ_COUNT ? MSG.next : MSG.result);
+    await expect(control).toBeFocused();
+    if (x < QUIZ_COUNT) {
+      await page.keyboard.press("Enter");
+      await expect(questionHeading(page, x + 1)).toBeFocused();
+      await expect(barFill(page)).toHaveAttribute("style", new RegExp(`width: ${((x + 1) / QUIZ_COUNT) * 100}%`));
+    }
+  }
+
+  const [done] = await readStore(page, "rounds");
+  expect(done.status).toBe("complete");
+  const quizAnswers = (done.answers as { itemId: string; choice?: number; answeredAt: string }[]).slice(CARD_COUNT);
+  expect(quizAnswers.map((a) => a.itemId)).toEqual((done.itemIds as string[]).slice(CARD_COUNT));
+  expect(quizAnswers.map((a) => a.choice === CORRECT)).toEqual(rights);
+  expect(done.completedAt).toBe(quizAnswers[QUIZ_COUNT - 1].answeredAt);
+  const states = await readStore(page, "conceptProgress");
+  expect(Object.fromEntries(states.map((p) => [p.keyConceptId, p.state]))).toEqual({
+    "k-normalisering": "known",
+    "k-forste": "shaky", // 'Kunne det', then a wrong answer: the latest wins.
+    "k-tredje": "known",
+    "k-funksjonell": "known",
+  });
+
+  // 'Se resultatet' → Notatoversikt until Resultat (Story 2.4); the complete Round's URL shows note.missing.
+  const roundPage = page.url();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  await page.goto(roundPage);
+  await expect(page.getByRole("heading", { level: 1, name: MSG.missing })).toBeFocused();
 });
 
 test("reload mid-Round: the first unanswered card, front side, with the stored chip", async ({ page }) => {
@@ -516,8 +629,8 @@ test("reference jump from a card: 'Viser P1 fra kort 1', 'Tilbake til kortet' re
   await expect(page.locator("mark")).toHaveCount(0);
 });
 
-test("320 px: front, back and Quiz shell without horizontal scroll, axe clean; the jump switches tabs and back", async ({ page }) => {
-  await startRound(page, { width: 320 });
+test("320 px: front, back and Quiz Question without horizontal scroll, axe clean; the jump switches tabs and back", async ({ page }) => {
+  await startRound(page, { width: 320, longOption: true });
   expect(await overflow(page)).toBeLessThanOrEqual(0);
   expect(await axeBlocking(page)).toEqual([]);
   await button(page, MSG.reveal).click();
@@ -544,6 +657,32 @@ test("320 px: front, back and Quiz shell without horizontal scroll, axe clean; t
   await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
   expect(await overflow(page)).toBeLessThanOrEqual(0);
   expect(await axeBlocking(page)).toEqual([]);
+
+  // Story 2.3 at 320 px: options ≥ 44 px, the long option (LONG_OPTION) wraps; unanswered and answered
+  // without horizontal scroll, axe clean.
+  await expect(page.locator("main ul").getByRole("button", { name: new RegExp(LONG_OPTION.slice(0, 20)) })).toBeVisible();
+  for (const l of "ABCD") expect((await optionButton(page, l).boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+  const qref = questionRegion(page).getByRole("button", { name: /^Kilde: P\d+$/ });
+  await qref.click();
+  await expect(page.getByRole("tab", { name: MSG.source })).toHaveAttribute("aria-selected", "true");
+  // Esc is handled inside the source panel: wait until the jump has focused the Passage.
+  await expect(page.locator('[id^="passage-"]:focus')).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
+  await expect(qref).toBeFocused();
+  await answerQuestion(page, 1, false);
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  expect(await axeBlocking(page)).toEqual([]);
+  // The answered question's Quote reference jumps too; Esc returns to it.
+  const quoteRef = questionRegion(page).locator("figcaption").getByRole("button");
+  await quoteRef.click();
+  await expect(page.getByRole("tab", { name: MSG.source })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator('[id^="passage-"]:focus')).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(quoteRef).toBeFocused();
+  await button(page, MSG.next).click();
+  await expect(questionHeading(page, 2)).toBeFocused();
+  await expect(page.getByRole("tab", { name: MSG.study })).toHaveAttribute("aria-selected", "true");
 });
 
 test("while a mark saves, both marks are aria-disabled and focus stays; one answer is stored", async ({ page }) => {
@@ -618,4 +757,154 @@ test("a Round without Quiz Questions: the last mark completes it and returns to 
   // A complete Round is never shown again.
   await page.goto(roundPage);
   await expect(page.getByRole("heading", { level: 1, name: MSG.missing })).toBeFocused();
+});
+
+// ---- Story 2.3: Quiz Questions ----
+
+test("Quiz Question: stem, 'Kilde: Pn', options A–D in optionOrder, no Quote; progress 'Runde 1 · Spørsmål 1 av 4' at 25 %", async ({ page }) => {
+  await startRound(page);
+  await expect(barFill(page)).toHaveAttribute("style", new RegExp(`width: ${100 / CARD_COUNT}%`));
+  await markAllCards(page);
+  const region = questionRegion(page);
+  await expect(region).toContainText(stem("k-normalisering"));
+  await expect(region).toContainText("Normalisering");
+  await expect(region.getByRole("button", { name: "Kilde: P1" })).toBeVisible();
+  const [round] = await readStore(page, "rounds");
+  const order = (round.optionOrder as Record<string, number[]>)["k-normalisering.qq1"];
+  await expect(page.locator("main ul").getByRole("button")).toHaveText(order.map((o, i) => `${"ABCD"[i]} ${OPTIONS[o]}`));
+  await expect(region.locator("blockquote")).toHaveCount(0);
+  await expect(region).not.toContainText(quote(PASSAGES[0]));
+  await expect(feedback(page)).toHaveText("");
+  await expect(roundH1(page)).toHaveText("Runde 1: quiz");
+  await expect(questionHeading(page)).toBeFocused();
+  await expect(barFill(page)).toHaveAttribute("style", /width: 25%/);
+});
+
+test("reload after answering question 1: 'Spørsmål 2 av 4', unanswered", async ({ page }) => {
+  await startRound(page);
+  await markAllCards(page);
+  await answerQuestion(page, 1, true);
+  await page.reload();
+  await expect(roundH1(page)).toBeFocused();
+  await expect(questionHeading(page, 2)).toBeVisible();
+  await expect(questionRegion(page, 2)).toContainText(stem("k-forste"));
+  await expect(feedback(page)).toHaveText("");
+  await expect(page.locator("main ul").getByRole("button").first()).not.toHaveAttribute("aria-disabled");
+  await expect(page.locator("main blockquote")).toHaveCount(0);
+});
+
+test("reference jump from a question: 'Viser P1 fra spørsmål 1', 'Tilbake til spørsmålet' before and after answering", async ({ page }) => {
+  await startRound(page);
+  await markAllCards(page);
+  const ref = questionRegion(page).getByRole("button", { name: "Kilde: P1" }).first();
+  await ref.click();
+  await expect(page.locator("#passage-p1")).toBeFocused();
+  await expect(page.getByText("Viser P1 fra spørsmål 1")).toBeVisible();
+  await page.getByRole("button", { name: MSG.backToQuestion }).click();
+  await expect(ref).toBeFocused();
+
+  const letter = await answerQuestion(page, 1, false);
+  await expect(optionButton(page, letter)).toBeFocused();
+  await ref.click();
+  await expect(page.locator("#passage-p1")).toBeFocused();
+  await page.getByRole("button", { name: MSG.backToQuestion }).click();
+  await expect(ref).toBeFocused();
+  const quoteRef = questionRegion(page).locator("figcaption").getByRole("button", { name: "Kilde: P1" });
+  await quoteRef.click();
+  await expect(page.locator("#passage-p1")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(quoteRef).toBeFocused();
+  // The feedback survives the jump; the next question starts without the return control.
+  await expect(feedback(page)).not.toHaveText("");
+  await button(page, MSG.next).click();
+  await expect(questionHeading(page, 2)).toBeFocused();
+  await expect(page.getByText("Viser P1 fra spørsmål 1")).toHaveCount(0);
+});
+
+test("while an answer saves, every option is aria-disabled and focus stays; a double press stores one answer", async ({ page }) => {
+  await startRound(page);
+  await markAllCards(page);
+  const { letter } = await pick(page, 1, true);
+  await holdRoundPuts(page);
+  await optionButton(page, letter).click();
+  for (const l of "ABCD") await expect(optionButton(page, l)).toHaveAttribute("aria-disabled", "true");
+  await expect(optionButton(page, letter)).toBeFocused();
+  await expect(feedback(page)).toHaveText("");
+  await page.keyboard.press("Enter");
+  await releaseRoundPuts(page);
+  await expect(feedback(page)).toHaveText(MSG.correct);
+  await button(page, MSG.next).click();
+  await expect(questionHeading(page, 2)).toBeFocused();
+  const second = await pick(page, 2, false);
+  await optionButton(page, second.letter).dblclick();
+  await expect(feedback(page)).toHaveText(`Feil. Rett svar er ${second.correctLetter}.`);
+  const [round] = await readStore(page, "rounds");
+  expect(round.answers).toHaveLength(CARD_COUNT + 2);
+});
+
+test("answer write fails: no feedback, err.generation, nothing stored, the options work again", async ({ page }) => {
+  await startRound(page);
+  await markAllCards(page);
+  const before = await readStore(page, "conceptProgress");
+  await page.evaluate(() => {
+    const w = window as unknown as { e2eFail: boolean };
+    w.e2eFail = true;
+    const put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (this: IDBObjectStore, ...args: Parameters<IDBObjectStore["put"]>) {
+      if (this.name === "rounds" && w.e2eFail) throw new DOMException("e2e", "DataError");
+      return put.apply(this, args);
+    };
+  });
+  const { letter } = await pick(page, 1, false);
+  await optionButton(page, letter).click();
+  const alert = questionRegion(page).locator('[role="alert"]');
+  await expect(alert).toHaveText(MSG.error);
+  for (const l of "ABCD") {
+    await expect(optionButton(page, l)).toHaveAttribute("aria-describedby", "answer-error");
+    await expect(optionButton(page, l)).not.toHaveAttribute("aria-disabled");
+  }
+  await expect(feedback(page)).toHaveText("");
+  await expect(page.locator("main blockquote")).toHaveCount(0);
+  const [round] = await readStore(page, "rounds");
+  expect(round.answers).toHaveLength(CARD_COUNT);
+  expect(await readStore(page, "conceptProgress")).toEqual(before);
+  expect(await axeBlocking(page)).toEqual([]);
+
+  await page.evaluate(() => {
+    (window as unknown as { e2eFail: boolean }).e2eFail = false;
+  });
+  await optionButton(page, letter).click();
+  await expect(feedback(page)).not.toHaveText("");
+  await expect(page.locator('main [role="alert"]')).toHaveCount(0);
+});
+
+test("a quiz-only Round starts on 'Spørsmål 1 av 4'; the last answer completes it; 'Se resultatet' → Notatoversikt", async ({ page }) => {
+  await startRound(page, { cards: false });
+  await expect(page).toHaveTitle(`Runde 1, quiz · ${TITLE} · ${BRAND}`);
+  await expect(questionHeading(page)).toBeVisible();
+  await expect(page.getByRole("button", { name: MSG.reveal })).toHaveCount(0);
+  await expect(barFill(page)).toHaveAttribute("style", /width: 25%/);
+  for (let x = 1; x <= QUIZ_COUNT; x++) {
+    await answerQuestion(page, x, x % 2 === 1, 0);
+    if (x < QUIZ_COUNT) {
+      await button(page, MSG.next).click();
+      await expect(questionHeading(page, x + 1)).toBeFocused();
+    }
+  }
+  await expect(button(page, MSG.next)).toHaveCount(0);
+  const [round] = await readStore(page, "rounds");
+  expect(round.status).toBe("complete");
+  const answers = round.answers as { choice: number; answeredAt: string }[];
+  expect(answers.map((a) => a.choice === CORRECT)).toEqual([true, false, true, false]);
+  expect(round.completedAt).toBe(answers[QUIZ_COUNT - 1].answeredAt);
+  const progress = await readStore(page, "conceptProgress");
+  expect(Object.fromEntries(progress.map((p) => [p.keyConceptId, p.state]))).toEqual({
+    "k-normalisering": "known",
+    "k-forste": "shaky",
+    "k-tredje": "known",
+    "k-funksjonell": "shaky",
+  });
+  await button(page, MSG.result).click();
+  await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
 });

@@ -11,7 +11,7 @@ Lukke retro-punkt A9 (Epic 1, funn R1). Tor bestemte å stramme inn, slik at dem
 - Funn under undersøkelsen: proxyen krevde `min_length=1` på `passages`. Kontrakten måtte derfor endres slik at tom liste er lov i demo, mens live fortsatt krever minst én passasje.
 
 ### Resultat
-- Branch `fix/demo-mode-empty-passages`, commit `d3c17edee561f4d25606ac619305df177919b265`. Ikke pushet.
+- Branch `fix/demo-mode-empty-passages`, commit `d3c17edee561f4d25606ac619305df177919b265`. Pushet som PR #27. CI ble grønn (3 min 6 s), og PR-en er merget til `main` med merge-commit `7b99c56b8b97a0b146cf212e7fb7e501b6d1d668`.
 - `web/api/studySet.ts` sender `passages: []` i demomodus. JSDoc og filhode er oppdatert.
 - `proxy/app/schemas.py`: `min_length` er fjernet. Validatoren `_check_passages` (tidligere `_total_length`) gir 400 for live uten passasjer. `openapi.json` er regenerert, og `schema.d.ts` er uendret.
 - Tester:

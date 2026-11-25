@@ -24,15 +24,24 @@ const NO_KEY: StudySetResult = { ok: false, code: "err.noKey" };
 const DEMO_ONLY: StudySetResult = { ok: false, code: "err.demoOnly" };
 
 const QuoteRef = { passageId: z.string(), quote: z.string() };
-/** Runtime guard for the contract type; typed against schema.d.ts so the two cannot drift silently. */
+/**
+ * Runtime guard for the contract type; typed against schema.d.ts so the two cannot drift silently. As
+ * strict as the Proxy (Story 2.3, epic-1 retro R3): integer `centralityRank` and `correctIndex`, exactly
+ * 4 options, `0 ≤ correctIndex ≤ 3`.
+ */
 const StudySetSchema: z.ZodType<StudySet> = z.object({
   concepts: z.array(
     z.object({
       name: z.string(),
-      centralityRank: z.number(),
+      centralityRank: z.number().int(),
       flashcards: z.array(z.object({ front: z.string(), back: z.string(), ...QuoteRef })),
       quizQuestions: z.array(
-        z.object({ question: z.string(), options: z.array(z.string()), correctIndex: z.number(), ...QuoteRef }),
+        z.object({
+          question: z.string(),
+          options: z.array(z.string()).length(4),
+          correctIndex: z.number().int().min(0).max(3),
+          ...QuoteRef,
+        }),
       ),
     }),
   ),

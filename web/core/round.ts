@@ -19,10 +19,17 @@ export type RoundStatus = "active" | "complete" | "abandoned";
 
 /**
  * One answered Item, in Item order. A Flashcard mark (Story 2.2): `knew` is 'Kunne det' (true) or
- * 'Kunne det ikke' (false). Story 2.3 adds the Quiz Question variant (the chosen original option index).
+ * 'Kunne det ikke' (false). A Quiz answer (Story 2.3): `choice` is the chosen option's original index
+ * (into the Study Set's `options`, not the display order), compared with `correctIndex` when scoring.
  */
 export type FlashcardAnswer = { itemId: string; knew: boolean; answeredAt: string };
-export type RoundAnswer = FlashcardAnswer;
+export type QuizAnswer = { itemId: string; choice: number; answeredAt: string };
+export type RoundAnswer = FlashcardAnswer | QuizAnswer;
+
+/** True for the Quiz Question variant of a Round answer. */
+export function isQuizAnswer(answer: RoundAnswer): answer is QuizAnswer {
+  return typeof (answer as Partial<QuizAnswer>).choice === "number";
+}
 
 /** One `rounds` record (AD-21). Composed once and never recomposed. */
 export type Round = {
