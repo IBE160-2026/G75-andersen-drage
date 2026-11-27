@@ -7,11 +7,13 @@ import type { VerifiedQuizQuestion } from "../../core/types";
 import { format, t } from "../../i18n/messages";
 import type { NoteRecord, RoundRecord, StudySetRecord } from "../../storage/db";
 import { Button } from "../Button/Button";
+import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { notePath } from "../NoteOverview/NoteOverview";
 import { QuoteBlock } from "../QuoteBlock/QuoteBlock";
 import { displayOrder, OPTION_LETTERS } from "../QuizQuestion/QuizQuestion";
 import { SourceRef, type ReturnContext } from "../ReferenceJump/ReferenceJump";
 import { itemsResolve, roundQuizQuestions } from "../Round/Round";
+import { useStartRound } from "../Round/useStartRound";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import { StudyLayout } from "../StudyLayout/StudyLayout";
 import styles from "./Result.module.css";
@@ -36,6 +38,8 @@ export function resultReady(
 
 /** The score paragraph: the focused h1 "Resultat" is described by it, so the score is read on arrival. */
 const SCORE_ID = "result-score";
+/** The inline `err.generation` after a failed 'Ny runde'. */
+const NEXT_ERROR_ID = "result-next-error";
 
 /** Resultat references return to the result (UX-DR11). */
 function resultReturn(): ReturnContext {
@@ -50,6 +54,9 @@ function resultReturn(): ReturnContext {
  * in Round order. Each row is a `section` labelled by its `h2` "Spørsmål {x}": the question (serif),
  * "Ditt svar:" with ✓ or ✗, on a miss "Rett svar:" with ✓ (letters per the stored `optionOrder`, marks
  * `aria-hidden`), then the Quote block with its "Kilde: Pn" (return context "Viser Pn fra resultatet").
+ * Story 2.5 (FR-18, D-24): the secondary 'Ny runde' after 'Tilbake til oversikten' starts the next Round
+ * through `useStartRound` from this (the Note's current, D-19) Study Set; pending → `aria-disabled`, a
+ * failure keeps the student here with `err.generation` inline, and pressing again retries.
  */
 export function ResultScreen({
   note,
@@ -70,6 +77,7 @@ export function ResultScreen({
     questions.map(({ question }) => question),
   );
   const choices = quizChoices(round.answers);
+  const next = useStartRound(note, studySet);
 
   return (
     <Screen title="result.title" note={note.title}>
@@ -85,7 +93,20 @@ export function ResultScreen({
               <Button variant="primary" onClick={() => router.push(notePath(note.noteHash))}>
                 {t("result.back")}
               </Button>
+              <Button
+                variant="secondary"
+                pending={next.pending}
+                aria-describedby={next.failed ? NEXT_ERROR_ID : undefined}
+                onClick={() => void next.start()}
+              >
+                {t("result.next")}
+              </Button>
             </div>
+            {next.failed ? (
+              <div className={styles.error}>
+                <ErrorMessage id={NEXT_ERROR_ID} text={t("err.generation")} />
+              </div>
+            ) : null}
             {questions.map(({ question }, i) => (
               <ResultRow
                 key={question.id}

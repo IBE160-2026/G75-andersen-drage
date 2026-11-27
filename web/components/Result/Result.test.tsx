@@ -2,16 +2,20 @@
 // Story 2.4: Resultat (FR-12, FR-14, UX-DR11, UX-DR17, UX-DR19): focus on the h1, the score, one row per
 // Quiz Question in Round order with "Ditt svar:" / "Rett svar:" (letters per optionOrder, marks
 // aria-hidden), the reference jump returning to the row's reference, and resultReady. The router is
-// stubbed; nothing is stored here.
+// stubbed; nothing is stored here. Story 2.5: the secondary 'Ny runde' (useStartRound, storage stubbed):
+// pending, failure with err.generation inline, retry.
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { pageTitle, t } from "../../i18n/messages";
-import type { NoteRecord, RoundRecord, StudySetRecord } from "../../storage/db";
+import type { ConceptProgressRecord, NoteRecord, RoundRecord, StorageResult, StudySetRecord } from "../../storage/db";
 import { AsideSlotContext } from "../AppShell/asideSlot";
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+const readConceptProgress = vi.fn<(noteHash: string) => Promise<StorageResult<ConceptProgressRecord[]>>>();
+const startRound = vi.fn<(composition: { round: Omit<RoundRecord, "number" | "schemaVersion"> }) => Promise<StorageResult<RoundRecord>>>();
+vi.mock("../../storage/db", () => ({ readConceptProgress, startRound }));
 
 const { ResultScreen, resultReady } = await import("./Result");
 
@@ -114,6 +118,8 @@ beforeEach(() => {
   document.body.append(container, slot);
   root = createRoot(container);
   push.mockReset();
+  readConceptProgress.mockReset();
+  startRound.mockReset();
   render();
 });
 
@@ -203,6 +209,86 @@ describe("ResultScreen", () => {
   it("'Tilbake til oversikten' goes to Notatoversikt", async () => {
     await act(async () => button(t("result.back"))!.click());
     expect(push).toHaveBeenCalledWith("/notat/h");
+  });
+
+  it("'Ny runde' is the secondary action right after 'Tilbake til oversikten', before the rows", () => {
+    const back = button(t("result.back"))!;
+    const next = button(t("result.next"))!;
+    expect(next.getAttribute("data-variant")).toBe("secondary");
+    expect(next.parentElement).toBe(back.parentElement);
+    expect(back.nextElementSibling).toBe(next);
+    expect(next.compareDocumentPosition(rows()[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(next.hasAttribute("aria-disabled")).toBe(false);
+  });
+
+  it("'Ny runde' composes from this Study Set, stores the Round and opens it; pending meanwhile, focus kept", async () => {
+    readConceptProgress.mockResolvedValue({
+      ok: true,
+      value: [{ schemaVersion: 1, noteHash: "h", keyConceptId: "k-b", state: "shaky", lastShownAt: T, lastUsedQuizQuestionId: "k-b.qq1" }],
+    });
+    let resolve!: (r: StorageResult<RoundRecord>) => void;
+    startRound.mockImplementation(() => new Promise((r) => (resolve = r)));
+    const next = button(t("result.next"))!;
+    next.focus();
+    await act(async () => next.click());
+    expect(readConceptProgress).toHaveBeenCalledWith("h");
+    expect(startRound).toHaveBeenCalledTimes(1);
+    const { round } = startRound.mock.calls[0][0];
+    expect(round).toMatchObject({ noteHash: "h", cacheKey: "h:2:m", status: "active", review: false });
+    expect(round.conceptIds[0]).toBe("k-b"); // shaky first
+    expect(next.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(next);
+    await act(async () => next.click()); // a second press while pending starts nothing
+    expect(startRound).toHaveBeenCalledTimes(1);
+    await act(async () => resolve({ ok: true, value: { ...ROUND, ...round, number: 2, schemaVersion: 1 } }));
+    expect(push).toHaveBeenCalledWith(`/notat/h/runde/${round.roundId}`);
+  });
+
+  it("a failed write keeps Resultat with err.generation inline; pressing again retries", async () => {
+    readConceptProgress.mockResolvedValue({ ok: true, value: [] });
+    startRound.mockResolvedValue({ ok: false, code: "err.generation" });
+    const next = button(t("result.next"))!;
+    await act(async () => next.click());
+    expect(push).not.toHaveBeenCalled();
+    const alert = container.querySelector('[role="alert"]')!;
+    expect(alert.textContent).toContain(t("err.generation"));
+    expect(next.getAttribute("aria-describedby")).toBe(alert.id);
+    expect(next.hasAttribute("aria-disabled")).toBe(false);
+    expect(container.querySelector("h1")?.textContent).toBe(t("result.title"));
+
+    startRound.mockImplementation(async ({ round }) => ({ ok: true, value: { ...ROUND, ...round, number: 2, schemaVersion: 1 } }));
+    await act(async () => next.click());
+    expect(startRound).toHaveBeenCalledTimes(2);
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(container.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it("a failed progress read (or a throw) is a failure too, never thrown", async () => {
+    readConceptProgress.mockResolvedValue({ ok: false, code: "err.generation" });
+    await act(async () => button(t("result.next"))!.click());
+    expect(startRound).not.toHaveBeenCalled();
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain(t("err.generation"));
+
+    readConceptProgress.mockRejectedValue(new Error("boom"));
+    await act(async () => button(t("result.next"))!.click());
+    expect(readConceptProgress).toHaveBeenCalledTimes(2);
+    expect(startRound).not.toHaveBeenCalled();
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain(t("err.generation"));
+  });
+
+  it("a navigation that throws after the Round is stored: err.generation inline, not pending, a second press retries", async () => {
+    readConceptProgress.mockResolvedValue({ ok: true, value: [] });
+    startRound.mockImplementation(async ({ round }) => ({ ok: true, value: { ...ROUND, ...round, number: 2, schemaVersion: 1 } }));
+    push.mockImplementationOnce(() => {
+      throw new Error("nav");
+    });
+    const next = button(t("result.next"))!;
+    await act(async () => next.click());
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain(t("err.generation"));
+    expect(next.hasAttribute("aria-disabled")).toBe(false);
+    await act(async () => next.click());
+    expect(startRound).toHaveBeenCalledTimes(2);
+    expect(push).toHaveBeenCalledTimes(2);
   });
 
   it("an unanswered question counts as wrong and shows 'Rett svar:'", () => {

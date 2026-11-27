@@ -134,6 +134,8 @@ export const messages = {
   "result.score": "{n} av {m} riktige",
   "result.row": "Spørsmål {x}",
   "result.back": "Tilbake til oversikten",
+  // Story 2.5 (D-24): the secondary next-Round action after result.back, text from banner.interrupted's 'Ny runde'.
+  "result.next": "Ny runde",
   "result.yours": "Ditt svar:",
   "result.correct": "Rett svar:",
   "return.from.result": "resultatet",
