@@ -23,6 +23,11 @@
   padding-bottom: var(--spacing-4);
 }
 
+/* Story 2.5: the inline err.generation after a failed 'Ny runde', above the rows. */
+.error {
+  padding-bottom: var(--spacing-4);
+}
+
 /* result-row: line top divider, spacing-4 vertical padding, blocks spacing-2 apart. */
 .row {
   display: flex;

@@ -1,9 +1,10 @@
 // Story 1.14: Demo Mode with the bundled sample notes (UJ-3; FR-5, FR-23, FR-24). The test stack is keyless
 // and has no route out, so every generation here is served by the Proxy from proxy/fixtures/: nothing is
 // stubbed and nothing reaches the provider. Each test starts in a fresh browser context.
+// Story 2.5: the full UJ-1 loop on the Norwegian sample, with no key (FR-18, FR-23).
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { SETTINGS_KEY } from "./seed";
+import { readStore, SETTINGS_KEY } from "./seed";
 
 const SAMPLES = [
   { title: "Smidig utvikling og Scrum", noteHash: "2e473642b71bb22d923c1336d60124f5fe636517a5d70b5f89a49984c84f02b1" },
@@ -199,4 +200,101 @@ test("Demo off again with Consent accepted and no key: err.noKey on Start, nothi
     .setInputFiles({ name: "eget.txt", mimeType: "text/plain", buffer: Buffer.from(`Mitt eget notat. ${words}.`) });
   await expect(page.locator('main [role="alert"]')).toContainText(MSG.noKey);
   expect(bodies).toEqual([]);
+});
+
+/** Every `/api/` request the page sends, as "METHOD /path". */
+function recordApiRequests(page: Page) {
+  const seen: string[] = [];
+  page.on("request", (req) => {
+    const { pathname } = new URL(req.url());
+    if (pathname.startsWith("/api/")) seen.push(`${req.method()} ${pathname}`);
+  });
+  return seen;
+}
+
+type StoredConcept = {
+  id: string;
+  flashcards: { id: string; front: string }[];
+  quizQuestions: { id: string; correctIndex: number }[];
+};
+
+test("Demo loop, no key: Norwegian sample → cards → quiz → Resultat → jump → 'Ny runde'; Round 2 starts with the concepts marked wrong; 'Start runde' then opens Round 3", async ({
+  page,
+}) => {
+  const api = recordApiRequests(page);
+  const bodies = recordStudySetBodies(page);
+  await page.goto("/");
+  await dialog(page).getByRole("button", { name: "Nei takk, vis demo" }).click();
+  const [scrum] = SAMPLES;
+  await page.getByRole("button", { name: new RegExp(`^${scrum.title}`) }).click();
+  await expect(page).toHaveURL(routeFor(scrum.noteHash), { timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "Sammendrag" })).toBeVisible();
+
+  const main = page.locator("main");
+  const btn = (name: string) => main.getByRole("button", { name, exact: true });
+  await btn("Start runde").click();
+  await expect(page.getByRole("heading", { level: 1, name: "Runde 1" })).toBeFocused();
+
+  const [studySet] = await readStore(page, "studySets");
+  const concepts = new Map((studySet.concepts as StoredConcept[]).map((c) => [c.id, c]));
+  const [round] = await readStore(page, "rounds");
+  const itemIds = round.itemIds as string[];
+  const conceptIds = round.conceptIds as string[];
+  const order = round.optionOrder as Record<string, number[]>;
+  expect(conceptIds.length).toBeGreaterThanOrEqual(4);
+  // Mark the second and the fourth concept wrong (card and question); the rest right.
+  const wrong = [conceptIds[1], conceptIds[3]];
+  const cards = itemIds.filter((id) => id.includes(".fc"));
+  const questions = itemIds.filter((id) => id.includes(".qq"));
+  expect(cards.length).toBeGreaterThan(0);
+  expect(questions.length).toBeGreaterThan(0);
+
+  for (const [i, id] of cards.entries()) {
+    const right = !wrong.includes(id.split(".")[0]);
+    // The Round opens with focus on its h1; each later card's heading takes focus after the mark.
+    const heading = page.getByRole("heading", { level: 2, name: `Kort ${i + 1} av ${cards.length}` });
+    await (i === 0 ? expect(heading).toBeVisible() : expect(heading).toBeFocused());
+    await btn("Snu kortet").click();
+    await btn(right ? "Kunne det" : "Kunne det ikke").click();
+  }
+  for (const [i, id] of questions.entries()) {
+    await expect(page.getByRole("heading", { level: 2, name: `Spørsmål ${i + 1} av ${questions.length}` })).toBeFocused();
+    const conceptId = id.split(".")[0];
+    const correct = concepts.get(conceptId)!.quizQuestions.find((q) => q.id === id)!.correctIndex;
+    const choice = wrong.includes(conceptId) ? order[id].find((o) => o !== correct)! : correct;
+    await main.locator("ul").getByRole("button", { name: new RegExp(`^${"ABCD"[order[id].indexOf(choice)]} `) }).click();
+    await expect(main.locator('[aria-live="polite"]')).not.toHaveText("");
+    await btn(i < questions.length - 1 ? "Neste spørsmål" : "Se resultatet").click();
+  }
+
+  await expect(page.getByRole("heading", { level: 1, name: "Resultat", exact: true })).toBeFocused();
+  const wrongQuestions = questions.filter((id) => wrong.includes(id.split(".")[0])).length;
+  await expect(main.locator("h1 + p")).toHaveText(`${questions.length - wrongQuestions} av ${questions.length} riktige`);
+
+  // The reference jump from the first row, and back.
+  const ref = page.getByRole("region", { name: "Spørsmål 1", exact: true }).locator("figcaption").getByRole("button");
+  await ref.click();
+  await expect(page.locator("mark")).toHaveCount(1);
+  await page.getByRole("button", { name: "Tilbake til resultatet" }).click();
+  await expect(ref).toBeFocused();
+
+  await btn("Ny runde").click();
+  await expect(page.getByRole("heading", { level: 1, name: "Runde 2" })).toBeFocused();
+  const second = (await readStore(page, "rounds")).find((r) => r.number === 2)!;
+  expect((second.conceptIds as string[]).slice(0, 2)).toEqual(wrong);
+  expect(concepts.get(wrong[0])!.flashcards.length).toBeGreaterThan(0);
+  const firstCard = concepts.get(wrong[0])!.flashcards[0];
+  expect((second.itemIds as string[])[0]).toBe(firstCard.id);
+  await expect(page.getByRole("region", { name: /^Kort 1 av \d+$/ })).toContainText(firstCard.front);
+  await expect(main.getByText("usikker", { exact: true })).toBeVisible();
+
+  // 'Start runde' from Notatoversikt: Round 3 (Round 2 becomes abandoned), never stuck.
+  await page.goto(`/notat/demo:${scrum.noteHash}`);
+  await btn("Start runde").click();
+  await expect(page.getByRole("heading", { level: 1, name: "Runde 3" })).toBeFocused();
+  expect((await readStore(page, "rounds")).find((r) => r.number === 2)).toMatchObject({ status: "abandoned" });
+
+  // Nothing but the status check and the demo generation reached /api/.
+  expect([...new Set(api)].sort()).toEqual(["GET /api/status", "POST /api/study-set"]);
+  expect(bodies.map((b) => [b.mode, b.noteHash])).toEqual([["demo", scrum.noteHash]]);
 });

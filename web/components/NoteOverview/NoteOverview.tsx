@@ -1,23 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import { uuidFromBytes } from "../../core/ids";
 import { contentLang, hasCoveredConcept, sortConcepts } from "../../core/overview";
-import { composeRound, type MasteryState } from "../../core/round";
+import type { MasteryState } from "../../core/round";
 import { t } from "../../i18n/messages";
-import {
-  readConceptProgress,
-  startRound,
-  type ConceptProgressRecord,
-  type NoteRecord,
-  type StudySetRecord,
-} from "../../storage/db";
+import type { ConceptProgressRecord, NoteRecord, StudySetRecord } from "../../storage/db";
 import { Button } from "../Button/Button";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
 import { MasteryChip } from "../MasteryChip/MasteryChip";
 import { QuoteBlock } from "../QuoteBlock/QuoteBlock";
 import { SourceRef, type ReturnContext } from "../ReferenceJump/ReferenceJump";
+import { useStartRound } from "../Round/useStartRound";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import { StudyLayout } from "../StudyLayout/StudyLayout";
 import styles from "./NoteOverview.module.css";
@@ -41,18 +33,13 @@ export function resultPath(noteHash: string, roundId: string): string {
   return `${roundPath(noteHash, roundId)}/resultat`;
 }
 
-/** `crypto.randomUUID()`, which exists only in a secure context; elsewhere a v4 UUID from getRandomValues. */
-function newRoundId(): string {
-  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
-  return uuidFromBytes(crypto.getRandomValues(new Uint8Array(16)));
-}
-
 /**
  * Notatoversikt (FR-6, FR-12, UX-DR6–9): summary, Key Concepts and 'Start runde' in the study panel,
  * in the shared StudyLayout (split from 768 px, tabs below). Generated content carries `lang` from
  * `StudySet.language`. Story 2.1: 'Start runde' reads the progress rows, composes the Round in core/
  * (Round ID and time from here) and stores it in one transaction, then opens the Round screen. While it
  * runs the button is pending; a failure keeps the student here with `err.generation` inline.
+ * Story 2.5: that path is `useStartRound`, shared with Resultat's 'Ny runde'.
  * Story 2.4: each covered concept's Mastery chip shows its stored state from `progress` (no row → 'ny').
  */
 export function NoteOverview({
@@ -70,50 +57,8 @@ export function NoteOverview({
   /** 'Prøv igjen' after `err.noConcepts`. */
   onRetry: () => void;
 }) {
-  const router = useRouter();
   const lang = contentLang(studySet.language);
-  const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
-  // A second press before the pending state has rendered must not start a second Round.
-  const starting = useRef(false);
-
-  async function start() {
-    if (starting.current) return;
-    starting.current = true;
-    setPending(true);
-    setFailed(false);
-    const roundId = await begin();
-    if (roundId) {
-      // Stays pending until the Round screen replaces this one.
-      router.push(roundPath(note.noteHash, roundId));
-      return;
-    }
-    starting.current = false;
-    setPending(false);
-    setFailed(true);
-  }
-
-  /** The new Round's ID, or null when it could not be stored. Never throws. */
-  async function begin(): Promise<string | null> {
-    try {
-      const progress = await readConceptProgress(note.noteHash);
-      if (!progress.ok) return null;
-      const composition = composeRound({
-        roundId: newRoundId(),
-        noteHash: note.noteHash,
-        cacheKey: studySet.cacheKey,
-        now: new Date().toISOString(),
-        random: Math.random,
-        concepts: studySet.concepts,
-        progress: progress.value,
-      });
-      if (!composition) return null;
-      const saved = await startRound(composition);
-      return saved.ok ? saved.value.roundId : null;
-    } catch {
-      return null;
-    }
-  }
+  const { start, pending, failed } = useStartRound(note, studySet);
 
   return (
     <Screen note={note.title}>

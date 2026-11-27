@@ -2,6 +2,7 @@
 // UX-DR15, UX-DR19). Story 2.2: review Flashcards and mark them (FR-13, FR-17, UX-DR11, UX-DR13, UX-DR21).
 // Story 2.3: answer Quiz Questions (FR-12, FR-14, FR-17, AD-11, AD-21, NFR-6, UX-DR11, UX-DR12, UX-DR14, UX-DR15).
 // Story 2.4: Resultat with score and sources (FR-12, FR-14, AD-3, AD-21, NFR-6, UX-DR11, UX-DR17, UX-DR19).
+// Story 2.5: the next Round from Resultat ('Ny runde') targets the weak spots (FR-18, AD-11, AD-21, UX-DR15).
 // Records are seeded straight into IndexedDB; nothing is POSTed, so nothing reaches
 // the provider.
 import { createHash } from "node:crypto";
@@ -41,6 +42,7 @@ const MSG = {
   backToResult: "Tilbake til resultatet",
   yours: "Ditt svar:",
   right: "Rett svar:",
+  nextRound: "Ny runde",
 };
 
 const PASSAGES: SeedPassage[] = [
@@ -647,8 +649,10 @@ test("keyboard only: reveal and mark every card (Tab / Enter / Space), states st
   await expect(page).toHaveURL(resultUrl(BARE_HASH, String(done.roundId)));
   await expect(resultH1(page)).toBeFocused();
 
-  // Tab: 'Tilbake til oversikten', then each row's 'Kilde: Pn'.
+  // Tab: 'Tilbake til oversikten', 'Ny runde' (Story 2.5), then each row's 'Kilde: Pn'.
   await button(page, MSG.backToOverview).focus();
+  await page.keyboard.press("Tab");
+  await expect(button(page, MSG.nextRound)).toBeFocused();
   for (let x = 1; x <= QUIZ_COUNT; x++) {
     await page.keyboard.press("Tab");
     await expect(resultRef(page, x)).toBeFocused();
@@ -1079,4 +1083,121 @@ test("Notatoversikt: a failed progress read shows every chip 'ny', never an erro
   await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
   await expect(masteryChips(page)).toHaveText(["ny", "ny", "ny", "ny"]);
   await expect(page.locator('main [role="alert"]')).toHaveCount(0);
+});
+
+// ---- Story 2.5: the next Round ----
+
+/** Plays Round 1 to Resultat: every card and question right except k-funksjonell's ('Kunne det ikke', a wrong choice). */
+async function playToResult(page: Page) {
+  for (let x = 1; x <= CARD_COUNT; x++) await markCard(page, x, x !== CARD_COUNT);
+  for (let x = 1; x <= QUIZ_COUNT; x++) {
+    await answerQuestion(page, x, x !== QUIZ_COUNT);
+    await button(page, x < QUIZ_COUNT ? MSG.next : MSG.result).click();
+    if (x < QUIZ_COUNT) await expect(questionHeading(page, x + 1)).toBeFocused();
+  }
+  await expect(resultH1(page)).toBeFocused();
+  await expect(scoreLine(page)).toHaveText("3 av 4 riktige");
+}
+
+test("keyboard on Resultat: 'Tilbake til oversikten' → 'Ny runde' → 'Kilde: P1'; 'Ny runde' opens 'Runde 2', the shaky card first; axe clean; a reopened tab keeps the progress", async ({
+  page,
+  context,
+}) => {
+  await startRound(page);
+  await playToResult(page);
+  expect(await axeBlocking(page)).toEqual([]);
+
+  await button(page, MSG.backToOverview).focus();
+  await page.keyboard.press("Tab");
+  const next = button(page, MSG.nextRound);
+  await expect(next).toBeFocused();
+  await expect(next).toHaveAttribute("data-variant", "secondary");
+  await page.keyboard.press("Tab");
+  await expect(resultRef(page, 1)).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(next).toBeFocused();
+  await page.keyboard.press("Enter");
+
+  await expect(page).toHaveURL(roundUrl(BARE_HASH));
+  await expect(roundH1(page, 2)).toBeFocused();
+  await expect(page).toHaveTitle(`Runde 2 · ${TITLE} · ${BRAND}`);
+  // k-funksjonell (shaky) first, then max(1, round(0.2 × 1)) = 1 known: ties by rank → k-normalisering (2 cards).
+  const first = page.getByRole("region", { name: "Kort 1 av 3" });
+  await expect(first).toContainText(front("k-funksjonell"));
+  await expect(page.locator("main").getByText("usikker", { exact: true })).toBeVisible();
+  const rounds = await readStore(page, "rounds");
+  const byNumber = Object.fromEntries(rounds.map((r) => [r.number as number, r]));
+  expect(byNumber[1].status).toBe("complete");
+  expect(byNumber[2]).toMatchObject({ status: "active", review: false, conceptIds: ["k-funksjonell", "k-normalisering"] });
+  expect(await axeBlocking(page)).toEqual([]);
+
+  // Close the tab and reopen the Note: the stored states and last-shown times are unchanged, the chips match.
+  const progress = await readStore(page, "conceptProgress");
+  await page.close();
+  const reopened = await context.newPage();
+  await reopened.setViewportSize({ width: 1280, height: 800 });
+  await reopened.goto(`/notat/${BARE_HASH}`);
+  await expect(reopened.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  await expect(masteryChips(reopened)).toHaveText(["kan", "kan", "kan", "usikker"]);
+  expect(await readStore(reopened, "conceptProgress")).toEqual(progress);
+});
+
+test("320 px Resultat: the actions wrap, buttons ≥ 44 px, no horizontal scroll, axe clean; 'Ny runde' by keyboard opens 'Runde 2'", async ({ page }) => {
+  await startRound(page, { width: 320 });
+  await playToResult(page);
+  const back = button(page, MSG.backToOverview);
+  const next = button(page, MSG.nextRound);
+  for (const b of [back, next]) {
+    const box = (await b.boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.x + box.width).toBeLessThanOrEqual(320);
+  }
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  expect(await axeBlocking(page)).toEqual([]);
+  await next.focus();
+  await page.keyboard.press("Enter");
+  await expect(roundH1(page, 2)).toBeFocused();
+  await expect(page.getByRole("region", { name: "Kort 1 av 3" })).toContainText(front("k-funksjonell"));
+});
+
+test("'Ny runde' pending: aria-disabled, focus stays, one Round stored; a failed write stays on Resultat with err.generation and retry works", async ({ page }) => {
+  await startRound(page);
+  await playToResult(page);
+  const resultAt = page.url();
+  const next = button(page, MSG.nextRound);
+
+  // The Round's put throws: nothing more is stored, Resultat stays with the inline error.
+  await page.evaluate(() => {
+    const w = window as unknown as { e2eFail: boolean };
+    w.e2eFail = true;
+    const put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (this: IDBObjectStore, ...args: Parameters<IDBObjectStore["put"]>) {
+      if (this.name === "rounds" && w.e2eFail) throw new DOMException("e2e", "DataError");
+      return put.apply(this, args);
+    };
+  });
+  const before = { rounds: await readStore(page, "rounds"), progress: await readStore(page, "conceptProgress") };
+  await next.click();
+  const alert = page.locator('main [role="alert"]');
+  await expect(alert).toHaveText(MSG.error);
+  await expect(next).toBeFocused();
+  await expect(next).not.toHaveAttribute("aria-disabled");
+  expect(page.url()).toBe(resultAt);
+  await expect(resultH1(page)).toBeVisible();
+  expect({ rounds: await readStore(page, "rounds"), progress: await readStore(page, "conceptProgress") }).toEqual(before);
+  expect(await axeBlocking(page)).toEqual([]);
+
+  // Retry, held open: pending is aria-disabled with focus kept; a second press stores no second Round.
+  await page.evaluate(() => {
+    (window as unknown as { e2eFail: boolean }).e2eFail = false;
+  });
+  await holdRoundPuts(page);
+  await next.focus();
+  await page.keyboard.press("Enter");
+  await expect(next).toHaveAttribute("aria-disabled", "true");
+  await expect(next).toBeFocused();
+  await page.keyboard.press("Enter");
+  await releaseRoundPuts(page);
+  await expect(roundH1(page, 2)).toBeFocused();
+  expect(await readStore(page, "rounds")).toHaveLength(2);
 });

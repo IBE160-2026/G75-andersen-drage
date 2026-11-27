@@ -1,5 +1,5 @@
 // Story 1.9: IndexedDB records (AD-21) on fake-indexeddb. A fresh factory per test. Story 2.1: Round start.
-// Story 2.2: Flashcard marks. Story 2.3: Quiz answers.
+// Story 2.2: Flashcard marks. Story 2.3: Quiz answers. Story 2.5: consecutive Rounds.
 import "fake-indexeddb/auto";
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -927,5 +927,67 @@ describe("recordQuizAnswer (Story 2.3)", () => {
   it("without IndexedDB: not ok, no throw", async () => {
     globalThis.indexedDB = undefined as unknown as IDBFactory;
     expect(await recordQuizAnswer(answer("k-a.qq1", 0))).toEqual({ ok: false, code: "err.generation" });
+  });
+});
+
+describe("consecutive Rounds (Story 2.5)", () => {
+  const T3 = "2026-11-25T12:00:00.000Z";
+  /** Answers every Item of the stored Round in order: `wrong` concepts 'Kunne det ikke' / a wrong choice, the rest right. */
+  const play = async (roundId: string, wrong: readonly string[], at: string) => {
+    const read = await readRound(roundId);
+    if (!read.ok) throw new Error("read failed");
+    for (const itemId of read.value.itemIds) {
+      const keyConceptId = itemId.split(".")[0];
+      const right = !wrong.includes(keyConceptId);
+      const state = right ? "known" : "shaky";
+      const saved = itemId.includes(".fc")
+        ? await recordFlashcardMark({ roundId, itemId, keyConceptId, knew: right, state, answeredAt: at })
+        : await recordQuizAnswer({ roundId, itemId, keyConceptId, choice: right ? 0 : 1, state, answeredAt: at });
+      if (!saved.ok) throw new Error(`answer failed: ${itemId}`);
+    }
+    const done = await readRound(roundId);
+    expect(done.ok && done.value.status).toBe("complete");
+  };
+  const begin = async (roundId: string, now: string) => {
+    const saved = await startRound(await compose(roundId, now));
+    if (!saved.ok) throw new Error("start failed");
+    return saved.value;
+  };
+
+  it("after a mixed Round: Round 2 is number 2, the shaky concept's card comes first, Round 1 stays complete", async () => {
+    const first = await begin("r-1", T1);
+    expect(first.conceptIds).toEqual(["k-a", "k-b", "k-c"]);
+    await play("r-1", ["k-c"], T1);
+    const second = await begin("r-2", T2);
+    expect(second.number).toBe(2);
+    expect(second.review).toBe(false);
+    // k-c shaky first; then max(1, round(0.2 × 1)) = 1 known, least recently shown, ties by rank → k-a.
+    expect(second.conceptIds).toEqual(["k-c", "k-a"]);
+    expect(second.itemIds[0]).toBe("k-c.fc1");
+    const first2 = await readRound("r-1");
+    expect(first2.ok && first2.value.status).toBe("complete");
+  });
+
+  it("a concept with two Quiz Questions: three Rounds use qq1, qq2, qq1; numbers 1, 2, 3", async () => {
+    const used: string[] = [];
+    const numbers: number[] = [];
+    for (const [i, now] of [T1, T2, T3].entries()) {
+      const round = await begin(`r-${i + 1}`, now);
+      numbers.push(round.number);
+      used.push(round.itemIds.find((id) => id.startsWith("k-a.qq"))!);
+      await play(round.roundId, ["k-a", "k-b", "k-c"], now);
+    }
+    expect(numbers).toEqual([1, 2, 3]);
+    expect(used).toEqual(["k-a.qq1", "k-a.qq2", "k-a.qq1"]);
+  });
+
+  it("all known: the next Round is a review Round of every covered concept", async () => {
+    await begin("r-1", T1);
+    await play("r-1", [], T1);
+    const progress = await readConceptProgress(DEMO_HASH);
+    expect(progress.ok && progress.value.map((p) => p.state)).toEqual(["known", "known", "known"]);
+    const second = await begin("r-2", T2);
+    expect(second).toMatchObject({ number: 2, review: true });
+    expect([...second.conceptIds].sort()).toEqual(["k-a", "k-b", "k-c"]);
   });
 });

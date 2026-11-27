@@ -173,6 +173,7 @@ The UI strings for every state. **Status:** all strings are drafts by Claude in 
 | **Resultat** | | |
 | result.score | Resultat *(approved)* (2026-11-25) | "{n} av {m} riktige" · 'Tilbake til oversikten' |
 | result.yours / result.correct | Resultat row *(approved)* | "Ditt svar:" / "Rett svar:" (correct answer line only on missed questions) |
+| result.next | Resultat *(approved)* (2026-11-26, D-24) | 'Ny runde' (secondary, after 'Tilbake til oversikten') |
 | **Note rows and Arkiv** | | |
 | row.lastPractised | Note row meta *(approved)* | "Sist øvd i dag" / "Sist øvd i går" / "Sist øvd for {n} dager siden" · "Ikke øvd ennå" |
 | importance.name | Importance select, accessible name (AT) *(approved)* (2026-11-25) | "Viktighet for {tittel}: {n} (1 er viktigst)" |

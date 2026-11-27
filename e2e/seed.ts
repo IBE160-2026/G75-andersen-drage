@@ -83,8 +83,8 @@ export async function seedNoteRecords(
   );
 }
 
-/** Story 2.1: every record in one IndexedDB store of `torsa`, as stored. */
-export async function readStore(page: Page, store: "conceptProgress" | "rounds"): Promise<Record<string, unknown>[]> {
+/** Story 2.1: every record in one IndexedDB store of `torsa`, as stored (Story 2.5: also `studySets`). */
+export async function readStore(page: Page, store: "conceptProgress" | "rounds" | "studySets"): Promise<Record<string, unknown>[]> {
   return page.evaluate(async (store) => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
       const req = indexedDB.open("torsa", 1);
