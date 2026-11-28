@@ -59,7 +59,7 @@ A Round with no Quiz Questions (it completes and goes back to Notatoversikt) can
 
 | # | Row | What happened | Severity | Action (fix in PR / GitHub issue) |
 |---|---|---|---|---|
-| N1 | 4.2 | Note, not a fail: after the last card the Round stops at the Quiz shell with no way on; Tor had to open the Note again to practise the concepts marked 'Kunne det ikke'. Expected until Quiz (2.3), Resultat with 'Tilbake til oversikten' (2.4) and the next Round from Resultat (2.5). | — | None now; recheck the end of a Round in the 2.3–2.5 manual passes |
+| N1 | 4.2 | Note, not a fail: after the last card the Round stops at the Quiz shell with no way on; Tor had to open the Note again to practise the concepts marked 'Kunne det ikke'. Expected until Quiz (2.3), Resultat with 'Tilbake til oversikten' (2.4) and the next Round from Resultat (2.5). | — | Closed 2026-11-28: rechecked in `story-2-5-manual-pass.md` rows 2.1–2.2 (desktop and 320 px, all P); Resultat and 'Ny runde' give a way on |
 
 ## Result
 
