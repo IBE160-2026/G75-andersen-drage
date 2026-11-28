@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: '11-28-2026 08:09'
+last_updated: '11-28-2026 10:02'
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -58,7 +58,7 @@ development_status:
   2-3-answer-quiz-questions: done
   2-4-resultat-with-score-and-sources: done
   2-5-the-next-round-targets-my-weak-spots: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done
 
   epic-3: backlog
   3-1-dine-notater-start-screen: backlog
@@ -118,8 +118,8 @@ action_items:
   - id: "epic-1-retro-item-5-keep-user-fields-and-delete-the-previous"
     epic: 1
     action: "Keep user fields and delete the previous Study Set on regenerate (AD-21);
-      move from Epic 3 to the first Epic 2 story that writes progress; target: own fix
-      PR right after Story 2.1, before Story 2.2 (spec-2-1)"
+      move from Epic 3 to the first Epic 2 story that writes progress; target: own
+      fix PR right after Story 2.1, before Story 2.2 (spec-2-1)"
     owner: "Tor (bmad-build)"
     status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
@@ -160,3 +160,49 @@ action_items:
     owner: "Tor"
     status: done
     ref: ".docs/implementation-artifacts/epic-1-retro-2026-11-24.md"
+  - id: "epic-2-retro-item-11-reconcile-deviations-md-with-epics-md-ad"
+    epic: 2
+    action: "Reconcile deviations.md with epics.md: add epics.md:784 (Story 2.2) to
+      D-23 and epics.md:853 (Story 2.4 completion) to D-22 under Docs to update, and
+      record resume-on-reload (built in 2.2) as a deviation"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
+  - id: "epic-2-retro-item-12-before-epic-3-move-route-helpers-out-of"
+    epic: 2
+    action: "Before Epic 3: move route helpers out of NoteOverview.tsx (break the
+      NoteOverview/useStartRound cycle), move pure Round selectors to core/ with unit
+      tests, and complete a flashcard-only Round with replace plus a goBack e2e"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
+  - id: "epic-2-retro-item-13-carry-f1-into-the-epic-3-cache-regenerat"
+    epic: 2
+    action: "Carry F1 into the Epic 3 cache/regenerate story (FR-4): a complete Round
+      keeps its own copy of its questions so Resultat survives an in-place regenerate
+      (option a); add a deferred-work.md entry"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
+  - id: "epic-2-retro-item-14-carry-f2-into-story-3-5-startround-check"
+    epic: 2
+    action: "Carry F2 into Story 3.5: startRound checks the Note's current cacheKey,
+      and a Round abandoned elsewhere says so instead of a retry that never succeeds;
+      add a deferred-work.md entry"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
+  - id: "epic-2-retro-item-15-extend-docs-standards-manual-checks-md-t"
+    epic: 2
+    action: "Extend .docs/standards/manual-checks.md to fix and oneshot specs: a UI
+      change keeps Manual checks and Carried items whatever the route"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
+  - id: "epic-2-retro-item-16-when-epic-3-adds-its-next-route-page-and"
+    epic: 2
+    action: "When Epic 3 adds its next route page and e2e spec: extract shared route-page
+      loading and the copied e2e helpers into one module; group round.spec.ts by story"
+    owner: "Tor"
+    status: open
+    ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
