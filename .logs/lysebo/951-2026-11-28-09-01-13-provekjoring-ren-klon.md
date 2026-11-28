@@ -20,3 +20,21 @@ Generalprøve på story 5.4 ved milepæl M2: klon `main`, følg README, fullfør
 ### Åpne punkter
 - Rett R1–R4 i README (seksjonen «Kom i gang») før feature freeze 9.12. Kjør deretter de berørte stegene på nytt (story 5.4 AC 1).
 - Story 5.4 skal kjøres på en ren maskin (Windows Sandbox, ny brukerkonto eller annen PC) senest 12.12.
+
+## 2026-11-28 kl. 09:08 — lysebo
+
+### Oppgave
+Rett README-funnene fra prøvekjøringen i samme PR (Tor), og kjør de berørte stegene på nytt.
+
+### Plan
+- Ny seksjon «Kom i gang» rett under «Forutsetninger»: 6 nummererte steg fra kloning til Resultat.
+- Kjør steg 1–2 på nytt fra en ny klon, og sjekk knappetekstene mot `web/i18n/messages.ts`.
+
+### Resultat
+- README: «Kom i gang» retter R1–R4. Under arbeidet med R1 dukket R5 opp: «Ingenting annet trengs» stemte ikke, fordi kloning krever Git. Nå står det at Git er valgfritt, med ZIP-nedlasting som alternativ.
+- Ny kjøring: repoet er offentlig og ZIP-lenken gir 200. Ny klon og `docker compose up` gir `✓ Ready` på en `web-1`-linje, og appen svarer 200. Mellomrommene i logglinja varierer, så README siterer ikke linja bokstavelig.
+- `.docs/qa/fresh-clone-rehearsal-2026-11-28.md` er oppdatert med R5, ny kjøring og resultat.
+
+### Åpne punkter
+- Story 5.4 skal kjøres på en ren maskin senest 12.12 (står allerede i issues.md).
+
