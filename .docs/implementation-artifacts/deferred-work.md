@@ -23,3 +23,11 @@
 - source_spec: `.docs/implementation-artifacts/spec-fix-gate-waits-for-status.md`
   summary: Add tests for the status wait beyond the logic already covered: a component test for `AppSettingsProvider.waitForStatus` (settles once, not on a Strict Mode abort), an e2e where status never answers (wait, then `err.noKey`), an e2e that Demo Mode and a missing Consent do not wait, and a second drop during the wait being ignored.
   evidence: Blind Hunter review of the fix; `gateNeedsStatus` (web/api/studySet.test.ts) and `fetchStatus` timeout (web/api/status.test.ts) are unit-tested, the three race e2e tests fail on the old code, but these paths have no direct test.
+
+- source_spec: `.docs/implementation-artifacts/spec-fix-start-round-under-readiness.md`
+  summary: Story 3.2 places the Readiness Score and gap note at the top of Notatoversikt's study panel, above the 'Start runde' block (D-25), and updates the Tab-order test in `e2e/notat.spec.ts` if the score adds a Tab stop.
+  evidence: D-25 moved 'Start runde' to the top of the study panel before the Readiness Score exists; the carry-forward search for Story 3.2 must find the ordering.
+
+- source_spec: `.docs/implementation-artifacts/spec-fix-start-round-under-readiness.md`
+  summary: Story 3.5 shows the interrupted-round banner in the start block's place at the top of Notatoversikt's study panel (under the Readiness Score) and hides 'Start runde' while it shows (D-25, UX-DR20).
+  evidence: D-25 moved the start block to the top; the banner replaces it, and the carry-forward search for Story 3.5 must find the placement.

@@ -34,7 +34,7 @@ export function resultPath(noteHash: string, roundId: string): string {
 }
 
 /**
- * Notatoversikt (FR-6, FR-12, UX-DR6–9): summary, Key Concepts and 'Start runde' in the study panel,
+ * Notatoversikt (FR-6, FR-12, UX-DR6–9): 'Start runde', summary and Key Concepts in the study panel,
  * in the shared StudyLayout (split from 768 px, tabs below). Generated content carries `lang` from
  * `StudySet.language`. Story 2.1: 'Start runde' reads the progress rows, composes the Round in core/
  * (Round ID and time from here) and stores it in one transaction, then opens the Round screen. While it
@@ -109,6 +109,35 @@ function StudyPanel({
   const states = new Map<string, MasteryState>(progress.map((p) => [p.keyConceptId, p.state]));
   return (
     <div className={styles.studyPanel}>
+      {/* D-25: the start block leads the study panel, so the primary action shows without scrolling.
+          Story 3.2 puts the Readiness Score above it; the Story 3.5 banner replaces it. */}
+      {hasCoveredConcept(studySet.concepts) ? (
+        <div className={styles.start}>
+          <Button
+            variant="primary"
+            pending={pending}
+            aria-describedby={failed ? `${START_HINT_ID} ${START_ERROR_ID}` : START_HINT_ID}
+            onClick={onStart}
+          >
+            {t("overview.start")}
+          </Button>
+          <p id={START_HINT_ID} className={styles.hint}>
+            {t("overview.start.hint")}
+          </p>
+          {failed ? <ErrorMessage id={START_ERROR_ID} text={t("err.generation")} /> : null}
+        </div>
+      ) : (
+        <ErrorMessage
+          id={NO_CONCEPTS_ID}
+          text={t("err.noConcepts")}
+          actions={
+            <Button variant="primary" onClick={onRetry}>
+              {t("gen.retry")}
+            </Button>
+          }
+        />
+      )}
+
       <section className={styles.section} aria-labelledby="overview-summary">
         <h2 id="overview-summary" className={styles.h2}>
           {t("overview.summary")}
@@ -147,33 +176,6 @@ function StudyPanel({
           ))}
         </ul>
       </section>
-
-      {hasCoveredConcept(studySet.concepts) ? (
-        <div className={styles.start}>
-          <Button
-            variant="primary"
-            pending={pending}
-            aria-describedby={failed ? `${START_HINT_ID} ${START_ERROR_ID}` : START_HINT_ID}
-            onClick={onStart}
-          >
-            {t("overview.start")}
-          </Button>
-          <p id={START_HINT_ID} className={styles.hint}>
-            {t("overview.start.hint")}
-          </p>
-          {failed ? <ErrorMessage id={START_ERROR_ID} text={t("err.generation")} /> : null}
-        </div>
-      ) : (
-        <ErrorMessage
-          id={NO_CONCEPTS_ID}
-          text={t("err.noConcepts")}
-          actions={
-            <Button variant="primary" onClick={onRetry}>
-              {t("gen.retry")}
-            </Button>
-          }
-        />
-      )}
     </div>
   );
 }

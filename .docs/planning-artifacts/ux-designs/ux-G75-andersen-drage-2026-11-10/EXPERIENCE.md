@@ -71,7 +71,7 @@ Every route change updates `document.title` and moves focus to the screen's `h1`
 | 1 | Start | "Dine notater · Torsas læringsassistent" | "Dine notater"; empty: "Dine notater: ingen ennå" (`start.empty`) | `h2` 'Legg til et notat' `[ASSUMPTION]` (not shown when empty) |
 | 2 | Demovelger | "Velg et eksempelnotat · …" | "Velg et eksempelnotat" | — |
 | 3 | Genererer | "Lager kort og quiz · {notat} · …" | "Lager kort og quiz" | — |
-| 4 | Notatoversikt | "{notat} · …" | Note title | `h2` 'Sammendrag', 'Nøkkelbegreper' `[ASSUMPTION]` |
+| 4 | Notatoversikt | "{notat} · …" | Note title | `h2` 'Sammendrag', 'Nøkkelbegreper' `[ASSUMPTION]`, after 'Start runde' and its hint (D-25) |
 | 5 | Runde: flashcards | "Runde {n} · {notat} · …" | "Runde {n}" | `h2` "Kort {x} av {y}" per Item, inline after the `h1` (one line: "Runde {n} · Kort {x} av {y}") |
 | 6 | Runde: quiz | "Runde {n}, quiz · {notat} · …" | "Runde {n}: quiz" (": quiz" visually hidden) | `h2` "Spørsmål {x} av {y}" per Item, inline after the `h1` (one line: "Runde {n} · Spørsmål {x} av {y}") |
 | 7 | Resultat | "Resultat · {notat} · …" | "Resultat" | `h2` "Spørsmål {x}" per row |
@@ -320,7 +320,7 @@ Sara, second-year student, one evening left, laptop, first visit. Wireframes: [`
 2. Start shows `start.empty` with drop zone, 'Lim inn tekst', 'Prøv demomodus'. (key-start, frame c)
 3. Drops `forelesning-7.pdf`. Validated in-browser.
 4. Genererer: "Finner nøkkelbegreper …", "forelesning-7.pdf · 3 120 ord · 24 avsnitt", under a minute. (mockup: [key-generating](mockups/key-generating.html), [PNG](mockups/key-generating.png), frame a)
-5. Notatoversikt: source panel left (P1 …), right: "Klar for eksamen 0 %" with its gap note, summary with Quotes, 8 Key Concepts all 'ny', 'Start runde'.
+5. Notatoversikt: source panel left (P1 …), right: "Klar for eksamen 0 %" with its gap note, 'Start runde', summary with Quotes, 8 Key Concepts all 'ny' (order per D-25).
 6. Runde: Flashcard front "Hva skiller 3NF fra 2NF?" + "Kilde: P4". Space reveals the back: answer, Quote, "Kilde: P4". She presses 1 or 2 per card; focus lands on each new card's heading. On one card she presses 'Forklar enklere'. (mockup: [key-flashcards](mockups/key-flashcards.html), [PNG](mockups/key-flashcards.png))
 7. Runde: quiz, "Spørsmål 4 av 8", reference "Kilde: P7" under the stem. She answers with 1–4; on a miss: `quiz.wrong` ("Feil. Rett svar er C.") + Quote. (mockup: [key-quiz](mockups/key-quiz.html), [PNG](mockups/key-quiz.png))
 8. **Climax — Resultat:** "5 av 8 riktige". On the question she missed she clicks "Kilde: P7"; the source panel scrolls to P7 and rings the exact sentence the question was built from. She sees it is in her own Note, then presses 'Tilbake til resultatet'. (mockup: [key-result](mockups/key-result.html), [PNG](mockups/key-result.png))

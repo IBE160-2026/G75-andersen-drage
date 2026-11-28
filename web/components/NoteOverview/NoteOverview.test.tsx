@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // Story 2.4: Notatoversikt's Mastery chips from conceptProgress: the stored state for covered concepts,
 // 'ny' without a row (or when the read failed, which the page passes as no rows), and the not-covered
-// text unchanged. Storage and the router are stubbed.
+// text unchanged. D-25: the start block comes before the summary. Storage and the router are stubbed.
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -70,8 +70,8 @@ afterEach(() => {
   container.remove();
 });
 
-function render(progress: ConceptProgressRecord[]) {
-  act(() => root.render(<NoteOverview note={NOTE} studySet={SET} progress={progress} wide onRetry={() => {}} />));
+function render(progress: ConceptProgressRecord[], studySet: StudySetRecord = SET) {
+  act(() => root.render(<NoteOverview note={NOTE} studySet={studySet} progress={progress} wide onRetry={() => {}} />));
 }
 
 /** Each concept's name and what follows it: the chip text, or the not-covered text. */
@@ -96,5 +96,30 @@ describe("NoteOverview chips (Story 2.4)", () => {
     render([]);
     expect(chips().slice(0, 4).every(([, chip]) => chip === t("mastery.new"))).toBe(true);
     expect(container.querySelector('[role="alert"]')).toBeNull();
+  });
+});
+
+/** True when `a` comes before `b` in document order. */
+const precedes = (a: Element | null, b: Element | null) =>
+  !!a && !!b && (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+describe("NoteOverview start block (D-25)", () => {
+  it("'Start runde' and its hint lead the study panel, before the 'Sammendrag' heading", () => {
+    render([]);
+    const start = [...container.querySelectorAll("button")].find((b) => b.textContent === t("overview.start"));
+    const hint = container.querySelector("#start-hint");
+    const summary = container.querySelector("#overview-summary");
+    const block = start?.closest("div");
+    expect(block?.parentElement?.firstElementChild).toBe(block);
+    expect(block?.contains(hint)).toBe(true);
+    expect(precedes(hint, summary)).toBe(true);
+  });
+
+  it("with no covered concept, err.noConcepts and 'Prøv igjen' take that place, before 'Sammendrag'", () => {
+    render([], { ...SET, concepts: [concept("k-x", 1, false)] });
+    const error = container.querySelector("#no-concepts-error");
+    expect(error?.textContent).toContain(t("err.noConcepts"));
+    expect(precedes(error, container.querySelector("#overview-summary"))).toBe(true);
+    expect([...container.querySelectorAll("button")].some((b) => b.textContent === t("overview.start"))).toBe(false);
   });
 });
