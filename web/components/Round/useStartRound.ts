@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { uuidFromBytes } from "../../core/ids";
 import { composeRound } from "../../core/round";
+import { roundPath } from "../../core/routes";
 import { readConceptProgress, startRound, type NoteRecord, type StudySetRecord } from "../../storage/db";
-import { roundPath } from "../NoteOverview/NoteOverview";
 
 /** `crypto.randomUUID()`, which exists only in a secure context; elsewhere a v4 UUID from getRandomValues. */
 function newRoundId(): string {

@@ -847,6 +847,11 @@ test("a Round without Quiz Questions: the last mark completes it and returns to 
   await button(page, MSG.unknown).click();
   await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
   await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  // The last mark replaced the Round URL: Back goes to the Notatoversikt it started from, not the finished Round.
+  await page.goBack();
+  await expect(page).toHaveURL(new RegExp(`/notat/${BARE_HASH}$`));
+  await expect(page.getByRole("heading", { level: 1, name: TITLE })).toBeFocused();
+  expect(page.url()).not.toBe(roundPage);
   const [round] = await readStore(page, "rounds");
   expect(round).toMatchObject({ status: "complete" });
   const answers = round.answers as { answeredAt: string }[];

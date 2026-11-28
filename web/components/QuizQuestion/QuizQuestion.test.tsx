@@ -8,7 +8,6 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { pageTitle, t } from "../../i18n/messages";
 import type { ConceptProgressRecord, NoteRecord, QuizAnswerInput, RoundRecord, StudySetRecord } from "../../storage/db";
-import { displayOrder } from "./QuizQuestion";
 
 const push = vi.fn();
 const replace = vi.fn();
@@ -124,15 +123,6 @@ const withAnswer = (itemId: string, choice: number, extra: Partial<RoundRecord> 
   ...ROUND,
   answers: [...ROUND.answers, { itemId, choice, answeredAt: T }],
   ...extra,
-});
-
-describe("displayOrder", () => {
-  it("is the stored permutation, or the Study Set order when it is missing or not a permutation", () => {
-    expect(displayOrder([2, 0, 3, 1], 4)).toEqual([2, 0, 3, 1]);
-    expect(displayOrder(undefined, 4)).toEqual([0, 1, 2, 3]);
-    expect(displayOrder([0, 1, 2], 4)).toEqual([0, 1, 2, 3]);
-    expect(displayOrder([0, 0, 2, 3], 4)).toEqual([0, 1, 2, 3]);
-  });
 });
 
 describe("Quiz region, unanswered", () => {

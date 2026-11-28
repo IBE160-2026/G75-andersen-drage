@@ -18,21 +18,6 @@ const START_HINT_ID = "start-hint";
 const START_ERROR_ID = "start-error";
 const NO_CONCEPTS_ID = "no-concepts-error";
 
-/** Notatoversikt's route; Note keys keep their `demo:` prefix. */
-export function notePath(noteHash: string): string {
-  return `/notat/${noteHash}`;
-}
-
-/** The Round screen's route; Note keys keep their `demo:` prefix, as on `/notat/{noteHash}`. */
-export function roundPath(noteHash: string, roundId: string): string {
-  return `${notePath(noteHash)}/runde/${roundId}`;
-}
-
-/** Resultat's route (Story 2.4): the complete Round's route + `/resultat`. */
-export function resultPath(noteHash: string, roundId: string): string {
-  return `${roundPath(noteHash, roundId)}/resultat`;
-}
-
 /**
  * Notatoversikt (FR-6, FR-12, UX-DR6–9): 'Start runde', summary and Key Concepts in the study panel,
  * in the shared StudyLayout (split from 768 px, tabs below). Generated content carries `lang` from

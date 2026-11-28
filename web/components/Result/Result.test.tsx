@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // Story 2.4: Resultat (FR-12, FR-14, UX-DR11, UX-DR17, UX-DR19): focus on the h1, the score, one row per
 // Quiz Question in Round order with "Ditt svar:" / "Rett svar:" (letters per optionOrder, marks
-// aria-hidden), the reference jump returning to the row's reference, and resultReady. The router is
+// aria-hidden), and the reference jump returning to the row's reference. The router is
 // stubbed; nothing is stored here. Story 2.5: the secondary 'Ny runde' (useStartRound, storage stubbed):
 // pending, failure with err.generation inline, retry.
 import { act } from "react";
@@ -17,7 +17,7 @@ const readConceptProgress = vi.fn<(noteHash: string) => Promise<StorageResult<Co
 const startRound = vi.fn<(composition: { round: Omit<RoundRecord, "number" | "schemaVersion"> }) => Promise<StorageResult<RoundRecord>>>();
 vi.mock("../../storage/db", () => ({ readConceptProgress, startRound }));
 
-const { ResultScreen, resultReady } = await import("./Result");
+const { ResultScreen } = await import("./Result");
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -296,28 +296,5 @@ describe("ResultScreen", () => {
     expect(container.textContent).toContain("1 av 4 riktige");
     const lines = [...rows()[2].querySelectorAll("p")].filter((p) => p.textContent?.includes(":")).map(spoken);
     expect(lines).toEqual(["Ditt svar:", "Rett svar: A. null"]);
-  });
-});
-
-describe("resultReady", () => {
-  it("is true for a complete Round of the Note with Quiz Questions whose Items resolve", () => {
-    expect(resultReady(ROUND, "h", SET)).toBe(true);
-  });
-
-  it("is false for an active or abandoned Round", () => {
-    expect(resultReady({ ...ROUND, status: "active" }, "h", SET)).toBe(false);
-    expect(resultReady({ ...ROUND, status: "abandoned" }, "h", SET)).toBe(false);
-  });
-
-  it("is false for another Note's Round", () => {
-    expect(resultReady(ROUND, "other", SET)).toBe(false);
-  });
-
-  it("is false when an Item is no longer in the Study Set", () => {
-    expect(resultReady({ ...ROUND, itemIds: [...ROUND.itemIds, "k-x.qq1"] }, "h", SET)).toBe(false);
-  });
-
-  it("is false for a Round without Quiz Questions", () => {
-    expect(resultReady({ ...ROUND, itemIds: ["k-a.fc1", "k-b.fc1"] }, "h", SET)).toBe(false);
   });
 });

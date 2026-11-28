@@ -2,39 +2,21 @@
 
 import { useRouter } from "next/navigation";
 import { contentLang } from "../../core/overview";
+import { displayOrder, roundQuizQuestions } from "../../core/roundItems";
+import { notePath } from "../../core/routes";
 import { quizChoices, score } from "../../core/score";
 import type { VerifiedQuizQuestion } from "../../core/types";
 import { format, t } from "../../i18n/messages";
 import type { NoteRecord, RoundRecord, StudySetRecord } from "../../storage/db";
 import { Button } from "../Button/Button";
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage";
-import { notePath } from "../NoteOverview/NoteOverview";
 import { QuoteBlock } from "../QuoteBlock/QuoteBlock";
-import { displayOrder, OPTION_LETTERS } from "../QuizQuestion/QuizQuestion";
+import { OPTION_LETTERS } from "../QuizQuestion/QuizQuestion";
 import { SourceRef, type ReturnContext } from "../ReferenceJump/ReferenceJump";
-import { itemsResolve, roundQuizQuestions } from "../Round/Round";
 import { useStartRound } from "../Round/useStartRound";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import { StudyLayout } from "../StudyLayout/StudyLayout";
 import styles from "./Result.module.css";
-
-/**
- * True when the Round can show Resultat (Story 2.4): it belongs to `noteHash`, is `complete`, every Item
- * is still in the Study Set it was composed from, and it has at least one Quiz Question. A Round without
- * Quiz Questions has no Resultat (its last mark returns to Notatoversikt).
- */
-export function resultReady(
-  round: Pick<RoundRecord, "noteHash" | "status" | "itemIds">,
-  noteHash: string,
-  studySet: Pick<StudySetRecord, "concepts">,
-): boolean {
-  return (
-    round.noteHash === noteHash &&
-    round.status === "complete" &&
-    itemsResolve(round, studySet) &&
-    roundQuizQuestions(round, studySet).length > 0
-  );
-}
 
 /** The score paragraph: the focused h1 "Resultat" is described by it, so the score is read on arrival. */
 const SCORE_ID = "result-score";

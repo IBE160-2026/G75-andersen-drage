@@ -8,6 +8,7 @@ import { useNoteSession } from "../../../components/NoteSession/NoteSession";
 import { useWide } from "../../../components/StudyLayout/StudyLayout";
 import { bareNoteHash } from "../../../core/ids";
 import { extractedFromNote } from "../../../core/overview";
+import { notePath } from "../../../core/routes";
 import { format } from "../../../i18n/messages";
 import {
   readConceptProgress,
@@ -90,7 +91,7 @@ export default function NoteOverviewPage() {
         onSaved={(saved) => {
           // Demo Mode may have changed since this Note was stored: the answer then lives under the other key.
           if (saved === noteHash) setReload((n) => n + 1);
-          else router.push(`/notat/${saved}`);
+          else router.push(notePath(saved));
         }}
       />
     );
