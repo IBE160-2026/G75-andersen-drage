@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: '11-28-2026 10:02'
+last_updated: '11-28-2026 10:32'
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -166,7 +166,7 @@ action_items:
       D-23 and epics.md:853 (Story 2.4 completion) to D-22 under Docs to update, and
       record resume-on-reload (built in 2.2) as a deviation"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
   - id: "epic-2-retro-item-12-before-epic-3-move-route-helpers-out-of"
     epic: 2
