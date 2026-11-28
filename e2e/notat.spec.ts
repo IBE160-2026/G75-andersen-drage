@@ -181,10 +181,15 @@ test("desktop: title, study panel and source panel side by side, source on the l
   await expect(concepts.filter({ hasText: "Denormalisering" }).getByText("ny", { exact: true })).toHaveCount(0);
   await expect(main.getByText("ny", { exact: true })).toHaveCount(4);
 
-  // 'Start runde' at the end, enabled since Story 2.1 (round.spec.ts), with its hint.
+  // 'Start runde' leads the study panel (D-25), enabled since Story 2.1 (round.spec.ts), with its hint,
+  // and shows without scrolling.
   const start = page.getByRole("button", { name: MSG.start });
   await expect(start).not.toHaveAttribute("aria-disabled");
   await expect(start).toHaveAccessibleDescription(MSG.startHint);
+  await expect(start).toBeInViewport();
+  const startBox = (await start.boundingBox())!;
+  const summaryBox = (await main.getByRole("heading", { level: 2, name: MSG.summary }).boundingBox())!;
+  expect(startBox.y).toBeLessThan(summaryBox.y);
 
   // Generated content and Passage text carry the Study Set language; UI text stays bokmål.
   await expect(main.locator("blockquote p[lang]").first()).toHaveAttribute("lang", "nb");
@@ -208,13 +213,13 @@ test("desktop Tab order: from the h1 the study panel comes first, then the sourc
   // The first Tab on a screen goes to the skip link (Screen); start again from the h1.
   await page.keyboard.press("Tab");
   await h1(page).focus();
-  // Story 1.12: each Summary Point's "Kilde: Pn" is a button, in reading order.
+  // D-25: 'Start runde' first, then each Summary Point's "Kilde: Pn" button (Story 1.12) in reading order.
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: MSG.start })).toBeFocused();
   for (let i = 1; i <= 5; i++) {
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: `Kilde: P${i}` })).toBeFocused();
   }
-  await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: MSG.start })).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(region(page)).toBeFocused();
   await page.keyboard.press("Tab");

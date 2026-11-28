@@ -40,7 +40,7 @@ Mark each row **P** (pass) or **F** (fail). Note every F under *Findings*.
 
 | # | Row | What happened | Severity | Action (fix in PR / GitHub issue) |
 |---|---|---|---|---|
-| O1 | Setup 5 | Observation, not an F: on a normal desktop screen 'Start runde' sits below the fold on Notatoversikt (sample *Smidig utvikling og Scrum*), so you scroll to reach it. As built per the IA wireframe (Readiness → Sammendrag → Nøkkelbegreper → 'Start runde'); the key-overview mockup hints at a place under the Readiness Score | Low (UX) | Tor 2026-11-28: option B, move 'Start runde' + hint up under the Readiness Score, own PR after this pass (new deviation D-25) |
+| O1 | Setup 5 | Observation, not an F: on a normal desktop screen 'Start runde' sits below the fold on Notatoversikt (sample *Smidig utvikling og Scrum*), so you scroll to reach it. As built per the IA wireframe (Readiness → Sammendrag → Nøkkelbegreper → 'Start runde'); the key-overview mockup hints at a place under the Readiness Score | Low (UX) | Tor 2026-11-28: option B, move 'Start runde' + hint up under the Readiness Score, own PR after this pass (new deviation D-25). Done in `spec-fix-start-round-under-readiness.md` (D-25) |
 
 ## Result
 
