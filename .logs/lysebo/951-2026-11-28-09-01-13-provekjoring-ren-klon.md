@@ -15,7 +15,7 @@ Generalprøve på story 5.4 ved milepæl M2: klon `main`, følg README, fullfør
 - Kloning 7 s, bygg og oppstart 1 min 27 s, Demo-runde ca. 2 min (08:58–09:00). Fra klon til Resultat tok det ca. 9 min, under kravet på 15 min (SM-4).
 - `docker compose run --rm test` var grønn i klonen uten `.env`: Vitest 610, pytest 173, Playwright 155 på 1 min 44 s. Siste CI på `main` er grønn (SM-5).
 - Funn i README: R1 mangler kloningssteg og URL (lav). R2 mangler hurtigstart for Demo-runden (middels; Tor måtte spørre hvordan runden startes). R3 sier ikke at første oppstart bygger imagene (lav). R4 sier ikke at port 3000 må være ledig (lav).
-- Ryddet etterpå: klonens containere og nettverk er stoppet og fjernet, og den vanlige appen er startet igjen. Klonens imager (`g75-clone-*`) og mappa i scratchpad er beholdt.
+- Ryddet etterpå: klonens containere og nettverk er stoppet og fjernet, og den vanlige appen er startet igjen. Klonens imager (`g75-clone-*`) og mappa i scratchpad ble først beholdt. Senere samme dag ble de fjernet etter Tors ønske: 7 imager (`g75-clone-*` og `g75-andersen-drage-*`, ca. 9,5 GB) og begge klonmappene. `oppgaven-*` er urørt.
 
 ### Åpne punkter
 - Rett R1–R4 i README (seksjonen «Kom i gang») før feature freeze 9.12. Kjør deretter de berørte stegene på nytt (story 5.4 AC 1).
