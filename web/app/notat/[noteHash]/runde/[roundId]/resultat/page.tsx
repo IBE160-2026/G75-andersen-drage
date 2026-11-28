@@ -3,8 +3,9 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useNoteSession } from "../../../../../../components/NoteSession/NoteSession";
-import { ResultScreen, resultReady } from "../../../../../../components/Result/Result";
+import { ResultScreen } from "../../../../../../components/Result/Result";
 import { useWide } from "../../../../../../components/StudyLayout/StudyLayout";
+import { resultReady } from "../../../../../../core/roundItems";
 import {
   readNote,
   readRound,

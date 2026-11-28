@@ -9,7 +9,8 @@ import { pageTitle, t } from "../../i18n/messages";
 import type { ConceptProgressRecord, FlashcardMark, NoteRecord, RoundRecord, StudySetRecord } from "../../storage/db";
 
 const push = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+const replace = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push, replace }) }));
 
 const recordFlashcardMark = vi.fn();
 vi.mock("../../storage/db", () => ({
@@ -84,6 +85,7 @@ beforeEach(() => {
   root = createRoot(container);
   recordFlashcardMark.mockReset();
   push.mockReset();
+  replace.mockReset();
   act(() => root.render(<RoundScreen note={NOTE} studySet={SET} round={ROUND} progress={[ROW]} wide />));
 });
 
@@ -150,14 +152,15 @@ describe("RoundScreen Flashcards", () => {
     expect(container.textContent).toContain("Svar 1");
   });
 
-  it("the mark that completes a Round without Quiz Questions goes back to Notatoversikt, not Resultat", async () => {
+  it("the mark that completes a Round without Quiz Questions replaces it with Notatoversikt, not Resultat", async () => {
     recordFlashcardMark.mockResolvedValue({
       ok: true,
       value: { round: { ...ROUND, status: "complete", completedAt: T, answers: [] }, progress: ROW },
     });
     await click(t("card.reveal"));
     await click(t("card.known"));
-    expect(push).toHaveBeenCalledWith("/notat/h");
+    expect(replace).toHaveBeenCalledWith("/notat/h");
+    expect(push).not.toHaveBeenCalled();
   });
 });
 

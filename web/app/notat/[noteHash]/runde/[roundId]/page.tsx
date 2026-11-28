@@ -2,11 +2,11 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { resultPath } from "../../../../../components/NoteOverview/NoteOverview";
 import { useNoteSession } from "../../../../../components/NoteSession/NoteSession";
-import { resultReady } from "../../../../../components/Result/Result";
-import { itemsResolve, RoundScreen } from "../../../../../components/Round/Round";
+import { RoundScreen } from "../../../../../components/Round/Round";
 import { useWide } from "../../../../../components/StudyLayout/StudyLayout";
+import { itemsResolve, resultReady } from "../../../../../core/roundItems";
+import { resultPath } from "../../../../../core/routes";
 import {
   readConceptProgress,
   readNote,

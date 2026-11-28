@@ -15,19 +15,6 @@ const FEEDBACK_ID = "answer-feedback";
 export const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
 
 /**
- * The display order of a question's options: the Round's stored `optionOrder` permutation, or the Study
- * Set order when the stored one is missing or not a permutation of the options. `composeRound` always
- * stores a permutation; `recordQuizAnswer` only rejects an answer when the question has no `optionOrder`
- * entry or `choice` is not an integer in `0 … optionOrder[itemId].length − 1`.
- */
-export function displayOrder(order: readonly number[] | undefined, optionCount: number): number[] {
-  const identity = Array.from({ length: optionCount }, (_, i) => i);
-  if (!order || order.length !== optionCount) return identity;
-  const sorted = [...order].sort((a, b) => a - b);
-  return sorted.every((value, i) => value === i) ? [...order] : identity;
-}
-
-/**
  * Quiz region (UX-DR14, Story 2.3). A `section` labelled by the Item `h2` ("Spørsmål {x} av {y}", in the
  * Round screen's progress line), no card container: concept chip, stem in `card-front`, "Kilde: Pn"
  * (usable before and after answering) and four full-width options "A"–"D" in `order` (original option

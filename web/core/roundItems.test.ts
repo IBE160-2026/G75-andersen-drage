@@ -1,7 +1,15 @@
-// Story 2.1: the Round screen's pure helpers, and the Round route built by Notatoversikt.
+// The read-side Round selectors (Stories 2.1–2.4): Items per part, position, Resultat readiness and the
+// option display order.
 import { describe, expect, it } from "vitest";
-import { notePath, resultPath, roundPath } from "../NoteOverview/NoteOverview";
-import { itemsResolve, roundFlashcards, roundPosition, roundQuizQuestions } from "./Round";
+import type { Round } from "./round";
+import {
+  displayOrder,
+  itemsResolve,
+  resultReady,
+  roundFlashcards,
+  roundPosition,
+  roundQuizQuestions,
+} from "./roundItems";
 
 const ref = { passageId: "p1", quote: "q" };
 const concept = (id: string, cards: number, quiz: number) => ({
@@ -43,21 +51,6 @@ describe("roundFlashcards", () => {
   });
 });
 
-describe("roundPath", () => {
-  it("keeps the demo: prefix of the Note key", () => {
-    expect(roundPath("demo:abc", "r-1")).toBe("/notat/demo:abc/runde/r-1");
-    expect(roundPath("abc", "r-1")).toBe("/notat/abc/runde/r-1");
-  });
-});
-
-describe("notePath / resultPath (Story 2.4)", () => {
-  it("Resultat is the Round route + /resultat, keeping the demo: prefix", () => {
-    expect(notePath("demo:abc")).toBe("/notat/demo:abc");
-    expect(resultPath("demo:abc", "r-1")).toBe("/notat/demo:abc/runde/r-1/resultat");
-    expect(resultPath("abc", "r-1")).toBe("/notat/abc/runde/r-1/resultat");
-  });
-});
-
 describe("roundPosition (Story 2.2)", () => {
   it("is the Flashcard part until every card is answered, then the Quiz part, then done", () => {
     expect(roundPosition(0, 3, 2)).toEqual({ part: "cards", index: 0, total: 3 });
@@ -76,5 +69,43 @@ describe("roundQuizQuestions (Story 2.2)", () => {
       ["k-b.qq1", "k-b"],
       ["k-a.qq1", "k-a"],
     ]);
+  });
+});
+
+describe("resultReady (Story 2.4)", () => {
+  const ROUND: Pick<Round, "noteHash" | "status" | "itemIds"> = {
+    noteHash: "h",
+    status: "complete",
+    itemIds: ["k-a.fc1", "k-b.fc1", "k-a.qq1", "k-b.qq1"],
+  };
+
+  it("is true for a complete Round of the Note with Quiz Questions whose Items resolve", () => {
+    expect(resultReady(ROUND, "h", SET)).toBe(true);
+  });
+
+  it("is false for an active or abandoned Round", () => {
+    expect(resultReady({ ...ROUND, status: "active" }, "h", SET)).toBe(false);
+    expect(resultReady({ ...ROUND, status: "abandoned" }, "h", SET)).toBe(false);
+  });
+
+  it("is false for another Note's Round", () => {
+    expect(resultReady(ROUND, "other", SET)).toBe(false);
+  });
+
+  it("is false when an Item is no longer in the Study Set", () => {
+    expect(resultReady({ ...ROUND, itemIds: [...ROUND.itemIds, "k-x.qq1"] }, "h", SET)).toBe(false);
+  });
+
+  it("is false for a Round without Quiz Questions", () => {
+    expect(resultReady({ ...ROUND, itemIds: ["k-a.fc1", "k-b.fc1"] }, "h", SET)).toBe(false);
+  });
+});
+
+describe("displayOrder (Story 2.3)", () => {
+  it("is the stored permutation, or the Study Set order when it is missing or not a permutation", () => {
+    expect(displayOrder([2, 0, 3, 1], 4)).toEqual([2, 0, 3, 1]);
+    expect(displayOrder(undefined, 4)).toEqual([0, 1, 2, 3]);
+    expect(displayOrder([0, 1, 2], 4)).toEqual([0, 1, 2, 3]);
+    expect(displayOrder([0, 0, 2, 3], 4)).toEqual([0, 1, 2, 3]);
   });
 });

@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { updateMastery } from "../../core/mastery";
 import { contentLang } from "../../core/overview";
 import { isQuizAnswer, type MasteryState } from "../../core/round";
-import type { VerifiedFlashcard, VerifiedQuizQuestion } from "../../core/types";
+import { displayOrder, roundFlashcards, roundPosition, roundQuizQuestions } from "../../core/roundItems";
+import { notePath, resultPath } from "../../core/routes";
 import { format, t } from "../../i18n/messages";
 import {
   recordFlashcardMark,
@@ -17,65 +18,12 @@ import {
 } from "../../storage/db";
 import { Flashcard } from "../Flashcard/Flashcard";
 import { MasteryChip } from "../MasteryChip/MasteryChip";
-import { notePath, resultPath } from "../NoteOverview/NoteOverview";
-import { displayOrder, QuizQuestion } from "../QuizQuestion/QuizQuestion";
+import { QuizQuestion } from "../QuizQuestion/QuizQuestion";
 import { Screen, ScreenHeading } from "../Screen/Screen";
 import { StudyLayout } from "../StudyLayout/StudyLayout";
 import styles from "./Round.module.css";
 
 const ITEM_HEADING_ID = "round-item-heading";
-
-/** The Round's Flashcards in Item order, each with its concept. Unknown Item IDs are left out. */
-export function roundFlashcards(
-  round: Pick<RoundRecord, "itemIds">,
-  studySet: Pick<StudySetRecord, "concepts">,
-): { card: VerifiedFlashcard; conceptId: string }[] {
-  const byId = new Map(
-    studySet.concepts.flatMap((concept) => concept.flashcards.map((card) => [card.id, { card, conceptId: concept.id }] as const)),
-  );
-  return round.itemIds.flatMap((id) => {
-    const entry = byId.get(id);
-    return entry ? [entry] : [];
-  });
-}
-
-/** The Round's Quiz Questions in Item order, each with its concept. Unknown Item IDs are left out. */
-export function roundQuizQuestions(
-  round: Pick<RoundRecord, "itemIds">,
-  studySet: Pick<StudySetRecord, "concepts">,
-): { question: VerifiedQuizQuestion; conceptId: string }[] {
-  const byId = new Map(
-    studySet.concepts.flatMap((concept) =>
-      concept.quizQuestions.map((question) => [question.id, { question, conceptId: concept.id }] as const),
-    ),
-  );
-  return round.itemIds.flatMap((id) => {
-    const entry = byId.get(id);
-    return entry ? [entry] : [];
-  });
-}
-
-/**
- * Where the Round stands: the Flashcard part (`index` into the cards) until every card is answered, then
- * the Quiz part (`index` into the Quiz Questions). Answers are stored in Item order, Flashcards first.
- * `done` when every Item is answered.
- */
-export type RoundPosition =
-  | { part: "cards"; index: number; total: number }
-  | { part: "quiz"; index: number; total: number }
-  | { part: "done" };
-
-export function roundPosition(answered: number, cards: number, questions: number): RoundPosition {
-  if (answered < cards) return { part: "cards", index: answered, total: cards };
-  if (answered - cards < questions) return { part: "quiz", index: answered - cards, total: questions };
-  return { part: "done" };
-}
-
-/** True when every Item ID of the Round is in the Study Set (otherwise the set has changed or gone). */
-export function itemsResolve(round: Pick<RoundRecord, "itemIds">, studySet: Pick<StudySetRecord, "concepts">): boolean {
-  const ids = new Set(studySet.concepts.flatMap((c) => [...c.flashcards, ...c.quizQuestions].map((item) => item.id)));
-  return round.itemIds.every((id) => ids.has(id));
-}
 
 /**
  * Round screen (Stories 2.1–2.3; UX-DR7, UX-DR8, UX-DR13–UX-DR15): rendered from the stored Round, never
@@ -171,7 +119,8 @@ export function RoundScreen({
     });
     if (saved.ok && saved.value.round.status === "complete") {
       // Stays pending while the screen leaves: the marks must not fire again during navigation.
-      router.push(notePath(note.noteHash));
+      // Replace: a finished Round's URL must not stay in the history, so Back from Notatoversikt skips it.
+      router.replace(notePath(note.noteHash));
       return;
     }
     pendingRef.current = false;

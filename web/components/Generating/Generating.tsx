@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { gateNeedsStatus, requestStudySet } from "../../api/studySet";
 import { buildNoteRecord, recordsForMode } from "../../core/noteRecord";
+import { notePath } from "../../core/routes";
 import type { ExtractedNote } from "../../core/types";
 import { verifyStudySet } from "../../core/verifyStudySet";
 import { fileType } from "../../extract/types";
@@ -136,7 +137,7 @@ export function Generating({
       stop();
       setProgress(100);
       if (onSavedRef.current) onSavedRef.current(records.note.noteHash);
-      else router.push(`/notat/${records.note.noteHash}`);
+      else router.push(notePath(records.note.noteHash));
     })();
 
     return () => {

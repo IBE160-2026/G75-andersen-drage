@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-22-2026 13:13
-last_updated: '11-28-2026 10:32'
+last_updated: '11-28-2026 10:56'
 project: G75-andersen-drage
 project_key: NOKEY
 tracking_system: file-system
@@ -174,7 +174,7 @@ action_items:
       NoteOverview/useStartRound cycle), move pure Round selectors to core/ with unit
       tests, and complete a flashcard-only Round with replace plus a goBack e2e"
     owner: "Tor"
-    status: open
+    status: done
     ref: ".docs/implementation-artifacts/epic-2-retro-2026-11-28.md"
   - id: "epic-2-retro-item-13-carry-f1-into-the-epic-3-cache-regenerat"
     epic: 2
