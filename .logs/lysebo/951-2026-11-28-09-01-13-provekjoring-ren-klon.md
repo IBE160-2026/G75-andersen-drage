@@ -34,6 +34,7 @@ Rett README-funnene fra prøvekjøringen i samme PR (Tor), og kjør de berørte 
 - README: «Kom i gang» retter R1–R4. Under arbeidet med R1 dukket R5 opp: «Ingenting annet trengs» stemte ikke, fordi kloning krever Git. Nå står det at Git er valgfritt, med ZIP-nedlasting som alternativ.
 - Ny kjøring: repoet er offentlig og ZIP-lenken gir 200. Ny klon og `docker compose up` gir `✓ Ready` på en `web-1`-linje, og appen svarer 200. Mellomrommene i logglinja varierer, så README siterer ikke linja bokstavelig.
 - `.docs/qa/fresh-clone-rehearsal-2026-11-28.md` er oppdatert med R5, ny kjøring og resultat.
+- Commits 0ee97d0 (prøvekjøringen) og 7118f94 (README) på `docs/fresh-clone-rehearsal-m2`, pushet, PR #34 (https://github.com/IBE160-2026/G75-andersen-drage/pull/34).
 
 ### Åpne punkter
 - Story 5.4 skal kjøres på en ren maskin senest 12.12 (står allerede i issues.md).
