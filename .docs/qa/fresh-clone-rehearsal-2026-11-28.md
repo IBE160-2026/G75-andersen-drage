@@ -25,13 +25,20 @@ Rehearsal of Story 5.4 at milestone M2 (`epics.md` › Story 5.4, AC 1): clone `
 
 | # | Finding | Severity | Action |
 |---|---|---|---|
-| R1 | No clone step or repository URL; "Forutsetninger" lists only Docker | Low | Add a clone line to a quick-start section |
-| R2 | No quick-start for the Demo Round. Tor had to ask how to start it: the path ('Nei takk, vis demo' → sample → 'Start runde' → cards → quiz → 'Se resultatet') is only in "Demomodus", after the dense "App-skallet" section | Medium | Add "Kom i gang" with 4–6 numbered steps right under "Forutsetninger" |
-| R3 | No note that the first `docker compose up` builds the images and takes a few minutes | Low | One sentence in the quick-start |
-| R4 | No note that port 3000 must be free | Low | One sentence in the quick-start |
+| R1 | No clone step or repository URL; "Forutsetninger" lists only Docker | Low | Fixed: "Kom i gang" step 1 (Git clone with URL, or Code › Download ZIP); "Forutsetninger" now says Git is optional |
+| R2 | No quick-start for the Demo Round. Tor had to ask how to start it: the path ('Nei takk, vis demo' → sample → 'Start runde' → cards → quiz → 'Se resultatet') is only in "Demomodus", after the dense "App-skallet" section | Medium | Fixed: "Kom i gang" right under "Forutsetninger", 6 numbered steps from clone to Resultat |
+| R3 | No note that the first `docker compose up` builds the images and takes a few minutes | Low | Fixed: "Kom i gang" step 2 (first build takes a couple of minutes; ready when a `web-1` line shows `✓ Ready`) |
+| R4 | No note that port 3000 must be free | Low | Fixed: "Kom i gang" step 2 |
+| R5 | "Forutsetninger" said "Ingenting annet trengs", but cloning needs Git (found while fixing R1) | Low | Fixed: Git optional, ZIP download as the alternative |
+
+## Re-run after the fixes
+
+- About 09:05, same PC: the repository is public and the ZIP link (`archive/refs/heads/main.zip`) answers 200. A fresh `git clone` per step 1, then `docker compose up` per step 2: `proxy-1 Healthy`, then `web-1    | ✓ Ready` (the spacing varies with the project name, so the README does not quote it literally); localhost:3000 answers 200.
+- Steps 3–6 describe unchanged app behaviour that Tor ran in the first run (about 2 min). Their button texts match `web/i18n/messages.ts`, and `e2e/demo.spec.ts` runs the same Demo loop.
 
 ## Result
 
 - [x] Demo Mode Round finished within 15 minutes from clone (about 9 min)
 - [x] Test command green with no API key and no `.env`; latest CI on `main` green
-- [ ] README findings R1–R4 fixed before the feature freeze (2026-12-09), then re-run the affected steps (Story 5.4 AC 1)
+- [x] README findings R1–R5 fixed and the affected steps re-run (Story 5.4 AC 1)
+- [ ] Story 5.4 itself: run on a clean machine (Windows Sandbox, new user account or another PC) by 2026-12-12

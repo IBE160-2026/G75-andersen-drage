@@ -12,8 +12,21 @@ Prosjektet gjennomføres solo. Lasse S. Drage trakk seg fra emnet før prosjektb
 
 ## Forutsetninger
 
-- Docker Desktop med Docker Compose v5.5 eller nyere. Ingenting annet trengs.
+- Docker Desktop med Docker Compose v5.5 eller nyere. Ingenting annet trengs (Git er valgfritt, se «Kom i gang»).
 - En OpenRouter-nøkkel er **valgfri**. Appen starter og testene kjører uten nøkkel.
+
+## Kom i gang
+
+Slik prøver du hele løkka i demomodus, uten nøkkel. Det tar noen få minutter.
+
+1. Hent koden. Med Git: `git clone https://github.com/IBE160-2026/G75-andersen-drage.git`, deretter `cd G75-andersen-drage`. Uten Git: på GitHub velger du **Code › Download ZIP**, pakker ut og åpner en terminal i mappen.
+2. Start Docker Desktop og kjør `docker compose up`. Første gang bygges imagene, og det tar et par minutter. Appen er klar når en linje fra `web-1` i loggen viser `✓ Ready`. Port 3000 må være ledig.
+3. Åpne <http://localhost:3000>. Samtykkedialogen vises: trykk **«Nei takk, vis demo»**.
+4. Under *Velg et eksempelnotat* velger du for eksempel **«Smidig utvikling og Scrum»**. Kort og quiz lages fra et innspilt svar på noen sekunder, og *Notatoversikt* åpnes.
+5. Trykk **«Start runde»**. For hvert kort: **«Snu kortet»**, deretter **«Kunne det»** eller **«Kunne det ikke»**. I quizen velger du et svar og trykker **«Neste spørsmål»**, og etter siste spørsmål **«Se resultatet»**.
+6. *Resultat* viser «x av y riktige» med kilde for hvert spørsmål. **«Ny runde»** starter neste runde med begrepene du bommet på først.
+
+Stopp med Ctrl+C og `docker compose down`. Testene kjøres med `docker compose run --rm test` (se under).
 
 ## Kommandoer
 
