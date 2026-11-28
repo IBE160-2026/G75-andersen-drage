@@ -1,6 +1,6 @@
 # Arkitekturen i Torsas læringsassistent – en lesevennlig oversikt
 
-For sensor og Bård Pettersen. Dette er en forklaring av
+For sensor og faglærer. Dette er en forklaring av
 [arkitekturdokumentet](architecture-G75-andersen-drage-2026-11-18/ARCHITECTURE-SPINE.md) («spine»), som er bindende for
 implementeringen og har 21 arkitekturbeslutninger (AD-1 til AD-21). Her står *hva* som er bestemt og *hvorfor*; detaljene står
 i spine-dokumentet. Teknologivalg, versjoner og miljøvariabler står i [technology-G75.md](technology-G75.md).
@@ -50,7 +50,7 @@ flowchart LR
   kode som et live-svar. Sensor kan dermed prøve hele løkka uten nøkkel (AD-12).
 
 **Hvorfor to tjenester og ikke bare Next.js?** Nøkkelen må ligge på en server og ikke i nettleseren, og oppsettet følger
-referansen fra Bård (FastAPI + pydantic-ai + OpenRouter). Alt annet fra Pytagoras-oppsettet – database, cache, innlogging,
+referanseoppsettet fra faglærer (FastAPI + pydantic-ai + OpenRouter). Alt annet fra Pytagoras-oppsettet – database, cache, innlogging,
 betaling, hosting – er utelatt fordi appen er lokal og ikke har noe å lagre på serversiden (AD-1).
 
 ---

@@ -179,7 +179,7 @@ Minimum for å kjøre: Docker. Minimum for egne notater: i tillegg `OPENROUTER_A
 
 | Fra `technology.md` | I G75 | Hvorfor |
 | --- | --- | --- |
-| FastAPI + Next.js | **Beholdt** (AD-1) | Samme oppsett som referansen fra Bård; Python passer pydantic-ai, TypeScript passer UI |
+| FastAPI + Next.js | **Beholdt** (AD-1) | Samme oppsett som referanseoppsettet fra faglærer; Python passer pydantic-ai, TypeScript passer UI |
 | pydantic-ai mot OpenRouter | **Beholdt** | Bytte modell uten å bytte kode; ZDR-ruting |
 | Mock-fallback uten nøkler | **Beholdt** som Demomodus (AD-12) | Sensor skal kunne kjøre alt uten nøkkel |
 | Docker Compose lokalt | **Beholdt** (AD-2) | Én kommando, samme versjoner på alle maskiner |
